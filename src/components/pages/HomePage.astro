@@ -28,7 +28,12 @@ const mascotGreeting = {
     <ResponsiveImage src={heroAsset} alt={hero.alt[locale]} sizes="(min-width: 64rem) 1536px, 100vw" priority />
     <div class="home-hero__copy page-shell"><p>Bionatura · Fuengirola</p><h1>{copy.h1}</h1><p>{copy.intro}</p><div><a class="button button--leaf" href={pathFor(locale,'catalog')}>{c.order}</a><a class="button" href={pathFor(locale,'catalog')}>{c.catalog}</a></div></div>
   </section>
-  <section class="home-section page-shell"><p class="eyebrow">{c.season}</p><h2>{c.season}</h2><p>{c.seasonBody}</p></section>
+  <section class="home-section home-season page-shell">
+    <p class="eyebrow">{c.season}</p>
+    <h2>{c.season}</h2>
+    <p>{c.seasonBody}</p>
+    <a class="button button--leaf" href={pathFor(locale, 'catalog')}>{c.catalog}</a>
+  </section>
   <section class="home-section home-process"><div class="page-shell"><h2>{c.process}</h2><ol>{c.steps.map((step,index)=><li><span>{index+1}</span>{step}</li>)}</ol></div></section>
   <section class="home-section page-shell"><h2>{c.usual}</h2><p>{products.filter((p)=>p.alwaysAvailable).map((p)=>p.name[locale]).join(' · ')}</p></section>
   <section class="home-story"><div class="page-shell"><h2>{c.story}</h2><p>{c.storyBody}</p></div></section>

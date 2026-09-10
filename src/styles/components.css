@@ -713,7 +713,9 @@
 .home-featured article { padding-block:var(--space-5); border-top:1px solid var(--color-line); }
 .home-featured article span,.steps li>span { color:var(--color-leaf-dark); font-family:var(--font-display); font-size:var(--text-xl); }
 .home-process,.home-final { background:var(--color-soil-deep); color:var(--color-paper); }
+.home-process { background:var(--color-leaf-panel); }
 .home-process h2,.home-final h2 { color:var(--color-paper); }
+.home-season .button { margin-top:var(--space-4); }
 .home-process ol,.steps { margin:var(--space-6) 0 0; padding:0; list-style:none; }
 .home-process li { padding:var(--space-5) 0; border-top:1px solid rgb(255 255 255/.22); font-family:var(--font-display); font-size:var(--text-lg); }
 .home-process li span { display:inline-grid; width:2.5rem; height:2.5rem; margin-right:1rem; place-items:center; border:1px solid currentColor; border-radius:50%; }
