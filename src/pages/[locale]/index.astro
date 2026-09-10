@@ -1,0 +1,21 @@
+---
+import PageScaffold from '@/components/pages/PageScaffold.astro';
+import { LOCALES, type Locale } from '@/i18n/config';
+import { home } from '@/i18n/pages/home';
+
+export function getStaticPaths() {
+  return LOCALES.map((locale) => ({ params: { locale }, props: { locale } }));
+}
+
+const { locale } = Astro.props as { locale: Locale };
+const copy = home[locale];
+---
+
+<html lang={locale}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="description" content={copy.description} />
+    <title>{copy.title}</title>
+  </head>
+  <body><PageScaffold copy={copy} locale={locale} page="home" /></body>
+</html>
