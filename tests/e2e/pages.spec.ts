@@ -19,6 +19,10 @@ test('Spanish home explains offer, place and process above the fold', async ({ p
   await expect(page.locator('[data-bionatura-mascot]')).toContainText('¿Preparamos tu cesta?');
   const mascotWidth = await page.locator('[data-bionatura-mascot]').evaluate((element) => element.getBoundingClientRect().width);
   expect(mascotWidth).toBeGreaterThanOrEqual(300);
+  const decorativeBackground = await page.locator('[data-bionatura-mascot] > div').evaluate(
+    (element) => getComputedStyle(element, '::before').content,
+  );
+  expect(decorativeBackground).toBe('none');
 });
 
 test('mascot welcomes once per browser session without blocking the page', async ({ page }) => {
