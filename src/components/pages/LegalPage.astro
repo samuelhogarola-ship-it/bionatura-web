@@ -1,4 +1,47 @@
 ---
-import {business} from '@/data/business'; import {pathFor,type Locale,type PageKey} from '@/i18n/config'; import type {PageCopy} from '@/i18n/pages/types'; const {locale,page,copy}=Astro.props as {locale:Locale;page:PageKey;copy:PageCopy}; const isCookies=page==='cookies'; const legal={es:{identity:'Identidad jurídica',address:'Domicilio social (no es una tienda ni un punto de recogida)',scope:'Alcance',pending:'Los canales de contacto y cualquier texto que requiera validación de asesoría permanecen pendientes.',cookies:'Este MVP no instala cookies no esenciales ni analítica. Esta afirmación debe revisarse antes de publicar cualquier cambio futuro.'},en:{identity:'Legal identity',address:'Registered office (not a shop or collection point)',scope:'Scope',pending:'Contact channels and any wording requiring legal review remain pending.',cookies:'This MVP installs no non-essential cookies or analytics. This statement must be reviewed before publishing future changes.'},fi:{identity:'Oikeudellinen identiteetti',address:'Rekisteröity osoite (ei myymälä tai noutopaikka)',scope:'Soveltamisala',pending:'Yhteystiedot ja oikeudellista tarkistusta vaativa teksti odottavat vahvistusta.',cookies:'Tämä MVP ei asenna ei-välttämättömiä evästeitä tai analytiikkaa. Väite on tarkistettava ennen tulevien muutosten julkaisemista.'},da:{identity:'Juridisk identitet',address:'Registreret adresse (ikke butik eller afhentningssted)',scope:'Omfang',pending:'Kontaktkanaler og tekst, der kræver juridisk gennemgang, afventer bekræftelse.',cookies:'Denne MVP installerer ingen ikke-nødvendige cookies eller analyse. Udsagnet skal gennemgås før fremtidige ændringer offentliggøres.'}}[locale];
+import { business } from '@/data/business';
+import { pathFor, type Locale, type PageKey } from '@/i18n/config';
+import type { PageCopy } from '@/i18n/pages/types';
+
+const { locale, page, copy } = Astro.props as { locale: Locale; page: PageKey; copy: PageCopy };
+const isLegalNotice = page === 'legalNotice';
+const isCookies = page === 'cookies';
+const labels = {
+  es: { eyebrow: 'Información legal', owner: 'Identificación del titular', company: 'Razón social', taxId: 'NIF', address: 'Domicilio social', addressNote: 'Este domicilio no constituye una tienda ni un punto de recogida.', scope: 'Alcance', pending: 'Los canales de contacto y cualquier texto que requiera validación jurídica se incorporarán cuando corresponda.', cookies: 'Este sitio no utiliza cookies no esenciales ni herramientas de analítica.' },
+  en: { eyebrow: 'Legal information', owner: 'Owner identification', company: 'Company name', taxId: 'Tax ID', address: 'Registered office', addressNote: 'This address is not a shop or collection point.', scope: 'Scope', pending: 'Contact channels and wording requiring legal review will be added when appropriate.', cookies: 'This site uses no non-essential cookies or analytics tools.' },
+  fi: { eyebrow: 'Oikeudelliset tiedot', owner: 'Omistajan tunnistetiedot', company: 'Yrityksen nimi', taxId: 'Y-tunnus', address: 'Rekisteröity osoite', addressNote: 'Tämä osoite ei ole myymälä tai noutopaikka.', scope: 'Soveltamisala', pending: 'Yhteystiedot ja oikeudellista tarkistusta vaativa teksti lisätään tarvittaessa.', cookies: 'Tämä sivusto ei käytä ei-välttämättömiä evästeitä tai analytiikkatyökaluja.' },
+  da: { eyebrow: 'Juridiske oplysninger', owner: 'Identifikation af ejeren', company: 'Virksomhedsnavn', taxId: 'Skattenummer', address: 'Registreret adresse', addressNote: 'Denne adresse er ikke en butik eller et afhentningssted.', scope: 'Omfang', pending: 'Kontaktoplysninger og tekst, der kræver juridisk gennemgang, tilføjes, når det er relevant.', cookies: 'Dette websted bruger ingen ikke-nødvendige cookies eller analyseværktøjer.' },
+}[locale];
 ---
-<article class="editorial-page legal-page"><div class="page-shell reading-width"><h1>{copy.h1}</h1><p>{copy.intro}</p><section><h2>{legal.identity}</h2><p><strong>{business.legalName}</strong></p><p>{business.taxId}</p><h3>{legal.address}</h3><p>{business.registeredAddress.value.street}, {business.registeredAddress.value.postalCode} {business.registeredAddress.value.locality}</p></section><section><h2>{legal.scope}</h2><p>{isCookies?legal.cookies:legal.pending}</p></section><a href={pathFor(locale,'home')}>{copy.cta}</a></div></article>
+
+<article class="editorial-page legal-page">
+  <div class="page-shell legal-page__document">
+    <header class="legal-page__header">
+      <p class="editorial-page__eyebrow">{labels.eyebrow}</p>
+      <h1>{copy.h1}</h1>
+      <p class="legal-page__intro">{copy.intro}</p>
+    </header>
+
+    {isLegalNotice ? (
+      <section class="legal-page__card" aria-labelledby="legal-owner-title">
+        <h2 id="legal-owner-title">{labels.owner}</h2>
+        <dl class="legal-identity">
+          <div><dt>{labels.company}</dt><dd>{business.legalName}</dd></div>
+          <div><dt>{labels.taxId}</dt><dd>{business.taxId}</dd></div>
+        </dl>
+        <div class="legal-page__address">
+          <h3>{labels.address}</h3>
+          <address>{business.registeredAddress.value.street}<br />{business.registeredAddress.value.postalCode} {business.registeredAddress.value.locality}, {business.registeredAddress.value.country}</address>
+          <p>{labels.addressNote}</p>
+        </div>
+      </section>
+    ) : (
+      <section class="legal-page__card">
+        <h2>{labels.scope}</h2>
+        <p>{isCookies ? labels.cookies : labels.pending}</p>
+      </section>
+    )}
+
+    <a class="legal-page__back" href={pathFor(locale, 'home')}>← {copy.cta}</a>
+  </div>
+</article>

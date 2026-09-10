@@ -24,3 +24,7 @@ export function normalizePhoneE164(phone: string): string {
 export function buildWhatsAppUrl(phone: string, message: string): string {
   return `https://wa.me/${normalizePhoneE164(phone)}?text=${encodeURIComponent(message)}`;
 }
+
+export function createOrderFile(message: string): File {
+  return new File([message], 'pedido-bionatura.txt', { type: 'text/plain' });
+}

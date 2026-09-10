@@ -13,6 +13,12 @@ const labels: Record<Locale, string> = {
   fi: 'Suomi',
   da: 'Dansk',
 };
+const flags: Record<Locale, string> = {
+  es: '🇪🇸',
+  en: '🇬🇧',
+  fi: '🇫🇮',
+  da: '🇩🇰',
+};
 const languageLabel: Record<Locale, string> = {
   es: 'Idioma',
   en: 'Language',
@@ -24,22 +30,31 @@ const links = alternateLinks(page).filter(
 );
 ---
 
-<div class="language-switcher">
-  <label class="sr-only" for={`language-${locale}`}>{languageLabel[locale]}</label>
-  <select id={`language-${locale}`} data-language-select aria-label={languageLabel[locale]}>
+<details class="language-switcher">
+  <summary role="button" aria-label={languageLabel[locale]} aria-haspopup="true" aria-expanded="false">
+    <span class="language-switcher__flag" aria-hidden="true">{flags[locale]}</span>
+    <span>{locale.toUpperCase()}</span>
+    <svg aria-hidden="true" viewBox="0 0 12 8" width="12" height="8"><path d="m1 1 5 5 5-5" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.5" /></svg>
+  </summary>
+  <nav aria-label={languageLabel[locale]}>
     {links.map((link) => (
-      <option value={link.locale} data-href={link.href} selected={link.locale === locale} lang={link.locale}>
-        {link.locale.toUpperCase()} · {labels[link.locale]}
-      </option>
+      <a href={link.href} lang={link.locale} hreflang={link.locale} aria-current={link.locale === locale ? 'true' : undefined}>
+        <span aria-hidden="true">{flags[link.locale]}</span>
+        <span>{labels[link.locale]}</span>
+      </a>
     ))}
-  </select>
-</div>
+  </nav>
+</details>
 
 <script>
-  for (const select of document.querySelectorAll<HTMLSelectElement>('[data-language-select]')) {
-    select.addEventListener('change', () => {
-      const href = select.selectedOptions[0]?.dataset.href;
-      if (href) window.location.assign(href);
+  for (const switcher of document.querySelectorAll<HTMLDetailsElement>('.language-switcher')) {
+    switcher.addEventListener('toggle', () => {
+      switcher.querySelector('summary')?.setAttribute('aria-expanded', String(switcher.open));
     });
   }
+  document.addEventListener('click', (event) => {
+    for (const switcher of document.querySelectorAll<HTMLDetailsElement>('.language-switcher[open]')) {
+      if (!switcher.contains(event.target as Node)) switcher.open = false;
+    }
+  });
 </script>

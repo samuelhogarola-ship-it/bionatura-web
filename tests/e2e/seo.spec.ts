@@ -39,19 +39,20 @@ test('legal identity is visible on legal pages but not presented as a shop or co
   await expect(page.getByText('Calle Tórtolas, 11')).toHaveCount(0);
 });
 
-test('legal notices present the confirmed owner without calling the legal identity pending', async ({ page }) => {
+test('legal notices present the owner in a professional document without internal validation language', async ({ page }) => {
   const notices = [
-    ['/es/aviso-legal/', /La identidad jurídica y el domicilio social están confirmados\./i, /información legal se publicará|información pendiente/i],
-    ['/en/legal-notice/', /The legal identity and registered office have been confirmed\./i, /legal information will be published|information pending/i],
-    ['/fi/oikeudellinen-huomautus/', /Oikeudellinen identiteetti ja rekisteröity osoite on vahvistettu\./i, /julkaistaan, kun ne on vahvistettu|tietoja odotetaan/i],
-    ['/da/juridisk-meddelelse/', /Den juridiske identitet og registrerede adresse er bekræftet\./i, /offentliggøres, når de er bekræftet|oplysninger afventer/i],
+    ['/es/aviso-legal/', /Información identificativa del titular de este sitio web\./i],
+    ['/en/legal-notice/', /Identification details of the owner of this website\./i],
+    ['/fi/oikeudellinen-huomautus/', /Tämän verkkosivuston omistajan tunnistetiedot\./i],
+    ['/da/juridisk-meddelelse/', /Identifikationsoplysninger om ejeren af dette websted\./i],
   ] as const;
 
-  for (const [path, confirmation, pending] of notices) {
+  for (const [path, introduction] of notices) {
     await page.goto(path);
-    const introduction = page.locator('article.legal-page .reading-width > p').first();
-    await expect(introduction).toHaveText(confirmation);
-    await expect(introduction).not.toHaveText(pending);
+    const article = page.locator('article.legal-page');
+    await expect(article.locator('.legal-page__intro')).toHaveText(introduction);
+    await expect(article).not.toContainText(/confirmad|pendiente|pending|vahvist|afventer/i);
+    await expect(article.locator('dl.legal-identity')).toBeVisible();
   }
 });
 

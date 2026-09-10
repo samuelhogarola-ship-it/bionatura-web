@@ -2,7 +2,7 @@
 import SeasonPanel from './SeasonPanel.astro';
 import SeasonSelector from './SeasonSelector.astro';
 import ProductCard from './ProductCard.astro';
-import { alwaysAvailableProducts, seasonalProducts } from '@/data/products';
+import { alwaysAvailableProducts, recommendedProducts, seasonalProducts } from '@/data/products';
 import type { Season } from '@/domain/catalog';
 import type { Locale } from '@/i18n/config';
 import { pages } from '@/i18n/pages';
@@ -39,6 +39,14 @@ const seasons: Season[] = ['spring', 'summer', 'autumn', 'winter'];
       <h2 id="always-available-title">{ui[locale].alwaysAvailable}</h2>
       <div class="product-grid">
         {alwaysAvailableProducts().map((product) => <ProductCard {locale} {product} instanceId="regular" />)}
+      </div>
+    </section>
+
+    <section class="catalog-recommendations" aria-labelledby="catalog-recommendations-title">
+      <p class="catalog-recommendations__eyebrow">Bionatura · Fuengirola</p>
+      <h2 id="catalog-recommendations-title">{ui[locale].recommendationHeading}</h2>
+      <div class="product-grid">
+        {recommendedProducts().map((product) => <ProductCard {locale} {product} instanceId="recommended" />)}
       </div>
     </section>
   </div>

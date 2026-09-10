@@ -15,6 +15,33 @@ test('confirmed WhatsApp action includes the selected products and verified reci
   await expect(whatsapp).toHaveAttribute('target', '_blank');
 });
 
+test('shares the generated order file on devices that support file sharing', async ({ page }) => {
+  await page.addInitScript(() => {
+    Object.defineProperty(navigator, 'canShare', { configurable: true, value: () => true });
+    Object.defineProperty(navigator, 'share', {
+      configurable: true,
+      value: async (data: ShareData) => {
+        const file = data.files?.[0];
+        (window as typeof window & { __sharedOrder?: object }).__sharedOrder = {
+          filename: file?.name,
+          type: file?.type,
+          text: file ? await file.text() : '',
+        };
+      },
+    });
+  });
+  await page.goto('/es/catalogo/');
+  await page.locator('[data-product-id="red-onion"]:visible [data-add-product]').click();
+  await page.locator('[data-order-open]').click();
+  await page.getByRole('dialog').getByRole('link', { name: /whatsapp/i }).click();
+
+  await expect.poll(() => page.evaluate(() => (window as typeof window & { __sharedOrder?: object }).__sharedOrder)).toEqual({
+    filename: 'pedido-bionatura.txt',
+    type: 'text/plain',
+    text: expect.stringContaining('- Cebolla roja: 1 kg'),
+  });
+});
+
 test('floating WhatsApp control uses a recognizable icon and the confirmed number', async ({ page }) => {
   await page.goto('/es/');
 

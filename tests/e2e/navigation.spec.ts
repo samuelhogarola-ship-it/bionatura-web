@@ -14,8 +14,10 @@ test.describe('mobile navigation', () => {
     await expect(trigger).toBeFocused();
 
     await expect(page.locator('.site-header__utility')).toHaveCount(0);
-    await expect(page.locator('.language-switcher__icon')).toHaveCount(0);
-    await page.getByRole('combobox', { name: /idioma/i }).selectOption('en');
+    const language = page.locator('.language-switcher');
+    await expect(language.locator('.language-switcher__flag')).toHaveText('🇪🇸');
+    await language.getByRole('button', { name: /idioma/i }).click();
+    await language.getByRole('link', { name: 'English', exact: true }).click();
     await expect(page).toHaveURL(/\/en\/catalog\/$/);
   });
 
@@ -45,7 +47,9 @@ test.describe('desktop navigation', () => {
     expect(page.viewportSize()?.width).toBeGreaterThanOrEqual(1200);
     await expect(page.locator('.desktop-navigation')).toBeVisible();
     await expect(page.locator('[data-menu-trigger]')).toBeHidden();
-    await expect(page.locator('.language-switcher__icon')).toHaveCount(0);
+    const language = page.locator('.language-switcher');
+    await expect(language.locator('.language-switcher__flag')).toHaveText('🇪🇸');
+    await expect(language.getByText('ES', { exact: true })).toBeVisible();
     await expect(page.getByRole('link', { name: /cómo funciona/i })).toHaveCount(0);
     const basket = page.getByRole('button', { name: /tu cesta/i });
     await expect(basket.locator('svg')).toBeVisible();

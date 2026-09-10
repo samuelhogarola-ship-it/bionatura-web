@@ -19,6 +19,7 @@ export interface Product {
   categoryId: string;
   seasons: Season[];
   alwaysAvailable: boolean;
+  recommended?: boolean;
   quantityOptions: QuantityOption[];
   allowCustomQuantity: boolean;
   imageId: string;
@@ -57,8 +58,10 @@ export function assertValidCatalog(catalog: Product[]): void {
     assertLocalized(product.imageAlt, 'imageAlt', product.id);
 
     if (!product.categoryId.trim() || !product.imageId.trim()) throw new Error(`metadata missing in product ${product.id}`);
+    if (product.alwaysAvailable && product.recommended) throw new Error(`product cannot be alwaysAvailable and recommended: ${product.id}`);
     if (product.alwaysAvailable && product.seasons.length > 0) throw new Error(`alwaysAvailable product cannot have seasons: ${product.id}`);
-    if (!product.alwaysAvailable && product.seasons.length === 0) throw new Error(`seasonal product needs a season: ${product.id}`);
+    if (product.recommended && product.seasons.length > 0) throw new Error(`recommended product cannot have seasons: ${product.id}`);
+    if (!product.alwaysAvailable && !product.recommended && product.seasons.length === 0) throw new Error(`seasonal product needs a season: ${product.id}`);
     if (product.seasons.some((season) => !seasons.includes(season))) throw new Error(`invalid season in product ${product.id}`);
     if (product.quantityOptions.length === 0) throw new Error(`quantity options must not be empty: ${product.id}`);
     for (const option of product.quantityOptions) {

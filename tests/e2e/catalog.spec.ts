@@ -40,6 +40,17 @@ test('catalog uses real product photography and the approved all-year selection'
   await expect(page.locator('.product-card img[src*="product-placeholder"]')).toHaveCount(0);
   await expect(page.locator('[data-product-id="egg"] img')).toHaveAttribute('src', /eggs/);
   await expect(page.locator('[data-product-id="birdhouse"] img')).toHaveAttribute('src', /wooden-birdhouses/);
+  const yearRound = page.locator('.always-available');
+  await expect(yearRound.locator('[data-product-id="birdhouse"]')).toHaveCount(0);
+  const recommendations = page.locator('.catalog-recommendations');
+  await expect(recommendations.getByRole('heading', { name: 'También te puede interesar' })).toBeVisible();
+  const birdhouse = recommendations.locator('[data-product-id="birdhouse"]');
+  await expect(birdhouse).toBeVisible();
+  const [recommendationBox, recommendationGridBox] = await Promise.all([
+    birdhouse.boundingBox(),
+    recommendations.locator('.product-grid').boundingBox(),
+  ]);
+  expect(Math.abs(recommendationBox!.width - recommendationGridBox!.width)).toBeLessThan(2);
 });
 
 test('basket uses the sober Andalusian treatment', async ({ page }) => {
@@ -50,6 +61,10 @@ test('basket uses the sober Andalusian treatment', async ({ page }) => {
   await expect(dialog).toHaveAttribute('data-basket-style', 'andalusian-sober');
   await expect(dialog).toHaveCSS('border-radius', '0px');
   await expect(page.locator('.order-dialog__header')).toHaveCSS('background-color', 'rgb(20, 80, 55)');
+  const basketMascotDecoration = await page.locator('.mascot--basket .mascot__shape').evaluate(
+    (element) => getComputedStyle(element, '::before').backgroundColor,
+  );
+  expect(basketMascotDecoration).toBe('rgba(0, 0, 0, 0)');
 });
 
 test('desktop catalog header is compact and mascot-led without yellow decoration', async ({ page, isMobile }) => {

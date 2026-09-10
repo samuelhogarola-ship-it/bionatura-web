@@ -7,11 +7,11 @@ const copy = (es: string, en: string, fi: string, da: string): Copy => ({ es, en
 
 const makeProduct = (
   id: string, slug: Copy, name: Copy, description: Copy, imageAlt: Copy, categoryId: string,
-  seasonList: Season[], alwaysAvailable: boolean, quantityOptions: QuantityOption[], featured = false,
+  seasonList: Season[], alwaysAvailable: boolean, quantityOptions: QuantityOption[], featured = false, recommended = false,
 ): Product => ({
   id, slug, name, shortDescription: description, categoryId, seasons: seasonList, alwaysAvailable,
   quantityOptions, allowCustomQuantity: true, imageId: `product-${id}`, imageAlt,
-  featured, demoOnly: false,
+  featured, recommended, demoOnly: false,
 });
 
 const bottle: QuantityOption = {
@@ -31,10 +31,11 @@ export const products: Product[] = [
   makeProduct('egg', copy('huevo', 'egg', 'muna', 'aeg'), copy('Huevos caseros', 'Farm eggs', 'Tilamunat', 'Gårdæg'), copy('Huevos caseros frescos, disponibles por docenas.', 'Fresh farm eggs, available by the dozen.', 'Tuoreita tilamunia tusinoittain.', 'Friske gårdæg, sælges i dusin.'), copy('Huevos caseros sueltos, sin caja, en el huerto de Bionatura.', 'Loose farm eggs without a carton in the Bionatura garden.', 'Irrallisia tilamunia ilman kennoa Bionaturan puutarhassa.', 'Løse gårdæg uden bakke i Bionaturas have.'), 'eggs', [], true, [{ id: 'dozen', value: 1, unit: 'dozen' }]),
   makeProduct('kombucha', copy('kombucha-bio', 'organic-kombucha', 'luomu-kombucha', 'oekologisk-kombucha'), copy('Kombucha bio', 'Organic kombucha', 'Luomukombucha', 'Økologisk kombucha'), copy('Kombucha bio refrescante y naturalmente fermentada.', 'Refreshing, naturally fermented organic kombucha.', 'Raikas, luonnollisesti fermentoitu luomukombucha.', 'Forfriskende, naturligt fermenteret økologisk kombucha.'), copy('Botella sin marca de kombucha bio en el huerto de Bionatura.', 'Unbranded bottle of organic kombucha in the Bionatura garden.', 'Etiketitön luomukombuchapullo Bionaturan puutarhassa.', 'Flaske uden mærke med økologisk kombucha i Bionaturas have.'), 'drinks', [], true, [bottle]),
   makeProduct('olive-oil', copy('aceite-oliva-bio', 'organic-olive-oil', 'luomu-oliivioljy', 'oekologisk-olivenolie'), copy('Aceite de oliva bio', 'Organic olive oil', 'Luomuoliiviöljy', 'Økologisk olivenolie'), copy('Aceite de oliva virgen extra bio para la cocina diaria.', 'Organic extra virgin olive oil for everyday cooking.', 'Luomu-ekstraneitsytoliiviöljyä arkiruokaan.', 'Økologisk ekstra jomfruolivenolie til hverdagsmad.'), copy('Botella sin marca de aceite de oliva bio en el huerto de Bionatura.', 'Unbranded bottle of organic olive oil in the Bionatura garden.', 'Etiketitön luomuoliiviöljypullo Bionaturan puutarhassa.', 'Flaske uden mærke med økologisk olivenolie i Bionaturas have.'), 'pantry', [], true, [bottle]),
-  makeProduct('birdhouse', copy('casa-pajaros', 'birdhouse', 'linnunpontto', 'fuglehus'), copy('Casas para pájaros', 'Birdhouses', 'Linnunpöntöt', 'Fuglehuse'), copy('Casas de madera hechas a mano para dar refugio a las aves del jardín.', 'Handmade wooden houses that shelter garden birds.', 'Käsintehtyjä puumökkejä puutarhan linnuille.', 'Håndlavede træhuse, der giver havens fugle ly.'), copy('Casas de madera para pájaros hechas a mano.', 'Handmade wooden birdhouses.', 'Käsintehtyjä puisia linnunpönttöjä.', 'Håndlavede fuglehuse i træ.'), 'garden', [], true, [{ id: 'unit', value: 1, unit: 'unit' }]),
+  makeProduct('birdhouse', copy('casa-pajaros', 'birdhouse', 'linnunpontto', 'fuglehus'), copy('Casas para pájaros', 'Birdhouses', 'Linnunpöntöt', 'Fuglehuse'), copy('Casas de madera hechas a mano para dar refugio a las aves del jardín.', 'Handmade wooden houses that shelter garden birds.', 'Käsintehtyjä puumökkejä puutarhan linnuille.', 'Håndlavede træhuse, der giver havens fugle ly.'), copy('Casas de madera para pájaros hechas a mano.', 'Handmade wooden birdhouses.', 'Käsintehtyjä puisia linnunpönttöjä.', 'Håndlavede fuglehuse i træ.'), 'garden', [], false, [{ id: 'unit', value: 1, unit: 'unit' }], false, true),
 ];
 
 export const seasonalProducts = (season: Season): Product[] => products.filter((product) => !product.alwaysAvailable && product.seasons.includes(season));
 export const alwaysAvailableProducts = (): Product[] => products.filter((product) => product.alwaysAvailable);
+export const recommendedProducts = (): Product[] => products.filter((product) => product.recommended);
 
 assertValidCatalog(products);

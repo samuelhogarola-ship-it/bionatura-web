@@ -2,7 +2,7 @@ import { products } from '../data/products';
 import { clearOrder, parseStoredOrder, removeLine, serializeOrder, upsertLine, type OrderState } from '../domain/order-list';
 import { isLocale, type Locale } from '../i18n/config';
 import { ui } from '../i18n/ui';
-import { buildWhatsAppUrl, formatOrderMessage } from '../domain/whatsapp';
+import { buildWhatsAppUrl, createOrderFile, formatOrderMessage } from '../domain/whatsapp';
 
 export const ORDER_STORAGE_KEY = 'bionatura.order.v1';
 
@@ -105,14 +105,50 @@ function showCustomQuantity(card: HTMLElement) {
   if (!custom.hidden) card.querySelector<HTMLInputElement>('[data-custom-quantity-input]')?.focus();
 }
 
+function downloadOrderFile(file: File) {
+  const url = URL.createObjectURL(file);
+  const download = document.createElement('a');
+  download.href = url;
+  download.download = file.name;
+  download.hidden = true;
+  document.body.append(download);
+  download.click();
+  download.remove();
+  window.setTimeout(() => URL.revokeObjectURL(url), 1_000);
+}
+
 document.addEventListener('change', (event) => {
   const select = (event.target as Element | null)?.closest<HTMLSelectElement>('[data-quantity]');
   const card = select?.closest<HTMLElement>('[data-product-id]');
   if (card) showCustomQuantity(card);
 });
 
-document.addEventListener('click', (event) => {
+document.addEventListener('click', async (event) => {
   const target = event.target as Element | null;
+  const whatsappAction = target?.closest<HTMLAnchorElement>('[data-whatsapp-action][data-order-file]');
+  if (whatsappAction) {
+    if (state.lines.length === 0) {
+      event.preventDefault();
+      return;
+    }
+    const message = formatOrderMessage(locale, state, products);
+    const file = createOrderFile(message);
+    const shareData: ShareData = { title: 'Bionatura', text: message, files: [file] };
+    if (navigator.share && navigator.canShare?.(shareData)) {
+      event.preventDefault();
+      try {
+        await navigator.share(shareData);
+      } catch (error) {
+        if (error instanceof DOMException && error.name === 'AbortError') return;
+        downloadOrderFile(file);
+        window.open(whatsappAction.href, '_blank', 'noopener,noreferrer');
+      }
+    } else {
+      downloadOrderFile(file);
+    }
+    return;
+  }
+
   const copyButton = target?.closest<HTMLButtonElement>('[data-copy-order-message]');
   if (copyButton) {
     if (state.lines.length === 0) return;

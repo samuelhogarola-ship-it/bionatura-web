@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { assertValidCatalog, type Product } from '../../src/domain/catalog';
-import { alwaysAvailableProducts, products, seasonalProducts } from '../../src/data/products';
+import { alwaysAvailableProducts, products, recommendedProducts, seasonalProducts } from '../../src/data/products';
 
 const product = (overrides: Partial<Product> = {}): Product => ({
   id: 'tomato',
@@ -59,7 +59,8 @@ describe('catalog validation', () => {
 
   it('selects seasonal and always-available products without relying on order', () => {
     expect(seasonalProducts('summer').some(({ id }) => id === 'tomato')).toBe(true);
-    expect(alwaysAvailableProducts().map(({ id }) => id)).toEqual(['egg', 'kombucha', 'olive-oil', 'birdhouse']);
+    expect(alwaysAvailableProducts().map(({ id }) => id)).toEqual(['egg', 'kombucha', 'olive-oil']);
+    expect(recommendedProducts().map(({ id }) => id)).toEqual(['birdhouse']);
     expect(seasonalProducts('autumn').map(({ id }) => id)).toEqual(expect.arrayContaining(['red-onion']));
     expect(seasonalProducts('winter').map(({ id }) => id)).toEqual(expect.arrayContaining(['red-onion']));
     expect(seasonalProducts('summer').every(({ alwaysAvailable }) => !alwaysAvailable)).toBe(true);
