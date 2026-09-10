@@ -73,6 +73,8 @@ test('contact page exposes the confirmed phone and WhatsApp without presenting t
 test('footer uses the requested local message and credits WF-Studio', async ({ page }) => {
   await page.goto('/es/');
 
-  await expect(page.locator('footer')).toContainText('Tus productos biológicos en Fuengirola');
+  const footerNote = page.locator('.site-footer__note');
+  await expect(footerNote).toHaveText('Tus productos biológicos en Fuengirola');
+  await expect(footerNote).toHaveCSS('font-style', 'normal');
   await expect(page.locator('footer')).toContainText('Web por WF-Studio');
 });
