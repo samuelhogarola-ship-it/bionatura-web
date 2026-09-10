@@ -1,26 +1,32 @@
 ---
 import { business } from '@/data/business';
+import type { ValidatedField } from '@/data/business';
+import { buildWhatsAppUrl } from '@/domain/whatsapp';
 import type { Locale } from '@/i18n/config';
 import { ui } from '@/i18n/ui';
 
 interface Props {
   locale: Locale;
+  whatsapp?: ValidatedField<string>;
 }
 
-const { locale } = Astro.props;
+const { locale, whatsapp = business.whatsapp } = Astro.props;
 const copy = ui[locale];
-const confirmed = business.whatsapp.status === 'confirmed' && business.whatsapp.value !== null;
+const confirmedPhone = whatsapp.status === 'confirmed' ? whatsapp.value : null;
+const href = confirmedPhone ? buildWhatsAppUrl(confirmedPhone, copy.whatsappIntro) : null;
 ---
 
 <div class="whatsapp-action">
   <p class="whatsapp-action__notice">{copy.availabilityNotice}</p>
-  {confirmed ? (
-    <button
+  {confirmedPhone && href ? (
+    <a
       class="button button--leaf"
-      type="button"
+      href={href}
       data-whatsapp-action
-      data-whatsapp-phone={business.whatsapp.value}
-    >{copy.consultWhatsapp}</button>
+      data-whatsapp-phone={confirmedPhone}
+      target="_blank"
+      rel="noopener noreferrer"
+    >{copy.consultWhatsapp}</a>
   ) : (
     <>
       <p class="whatsapp-action__demo"><strong>{copy.pendingContact}.</strong> {copy.demoCopyNotice}</p>

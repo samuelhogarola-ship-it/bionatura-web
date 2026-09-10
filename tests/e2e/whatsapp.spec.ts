@@ -74,33 +74,27 @@ test('clipboard and fallback exceptions still expose the manual message', async 
   await expect(page.getByRole('dialog')).toContainText(/no se pudo copiar/i);
 });
 
-test('confirmed fixture uses a native keyboard action to open a wa.me enquiry', async ({ page }) => {
+test('successful legacy fallback restores focus to Copy before hiding its textarea', async ({ page }) => {
   await page.clock.install({ time: new Date('2026-07-15T10:00:00+02:00') });
   await page.goto('/es/catalogo/');
   await page.evaluate(() => localStorage.clear());
   await page.reload();
-  await page.locator('[data-product-id="tomato"]').getByRole('button', { name: /añadir/i }).click();
-  await page.getByRole('button', { name: /tu lista/i }).click();
   await page.evaluate(() => {
-    Object.defineProperty(window, 'open', {
+    Object.defineProperty(navigator, 'clipboard', {
       configurable: true,
-      value: (url: string | URL | undefined) => {
-        document.body.dataset.openedWhatsappUrl = String(url);
-        return null;
-      },
+      value: undefined,
     });
-    const action = document.createElement('button');
-    action.type = 'button';
-    action.dataset.whatsappAction = '';
-    action.dataset.whatsappPhone = '+34 611 222 333';
-    action.textContent = 'Consultar fixture';
-    document.querySelector('.whatsapp-action')?.replaceChildren(action);
+    document.execCommand = () => true;
   });
 
-  const action = page.getByRole('button', { name: 'Consultar fixture' });
-  await action.focus();
-  await action.press('Enter');
-  await expect(page.locator('body')).toHaveAttribute('data-opened-whatsapp-url', /https:\/\/wa\.me\/34611222333\?text=/);
+  await page.locator('[data-product-id="tomato"]').getByRole('button', { name: /añadir/i }).click();
+  await page.getByRole('button', { name: /tu lista/i }).click();
+  const copyButton = page.getByRole('button', { name: /copiar mensaje/i });
+  await copyButton.click();
+
+  await expect(copyButton).toBeFocused();
+  await expect(page.locator('[data-copy-fallback]')).toBeHidden();
+  await expect(page.getByRole('dialog')).toContainText('Mensaje copiado.');
 });
 
 test('pending contact pages explicitly identify demo mode in every locale', async ({ page }) => {

@@ -58,6 +58,13 @@ function render() {
   for (const action of document.querySelectorAll<HTMLButtonElement | HTMLAnchorElement>('[data-copy-order-message], [data-whatsapp-action]')) {
     action.toggleAttribute('aria-disabled', state.lines.length === 0);
     if (action instanceof HTMLButtonElement) action.disabled = state.lines.length === 0;
+    if (action instanceof HTMLAnchorElement) {
+      if (state.lines.length === 0 || !action.dataset.whatsappPhone) {
+        action.removeAttribute('href');
+      } else {
+        action.href = buildWhatsAppUrl(action.dataset.whatsappPhone, formatOrderMessage(locale, state, products));
+      }
+    }
   }
 
   for (const line of state.lines) {
@@ -117,7 +124,10 @@ document.addEventListener('click', (event) => {
       fallback.select();
       try {
         const copied = document.execCommand('copy');
-        if (copied) fallback.hidden = true;
+        if (copied) {
+          copyButton.focus();
+          fallback.hidden = true;
+        }
         return copied;
       } catch {
         return false;
@@ -139,17 +149,6 @@ document.addEventListener('click', (event) => {
     } catch {
       useFallback();
     }
-    return;
-  }
-
-  const whatsappAction = target?.closest<HTMLButtonElement>('[data-whatsapp-action]');
-  if (whatsappAction) {
-    if (state.lines.length === 0 || !whatsappAction.dataset.whatsappPhone) {
-      event.preventDefault();
-      return;
-    }
-    const url = buildWhatsAppUrl(whatsappAction.dataset.whatsappPhone, formatOrderMessage(locale, state, products));
-    window.open(url, '_blank', 'noopener,noreferrer');
     return;
   }
 

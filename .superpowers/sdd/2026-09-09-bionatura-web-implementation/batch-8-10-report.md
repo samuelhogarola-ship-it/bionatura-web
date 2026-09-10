@@ -44,8 +44,8 @@ npm run test:unit && npm run check && npm run build && npx playwright test tests
 
 Result:
 
-- Unit: 6 files, 46 tests passed.
-- Astro check: 0 errors, 0 warnings, 3 deprecation hints.
+- Unit: 7 files, 47 tests passed.
+- Astro check: 0 errors, 0 warnings, 4 deprecation hints.
 - Build: 37 static pages built successfully.
 - E2E: 30 focused tests passed across Chromium mobile and desktop, including axe with the order dialog open.
 - `git diff --check`: passed.
@@ -54,7 +54,7 @@ Result:
 
 All Critical/Important findings and the three local minor findings were addressed:
 
-- Confirmed WhatsApp uses a native button; Enter triggers the same safe `window.open` path as click, with a fixture E.164 integration test and no production number.
+- Confirmed WhatsApp initially used a native button; review round 2 replaced it with the required native link.
 - Clipboard failures inspect the legacy fallback return value and catch Clipboard/fallback exceptions. Failed copy leaves a visible readonly selected textarea and announces manual-copy instructions rather than success.
 - The dialog contains its own polite live region while the page keeps a separate region for closed-dialog updates. Initial focus, Escape, return focus, open-dialog axe and focus after line deletion are covered.
 - Pending Contact content now names demo mode explicitly in Spanish, English, Finnish and Danish.
@@ -69,7 +69,22 @@ Review RED evidence:
 - Contact's initial broad HTML check was refined to `main`, where it failed before localized demo copy was added.
 - A separate synchronous Clipboard/fallback exception test failed before the outer exception path was implemented.
 
+## Review round 2
+
+The two remaining Important findings were addressed without a production test route or contact value:
+
+- `WhatsAppAction.astro` accepts an optional validated field for rendering tests. A confirmed field now renders a native `<a>` with a valid `wa.me` `href`, `target="_blank"` and `rel="noopener noreferrer"`. The normal production prop remains the pending business field, so production stays copy-only and contains no `wa.me` link. When the list controller is active, an empty confirmed list has no actionable `href`; adding a line creates the full localized list URL before activation, preserving native Enter behavior.
+- The real Astro component branch is rendered with `experimental_AstroContainer` and a fake E.164 fixture in `tests/unit/whatsapp-action.test.ts`; the test does not expose a route or persist a production number.
+- When legacy `execCommand('copy')` returns `true`, focus is returned to the Copy button before the fallback textarea is hidden. Existing `false` and exception tests continue to verify the visible manual-copy path.
+
+Review RED/GREEN evidence:
+
+- RED component render: 1 failed because the injected confirmed fixture still produced pending button/textarea markup and no `<a>`.
+- RED focus: 1 failed because hiding the selected fallback textarea left the Copy button unfocused.
+- GREEN focused: component render 1/1; successful fallback focus 1/1.
+- Final integrated GREEN: 47/47 unit tests and 30/30 focused E2E tests.
+
 ## Concerns
 
-- `document.execCommand('copy')` produces deprecation hints in the fallback and the two tests that exercise it. It is used only as the required fallback after Clipboard API failure; the primary path uses `navigator.clipboard.writeText`.
+- `document.execCommand('copy')` produces deprecation hints in the fallback and the three tests that exercise true, false and exception outcomes. It is used only as the required fallback after Clipboard API failure; the primary path uses `navigator.clipboard.writeText`.
 - The example Task 9 test addresses a summer-only tomato without selecting a season. The committed E2E fixes browser time to July so it tests the intended visible product without changing seasonal source data.
