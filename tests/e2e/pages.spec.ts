@@ -19,7 +19,8 @@ test('Spanish home explains offer, place and process above the fold', async ({ p
   await expect(page.getByRole('heading', { name: 'Una selección para empezar' })).toHaveCount(0);
   const seasonSection = page.locator('.home-season');
   await expect(seasonSection.getByRole('link', { name: 'Ver catálogo' })).toHaveAttribute('href', '/es/catalogo/');
-  await expect(page.locator('.home-process')).toHaveCSS('background-color', 'rgb(36, 92, 64)');
+  await expect(page.locator('.home-season')).toHaveCSS('background-color', 'rgb(237, 247, 233)');
+  await expect(page.locator('.home-process')).toHaveCSS('background-color', 'rgb(237, 247, 233)');
   await expect(page.locator('[data-bionatura-mascot]')).toContainText('¿Preparamos tu cesta?');
   const mascotWidth = await page.locator('[data-bionatura-mascot]').evaluate((element) => element.getBoundingClientRect().width);
   expect(mascotWidth).toBeGreaterThanOrEqual(300);

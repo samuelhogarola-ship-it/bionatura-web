@@ -707,20 +707,18 @@
 .home-hero__copy>p:nth-of-type(2) { max-width:34rem; font-family:var(--font-display); font-size:var(--text-lg); }
 .home-hero__copy>div { display:flex; flex-wrap:wrap; gap:.75rem; }
 .home-hero__copy .button:not(.button--leaf) { color:var(--color-paper); }
-.home-section,.home-story,.home-process,.home-final { padding-block:var(--space-8); }
+.home-page { background:var(--color-cream); }
+.home-section,.home-story,.home-process,.home-final { padding-block:var(--space-8); background:var(--color-cream); color:var(--color-ink); }
 .home-section>p,.home-story p,.home-contact p,.home-final p { max-width:45rem; }
 .home-featured>div,.steps,.pending-fields { display:grid; gap:var(--space-5); }
 .home-featured article { padding-block:var(--space-5); border-top:1px solid var(--color-line); }
 .home-featured article span,.steps li>span { color:var(--color-leaf-dark); font-family:var(--font-display); font-size:var(--text-xl); }
-.home-process,.home-final { background:var(--color-soil-deep); color:var(--color-paper); }
-.home-process { background:var(--color-leaf-panel); }
-.home-process h2,.home-final h2 { color:var(--color-paper); }
+.home-process h2,.home-final h2 { color:var(--color-soil-deep); }
 .home-season .button { margin-top:var(--space-4); }
 .home-process ol,.steps { margin:var(--space-6) 0 0; padding:0; list-style:none; }
-.home-process li { padding:var(--space-5) 0; border-top:1px solid rgb(255 255 255/.22); font-family:var(--font-display); font-size:var(--text-lg); }
+.home-process li { padding:var(--space-5) 0; border-top:1px solid var(--color-line); font-family:var(--font-display); font-size:var(--text-lg); }
 .home-process li span { display:inline-grid; width:2.5rem; height:2.5rem; margin-right:1rem; place-items:center; border:1px solid currentColor; border-radius:50%; }
-.home-story { background:var(--color-sage); }
-.home-final { overflow:hidden; background:var(--color-cream); color:var(--color-ink); }
+.home-final { overflow:hidden; }
 .home-final h2 { color:var(--color-soil-deep); }
 .home-final__layout { display:grid; align-items:center; gap:var(--space-5); }
 .home-final figure { position:relative; width:100%; max-width:28rem; margin:0 auto; padding-top:4rem; }
