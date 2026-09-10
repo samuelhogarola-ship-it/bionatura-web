@@ -1,0 +1,10 @@
+---
+const languages = [
+  ['Español', '/es/'], ['English', '/en/'],
+  ['Suomi', '/fi/'], ['Dansk', '/da/'],
+] as const;
+---
+<html lang="es">
+  <head><meta charset="utf-8" /><meta name="robots" content="noindex" /><title>Bionatura</title></head>
+  <body><main><h1>Bionatura</h1>{languages.map(([label, href]) => <a href={href}>{label}</a>)}</main></body>
+</html>
