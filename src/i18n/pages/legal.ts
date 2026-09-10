@@ -1,10 +1,10 @@
 import type { LocalizedPageCopy } from './types';
 
 const legalNotice: LocalizedPageCopy = {
-  es: { title: 'Aviso legal | Bionatura', description: 'Información legal de Bionatura.', h1: 'Aviso legal', intro: 'La información legal se publicará cuando haya sido validada.', sections: [{ title: 'Información pendiente', body: 'No se muestran datos jurídicos sin confirmación.' }], cta: 'Inicio', ctaPage: 'home' },
-  en: { title: 'Legal notice | Bionatura', description: 'Bionatura legal information.', h1: 'Legal notice', intro: 'Legal information will be published once it has been verified.', sections: [{ title: 'Information pending', body: 'No legal details are shown without confirmation.' }], cta: 'Home', ctaPage: 'home' },
-  fi: { title: 'Oikeudellinen huomautus | Bionatura', description: 'Bionaturan oikeudelliset tiedot.', h1: 'Oikeudellinen huomautus', intro: 'Oikeudelliset tiedot julkaistaan, kun ne on vahvistettu.', sections: [{ title: 'Tietoja odotetaan', body: 'Emme näytä oikeudellisia tietoja ilman vahvistusta.' }], cta: 'Etusivu', ctaPage: 'home' },
-  da: { title: 'Juridisk meddelelse | Bionatura', description: 'Bionaturas juridiske oplysninger.', h1: 'Juridisk meddelelse', intro: 'Juridiske oplysninger offentliggøres, når de er bekræftet.', sections: [{ title: 'Oplysninger afventer', body: 'Vi viser ikke juridiske oplysninger uden bekræftelse.' }], cta: 'Forside', ctaPage: 'home' },
+  es: { title: 'Aviso legal | Bionatura', description: 'Información legal de Bionatura.', h1: 'Aviso legal', intro: 'La identidad jurídica y el domicilio social están confirmados.', sections: [{ title: 'Datos confirmados del titular', body: 'Los datos identificativos que se muestran han sido facilitados y confirmados por Bionatura.' }], cta: 'Inicio', ctaPage: 'home' },
+  en: { title: 'Legal notice | Bionatura', description: 'Bionatura legal information.', h1: 'Legal notice', intro: 'The legal identity and registered office have been confirmed.', sections: [{ title: 'Confirmed owner details', body: 'The identifying details shown have been provided and confirmed by Bionatura.' }], cta: 'Home', ctaPage: 'home' },
+  fi: { title: 'Oikeudellinen huomautus | Bionatura', description: 'Bionaturan oikeudelliset tiedot.', h1: 'Oikeudellinen huomautus', intro: 'Oikeudellinen identiteetti ja rekisteröity osoite on vahvistettu.', sections: [{ title: 'Vahvistetut haltijan tiedot', body: 'Bionatura on toimittanut ja vahvistanut näytetyt tunnistetiedot.' }], cta: 'Etusivu', ctaPage: 'home' },
+  da: { title: 'Juridisk meddelelse | Bionatura', description: 'Bionaturas juridiske oplysninger.', h1: 'Juridisk meddelelse', intro: 'Den juridiske identitet og registrerede adresse er bekræftet.', sections: [{ title: 'Bekræftede ejeroplysninger', body: 'De viste identifikationsoplysninger er leveret og bekræftet af Bionatura.' }], cta: 'Forside', ctaPage: 'home' },
 };
 
 const privacy: LocalizedPageCopy = {

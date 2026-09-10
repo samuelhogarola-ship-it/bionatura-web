@@ -32,11 +32,27 @@ test('legal identity is visible on legal pages but not presented as a shop or co
   await expect(page.getByText('Bionatura del Sur S.L.')).toBeVisible();
   await expect(page.getByText('B92371301')).toBeVisible();
   await expect(page.getByText(/Calle Tórtolas, 11.*29640 Fuengirola/)).toBeVisible();
-  await expect(page.getByText(/domicilio social/i)).toBeVisible();
+  await expect(page.getByRole('heading', { name: /domicilio social/i })).toBeVisible();
 
   await page.goto('/es/');
   await expect(page.getByText('B92371301')).toHaveCount(0);
   await expect(page.getByText('Calle Tórtolas, 11')).toHaveCount(0);
+});
+
+test('legal notices present the confirmed owner without calling the legal identity pending', async ({ page }) => {
+  const notices = [
+    ['/es/aviso-legal/', /La identidad jurídica y el domicilio social están confirmados\./i, /información legal se publicará|información pendiente/i],
+    ['/en/legal-notice/', /The legal identity and registered office have been confirmed\./i, /legal information will be published|information pending/i],
+    ['/fi/oikeudellinen-huomautus/', /Oikeudellinen identiteetti ja rekisteröity osoite on vahvistettu\./i, /julkaistaan, kun ne on vahvistettu|tietoja odotetaan/i],
+    ['/da/juridisk-meddelelse/', /Den juridiske identitet og registrerede adresse er bekræftet\./i, /offentliggøres, når de er bekræftet|oplysninger afventer/i],
+  ] as const;
+
+  for (const [path, confirmation, pending] of notices) {
+    await page.goto(path);
+    const introduction = page.locator('article.legal-page .reading-width > p').first();
+    await expect(introduction).toHaveText(confirmation);
+    await expect(introduction).not.toHaveText(pending);
+  }
 });
 
 test('404 is useful and excluded from indexing', async ({ page }) => {
@@ -47,4 +63,3 @@ test('404 is useful and excluded from indexing', async ({ page }) => {
     await expect(page.getByRole('link', { name: label })).toBeVisible();
   }
 });
-

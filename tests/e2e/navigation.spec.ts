@@ -21,8 +21,9 @@ test.describe('mobile navigation', () => {
     await page.goto('/es/catalogo/');
     await page.getByRole('button', { name: /menú/i }).click();
 
-    const firstLink = page.getByRole('link', { name: 'Inicio', exact: true });
-    const lastLink = page.getByRole('link', { name: 'Contacto', exact: true });
+    const mobileNavigation = page.locator('[data-menu-panel]').getByRole('navigation', { name: /principal/i });
+    const firstLink = mobileNavigation.getByRole('link', { name: 'Inicio', exact: true });
+    const lastLink = mobileNavigation.getByRole('link', { name: 'Contacto', exact: true });
     await expect(firstLink).toBeFocused();
 
     await page.keyboard.press('Shift+Tab');

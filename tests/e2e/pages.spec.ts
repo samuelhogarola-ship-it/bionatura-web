@@ -20,7 +20,7 @@ test('the localized narrative pages expose their complete core content', async (
   for (const [path, heading, detail] of cases) {
     await page.goto(path);
     await expect(page.getByRole('heading', { level: 1 })).toHaveText(heading);
-    await expect(page.getByText(detail).first()).toBeVisible();
+    await expect(page.locator('main').getByText(detail).first()).toBeVisible();
   }
 });
 
@@ -34,4 +34,3 @@ test('contact page does not expose unconfirmed contact or pickup fields', async 
   await expect(page.getByText('Calle Tórtolas, 11')).toHaveCount(0);
   await expect(page.getByText(/punto de recogida/i)).toHaveCount(0);
 });
-
