@@ -40,5 +40,6 @@
 
   --content-wide: 76rem;
   --content-reading: 45rem;
-  --header-height: 5rem;
+  --utility-height: 1.875rem;
+  --header-height: 4.25rem;
 }

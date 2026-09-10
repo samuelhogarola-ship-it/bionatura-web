@@ -60,11 +60,35 @@ const links: Array<[PageKey, string]> = [
     const panel = menu.querySelector<HTMLElement>('[data-menu-panel]');
     if (!trigger || !panel) continue;
 
+    const desktopBreakpoint = window.matchMedia('(min-width: 68rem)');
+    const inertTargets = Array.from(document.querySelectorAll<HTMLElement>([
+      'main',
+      'footer',
+      '.site-header__utility',
+      '.site-header__main > .brand',
+      '.desktop-navigation',
+      '.site-header__actions > :not(.mobile-menu)',
+    ].join(',')));
+    const initialInertState = new Map(inertTargets.map((element) => [element, element.inert]));
+    const focusableSelector = 'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
+
+    const setBackgroundInert = (inert: boolean) => {
+      for (const element of inertTargets) {
+        element.inert = inert ? true : (initialInertState.get(element) ?? false);
+      }
+    };
+
     const setOpen = (open: boolean, restoreFocus = false) => {
       trigger.setAttribute('aria-expanded', String(open));
       panel.hidden = !open;
       document.documentElement.classList.toggle('menu-open', open);
-      if (restoreFocus) trigger.focus();
+      setBackgroundInert(open);
+
+      if (open) {
+        panel.querySelector<HTMLElement>(focusableSelector)?.focus();
+      } else if (restoreFocus && !desktopBreakpoint.matches) {
+        trigger.focus();
+      }
     };
 
     trigger.addEventListener('click', () => {
@@ -72,13 +96,45 @@ const links: Array<[PageKey, string]> = [
     });
 
     document.addEventListener('keydown', (event) => {
-      if (event.key === 'Escape' && trigger.getAttribute('aria-expanded') === 'true') {
+      if (trigger.getAttribute('aria-expanded') !== 'true') return;
+
+      if (event.key === 'Escape') {
         setOpen(false, true);
+        return;
+      }
+
+      if (event.key === 'Tab') {
+        const focusable = Array.from(panel.querySelectorAll<HTMLElement>(focusableSelector));
+        const first = focusable.at(0);
+        const last = focusable.at(-1);
+        if (!first || !last) {
+          event.preventDefault();
+          return;
+        }
+
+        if (event.shiftKey && document.activeElement === first) {
+          event.preventDefault();
+          last.focus();
+        } else if (!event.shiftKey && document.activeElement === last) {
+          event.preventDefault();
+          first.focus();
+        } else if (!panel.contains(document.activeElement)) {
+          event.preventDefault();
+          first.focus();
+        }
       }
     });
 
     panel.addEventListener('click', (event) => {
       if (event.target === panel) setOpen(false, true);
     });
+
+    desktopBreakpoint.addEventListener('change', (event) => {
+      if (event.matches && trigger.getAttribute('aria-expanded') === 'true') {
+        setOpen(false);
+      }
+    });
+
+    window.addEventListener('pagehide', () => setOpen(false));
   }
 </script>
