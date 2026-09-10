@@ -18,6 +18,8 @@ test('Spanish home explains offer, place and process above the fold', async ({ p
   await expect(page.locator('[data-bionatura-mascot] img')).toBeVisible();
   await expect(page.getByRole('heading', { name: 'Una selección para empezar' })).toHaveCount(0);
   await expect(page.getByRole('heading', { name: 'Productos habituales' })).toHaveCount(0);
+  await expect(page.getByRole('heading', { name: 'Desde el huerto' })).toHaveCount(0);
+  await expect(page.getByRole('heading', { name: 'Nuestro huerto' })).toBeVisible();
   const seasonSection = page.locator('.home-season');
   await expect(seasonSection.getByRole('link', { name: 'Ver catálogo' })).toHaveAttribute('href', '/es/catalogo/');
   await expect(page.locator('.home-season')).toHaveCSS('background-color', 'rgb(237, 247, 233)');
@@ -29,6 +31,12 @@ test('Spanish home explains offer, place and process above the fold', async ({ p
     (element) => getComputedStyle(element, '::before').content,
   );
   expect(decorativeBackground).toBe('none');
+  const galleryFigures = page.locator('.home-gallery .gallery-group__images figure');
+  const [thirdWidth, fourthWidth] = await Promise.all([
+    galleryFigures.nth(2).evaluate((element) => element.getBoundingClientRect().width),
+    galleryFigures.nth(3).evaluate((element) => element.getBoundingClientRect().width),
+  ]);
+  expect(Math.abs(thirdWidth - fourthWidth)).toBeLessThanOrEqual(1);
 });
 
 test('mascot welcomes once per browser session without blocking the page', async ({ page }) => {

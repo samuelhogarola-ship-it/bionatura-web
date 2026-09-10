@@ -16,6 +16,13 @@ test('gallery renders all real images with responsive, accessible loading metada
   }
 });
 
+test('Spanish garden gallery uses the customer-facing title', async ({ page }) => {
+  await page.goto('/es/galeria/');
+
+  await expect(page.getByRole('heading', { name: 'Nuestro huerto' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'El huerto', exact: true })).toHaveCount(0);
+});
+
 test('lightbox closes with Escape, restores focus and labels navigation', async ({ page }) => {
   await page.goto('/es/galeria/');
   const firstThumbnail = page.getByRole('button', { name: /ampliar/i }).first();

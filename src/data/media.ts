@@ -78,7 +78,7 @@ export const mediaForGroup = (group: MediaGroup) => mediaItems.filter((item) => 
 
 export const mediaGroupCopy: Record<Locale, Record<MediaGroup, { title: string; intro: string }>> = {
   es: {
-    garden: { title: 'El huerto', intro: 'Bancales, lluvia, riego y distintas fases del cultivo.' },
+    garden: { title: 'Nuestro huerto', intro: 'Bancales, lluvia, riego y distintas fases del cultivo.' },
     products: { title: 'Entre las hojas', intro: 'Primeros planos de algunas plantas visibles en las fotografías.' },
     preparation: { title: 'La cosecha', intro: 'Momentos en los que el trabajo y el producto se encuentran.' },
     bionatura: { title: 'Personas y proyecto', intro: 'Imágenes de las personas y de una muestra de productos de Bionatura.' },
