@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" role="img" aria-labelledby="title desc">
+  <title id="title">Bionatura demo product</title>
+  <desc id="desc">Abstract illustration labelled as demo material.</desc>
+  <rect width="800" height="600" fill="#e7eadb"/>
+  <circle cx="400" cy="300" r="170" fill="#6e8060"/>
+  <path d="M400 170c-90 35-120 100-90 190 40 55 100 45 90-190Z" fill="#f0bd69"/>
+  <text x="400" y="530" text-anchor="middle" fill="#263b2a" font-family="sans-serif" font-size="32">PRODUCTO DE MUESTRA · DEMO</text>
+</svg>
