@@ -21,6 +21,26 @@ test('Spanish garden gallery uses the customer-facing title', async ({ page }) =
 
   await expect(page.getByRole('heading', { name: 'Nuestro huerto' })).toBeVisible();
   await expect(page.getByRole('heading', { name: 'El huerto', exact: true })).toHaveCount(0);
+  await expect(page.getByText('Bancales, riego, distintas fases del cultivo y productos de nuestro huerto.')).toBeVisible();
+  await expect(page.getByText(/Bancales, lluvia/i)).toHaveCount(0);
+});
+
+test('harvest section starts with the enhanced tomato photograph', async ({ page }) => {
+  await page.goto('/es/galeria/');
+
+  const harvest = page.locator('section[aria-labelledby="gallery-preparation"]');
+  const firstImage = harvest.locator('img').first();
+  await expect(firstImage).toHaveAttribute('alt', /persona.*tomates.*carretilla/i);
+  await firstImage.scrollIntoViewIfNeeded();
+  await expect(firstImage).toBeVisible();
+  await expect.poll(() => firstImage.evaluate((image: HTMLImageElement) => image.naturalWidth)).toBeGreaterThan(0);
+  const quality = await firstImage.evaluate((image: HTMLImageElement) => ({
+    currentSrc: image.currentSrc,
+    naturalWidth: image.naturalWidth,
+    viewportWidth: window.innerWidth,
+  }));
+  expect(quality.currentSrc).toContain('preparation-tomato-harvest-enhanced');
+  expect(quality.naturalWidth).toBeGreaterThanOrEqual(Math.min(768, quality.viewportWidth));
 });
 
 test('lightbox closes with Escape, restores focus and labels navigation', async ({ page }) => {

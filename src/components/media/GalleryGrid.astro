@@ -17,9 +17,17 @@ let shown = 0;
     return <section class="gallery-group" aria-labelledby={`gallery-${group}`}>
       <header><h2 id={`gallery-${group}`}>{groupCopy.title}</h2><p>{groupCopy.intro}</p></header>
       <div class="gallery-group__images">
-        {items.map((item) => <figure>
+        {items.map((item, index) => <figure>
           <button type="button" data-gallery-open data-caption={item.caption[locale]} aria-label={`${labels}: ${item.alt[locale]}`}>
-            <ResponsiveImage src={item.asset} alt={item.alt[locale]} />
+            <ResponsiveImage
+              src={item.asset}
+              alt={item.alt[locale]}
+              sizes={item.id === 'tomato-harvest'
+                ? '(min-width: 48rem) 60vw, 100vw'
+                : index === 2 || index === 3
+                  ? '(min-width: 48rem) 76rem, 100vw'
+                  : '(min-width: 48rem) 50vw, 100vw'}
+            />
           </button>
           <figcaption>{item.caption[locale]}</figcaption>
         </figure>)}
