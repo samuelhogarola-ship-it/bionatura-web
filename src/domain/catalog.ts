@@ -67,6 +67,9 @@ export function assertValidCatalog(catalog: Product[]): void {
       }
       if (!units.includes(option.unit)) throw new Error(`invalid quantity unit in product ${product.id}`);
     }
+    if (product.price && product.price.currency !== 'EUR') {
+      throw new Error(`price currency must be EUR in product ${product.id}`);
+    }
     if (product.price && (!Number.isFinite(product.price.amount) || product.price.amount <= 0)) {
       throw new Error(`price must be positive in product ${product.id}`);
     }

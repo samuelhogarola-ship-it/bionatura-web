@@ -37,6 +37,11 @@ describe('catalog validation', () => {
     expect(() => assertValidCatalog([product({ price: { amount: 0, currency: 'EUR', unitLabel: {} } })])).toThrow(/price/);
   });
 
+  it('rejects prices whose runtime currency is not EUR', () => {
+    const nonEurPrice = { amount: 2, currency: 'USD' as unknown as 'EUR', unitLabel: {} };
+    expect(() => assertValidCatalog([product({ price: nonEurPrice })])).toThrow(/currency/);
+  });
+
   it('keeps stable ids and locates the tomato by id', () => {
     expect(products.map(({ id }) => id)).toEqual(expect.arrayContaining(['tomato', 'potato', 'egg', 'avocado']));
     expect(products.find(({ id }) => id === 'tomato')?.name.es).toBe('Tomates');
