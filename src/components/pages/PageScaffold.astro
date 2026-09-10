@@ -1,15 +1,13 @@
 ---
-import { pathFor, type Locale, type PageKey } from '@/i18n/config';
+import { pathFor, type Locale } from '@/i18n/config';
 import type { PageCopy } from '@/i18n/pages/types';
 
 interface Props {
   copy: PageCopy;
   locale: Locale;
-  page: PageKey;
 }
 
-const { copy, locale, page } = Astro.props;
-const ctaPage: PageKey = page === 'home' || page === 'gallery' ? 'catalog' : page === 'contact' || page === 'about' || page === 'legalNotice' || page === 'privacy' || page === 'cookies' ? 'home' : 'contact';
+const { copy, locale } = Astro.props;
 ---
 
 <main>
@@ -21,5 +19,5 @@ const ctaPage: PageKey = page === 'home' || page === 'gallery' ? 'catalog' : pag
       <p>{section.body}</p>
     </section>
   ))}
-  <a href={pathFor(locale, ctaPage)}>{copy.cta}</a>
+  <a href={pathFor(locale, copy.ctaPage)}>{copy.cta}</a>
 </main>
