@@ -20,13 +20,13 @@ const seasons: Season[] = ['spring', 'summer', 'autumn', 'winter'];
 
 <article class="catalog-page" data-season-selector>
   <header class="catalog-page__hero page-shell">
-    <div>
+    <Mascot {locale} context="catalog" />
+    <div class="catalog-page__copy">
       <p class="catalog-page__eyebrow">Bionatura · Fuengirola</p>
       <h1>{copy.h1}</h1>
       <p class="catalog-page__intro">{copy.intro}</p>
-      <p class="catalog-page__notice">{ui[locale].availabilityNotice}</p>
     </div>
-    <Mascot {locale} context="catalog" />
+    <p class="catalog-page__notice">{ui[locale].availabilityNotice}</p>
   </header>
 
   <div class="page-shell">
@@ -36,7 +36,6 @@ const seasons: Season[] = ['spring', 'summer', 'autumn', 'winter'];
     </div>
 
     <section class="always-available" aria-labelledby="always-available-title">
-      <p>{ui[locale].regularSelection}</p>
       <h2 id="always-available-title">{ui[locale].alwaysAvailable}</h2>
       <div class="product-grid">
         {alwaysAvailableProducts().map((product) => <ProductCard {locale} {product} instanceId="regular" />)}

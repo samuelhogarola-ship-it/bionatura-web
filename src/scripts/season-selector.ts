@@ -14,8 +14,10 @@ for (const selector of document.querySelectorAll<HTMLElement>('[data-season-sele
   const madridSeason = currentSeason();
 
   const activate = (season: Season, moveFocus = false) => {
+    let activeTab: HTMLButtonElement | undefined;
     for (const tab of tabs) {
       const active = tab.dataset.seasonTab === season;
+      if (active) activeTab = tab;
       tab.setAttribute('role', 'tab');
       tab.setAttribute('aria-selected', String(active));
       tab.tabIndex = active ? 0 : -1;
@@ -27,6 +29,9 @@ for (const selector of document.querySelectorAll<HTMLElement>('[data-season-sele
       panel.setAttribute('role', 'tabpanel');
       panel.tabIndex = 0;
       panel.hidden = !active;
+    }
+    if (activeTab && tablist.scrollWidth > tablist.clientWidth) {
+      activeTab.scrollIntoView({ block: 'nearest', inline: 'center' });
     }
   };
 

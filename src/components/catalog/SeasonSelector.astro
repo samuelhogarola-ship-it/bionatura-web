@@ -16,7 +16,7 @@ const seasons: Array<{ id: Season; symbol: string }> = [
 ];
 ---
 
-<nav class="season-selector" aria-label={ui[locale].seasonNavigation} data-season-tabs>
+<nav class="season-selector" aria-label={ui[locale].seasonNavigation} data-season-tabs data-season-style="harvest-rail">
   {seasons.map(({ id, symbol }) => (
     <button
       class="season-selector__button"

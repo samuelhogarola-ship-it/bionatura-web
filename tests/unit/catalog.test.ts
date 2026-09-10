@@ -52,13 +52,20 @@ describe('catalog validation', () => {
   });
 
   it('keeps stable ids and locates the tomato by id', () => {
-    expect(products.map(({ id }) => id)).toEqual(expect.arrayContaining(['tomato', 'potato', 'egg', 'avocado']));
+    expect(products.map(({ id }) => id)).toEqual(expect.arrayContaining(['tomato', 'potato', 'egg', 'red-onion', 'kombucha', 'olive-oil', 'birdhouse']));
+    expect(products.map(({ id }) => id)).not.toContain('avocado');
     expect(products.find(({ id }) => id === 'tomato')?.name.es).toBe('Tomates');
   });
 
   it('selects seasonal and always-available products without relying on order', () => {
     expect(seasonalProducts('summer').some(({ id }) => id === 'tomato')).toBe(true);
-    expect(alwaysAvailableProducts().map(({ id }) => id)).toEqual(expect.arrayContaining(['egg', 'avocado']));
+    expect(alwaysAvailableProducts().map(({ id }) => id)).toEqual(['egg', 'kombucha', 'olive-oil', 'birdhouse']);
+    expect(seasonalProducts('autumn').map(({ id }) => id)).toEqual(expect.arrayContaining(['red-onion']));
+    expect(seasonalProducts('winter').map(({ id }) => id)).toEqual(expect.arrayContaining(['red-onion']));
     expect(seasonalProducts('summer').every(({ alwaysAvailable }) => !alwaysAvailable)).toBe(true);
+  });
+
+  it('uses real product metadata instead of demo placeholders', () => {
+    expect(products.every(({ demoOnly, imageId }) => demoOnly === false && imageId !== 'product-placeholder')).toBe(true);
   });
 });

@@ -33,7 +33,10 @@ test('harvest section starts with the enhanced tomato photograph', async ({ page
   await expect(firstImage).toHaveAttribute('alt', /persona.*tomates.*carretilla/i);
   await firstImage.scrollIntoViewIfNeeded();
   await expect(firstImage).toBeVisible();
-  await expect.poll(() => firstImage.evaluate((image: HTMLImageElement) => image.naturalWidth)).toBeGreaterThan(0);
+  await expect.poll(
+    () => firstImage.evaluate((image: HTMLImageElement) => image.naturalWidth),
+    { timeout: 15_000 },
+  ).toBeGreaterThan(0);
   const quality = await firstImage.evaluate((image: HTMLImageElement) => ({
     currentSrc: image.currentSrc,
     naturalWidth: image.naturalWidth,

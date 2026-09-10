@@ -1,5 +1,6 @@
 ---
-import productPlaceholder from '@/assets/demo/product-placeholder.svg';
+import ResponsiveImage from '@/components/media/ResponsiveImage.astro';
+import { productImageFor } from '@/data/product-images';
 import type { Product, QuantityOption } from '@/domain/catalog';
 import type { Locale } from '@/i18n/config';
 import { ui } from '@/i18n/ui';
@@ -25,10 +26,16 @@ const optionLabel = (option: QuantityOption) => option.labels?.[locale] ?? label
 const price = product.price
   ? new Intl.NumberFormat(locale, { style: 'currency', currency: 'EUR' }).format(product.price.amount)
   : null;
+const productImage = productImageFor(product.id);
 ---
 
 <article class="product-card" data-product-id={product.id} data-product-name={product.name[locale]}>
-  <img src={productPlaceholder.src} width="480" height="360" alt={product.imageAlt[locale]} loading="lazy" />
+  <ResponsiveImage
+    src={productImage}
+    alt={product.imageAlt[locale]}
+    sizes="(min-width: 68rem) 25rem, (min-width: 42rem) 50vw, 100vw"
+    class="product-card__image"
+  />
   <div class="product-card__body">
     {product.demoOnly && <p class="product-card__demo">{ui[locale].demoProduct}</p>}
     <h3>{product.name[locale]}</h3>
