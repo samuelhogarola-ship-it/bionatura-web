@@ -24,16 +24,11 @@ const links: Array<[PageKey, string]> = [
   ['catalog', copy.navCatalog],
   ['gallery', copy.navGallery],
   ['about', copy.navAbout],
-  ['howItWorks', copy.navHow],
   ['contact', copy.navContact],
 ];
 ---
 
 <header class="site-header">
-  <div class="site-header__utility page-shell">
-    <p>Bionatura <span aria-hidden="true">—</span> Fuengirola</p>
-    <LanguageSwitcher locale={locale} page={page} />
-  </div>
   <div class="site-header__main page-shell">
     <Brand locale={locale} />
 
@@ -48,6 +43,7 @@ const links: Array<[PageKey, string]> = [
     </nav>
 
     <div class="site-header__actions">
+      <LanguageSwitcher locale={locale} page={page} />
       <OrderCount {locale} />
       <a class="button button--leaf site-header__cta" href={pathFor(locale, 'catalog')}>
         {copy.prepareOrder}

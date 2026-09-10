@@ -9,7 +9,6 @@ export const routes = {
   catalog: { es: 'catalogo', en: 'catalog', fi: 'tuotteet', da: 'katalog' },
   gallery: { es: 'galeria', en: 'gallery', fi: 'galleria', da: 'galleri' },
   about: { es: 'nosotros', en: 'about', fi: 'meista', da: 'om-os' },
-  howItWorks: { es: 'como-funciona', en: 'how-it-works', fi: 'miten-se-toimii', da: 'saadan-fungerer-det' },
   contact: { es: 'contacto', en: 'contact', fi: 'yhteystiedot', da: 'kontakt' },
   legalNotice: { es: 'aviso-legal', en: 'legal-notice', fi: 'oikeudellinen-huomautus', da: 'juridisk-meddelelse' },
   privacy: { es: 'privacidad', en: 'privacy', fi: 'tietosuoja', da: 'privatliv' },

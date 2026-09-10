@@ -1,5 +1,11 @@
 {
-  "redirects": [{ "source": "/", "destination": "/es/", "permanent": true }],
+  "redirects": [
+    { "source": "/", "destination": "/es/", "permanent": true },
+    { "source": "/es/como-funciona/", "destination": "/es/catalogo/", "permanent": true },
+    { "source": "/en/how-it-works/", "destination": "/en/catalog/", "permanent": true },
+    { "source": "/fi/miten-se-toimii/", "destination": "/fi/tuotteet/", "permanent": true },
+    { "source": "/da/saadan-fungerer-det/", "destination": "/da/katalog/", "permanent": true }
+  ],
   "headers": [{
     "source": "/(.*)",
     "headers": [

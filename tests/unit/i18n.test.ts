@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { alternateLinks, pathFor } from '../../src/i18n/config';
+import { alternateLinks, pathFor, routes } from '../../src/i18n/config';
 import { pages } from '../../src/i18n/pages';
 import { ui } from '../../src/i18n/ui';
 
@@ -13,6 +13,10 @@ describe('localized routes', () => {
 
   it('returns four alternates plus x-default', () => {
     expect(alternateLinks('contact')).toHaveLength(5);
+  });
+
+  it('does not publish a standalone how-it-works route', () => {
+    expect('howItWorks' in routes).toBe(false);
   });
 });
 

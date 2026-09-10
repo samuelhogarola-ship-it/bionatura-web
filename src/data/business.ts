@@ -15,8 +15,11 @@ export const business = {
     status: 'confirmed',
     value: { street: 'Calle Tórtolas, 11', postalCode: '29640', locality: 'Fuengirola', country: 'ES' },
   },
-  whatsapp: pendingField(),
-  phone: pendingField(),
+  whatsapp: { status: 'confirmed', value: '+34635648872' } as ValidatedField<string>,
+  phone: { status: 'confirmed', value: '+34635648872' } as ValidatedField<string>,
   email: pendingField(),
-  pickup: pendingField(),
+  pickup: {
+    status: 'confirmed',
+    value: 'Campo de Los Pacos, Fuengirola; ubicación acordada previamente.',
+  } as ValidatedField<string>,
 };

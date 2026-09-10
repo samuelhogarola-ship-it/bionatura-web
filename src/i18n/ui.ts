@@ -3,14 +3,14 @@ import type { Locale } from './config';
 export const ui = {
   es: {
     navHome: 'Inicio', navCatalog: 'Catálogo', navGallery: 'Galería', navAbout: 'Nosotros', navHow: 'Cómo funciona', navContact: 'Contacto',
-    menuLabel: 'Menú', closeMenu: 'Cerrar menú', prepareOrder: 'Prepara tu pedido', viewCatalog: 'Ver catálogo', addToList: 'Añadir a la lista', yourList: 'Tu lista', emptyList: 'Tu lista está vacía.',
-    quantity: 'Cantidad', customQuantity: 'Otra cantidad', removeItem: 'Eliminar', clearList: 'Vaciar lista', cancel: 'Cancelar', confirmClear: 'Vaciar',
+    menuLabel: 'Menú', closeMenu: 'Cerrar menú', prepareOrder: 'Prepara tu pedido', viewCatalog: 'Ver catálogo', addToList: 'Añadir a la cesta', yourList: 'Tu cesta', emptyList: 'Tu cesta está vacía.',
+    quantity: 'Cantidad', customQuantity: 'Otra cantidad', removeItem: 'Eliminar', clearList: 'Vaciar cesta', cancel: 'Cancelar', confirmClear: 'Vaciar',
     spring: 'Primavera', summer: 'Verano', autumn: 'Otoño', winter: 'Invierno', consultWhatsapp: 'Consultar por WhatsApp', copyMessage: 'Copiar mensaje',
     availabilityNotice: 'El catálogo es orientativo. Te confirmaremos la disponibilidad y cuándo puedes recogerlo.', demoProduct: 'Producto de muestra', pendingContact: 'Contacto pendiente de confirmar',
     whatsappIntro: 'Hola, he preparado esta lista en Bionatura.es:', whatsappAvailability: '¿Tenéis disponibilidad?', whatsappPickup: '¿Cuándo podría recogerlo?',
     seasonNavigation: 'Temporadas', currentSeason: 'Ahora', seasonSelection: 'Selección de temporada', regularSelection: 'Durante todo el año', alwaysAvailable: 'Productos habituales',
     unitSingular: 'unidad', unitPlural: 'unidades', oneDozen: '1 docena', dozenPlural: 'docenas', customQuantityLabel: 'Especifica la medida', customQuantityError: 'Escribe una cantidad de hasta 40 caracteres.',
-    orderEyebrow: 'Consulta sin compromiso', closeList: 'Cerrar lista', clearQuestion: '¿Seguro que quieres vaciar la lista?', addedToList: 'añadido a la lista', removedFromList: 'eliminado de la lista', listCleared: 'Lista vaciada.',
+    orderEyebrow: 'Consulta sin compromiso', closeList: 'Cerrar cesta', clearQuestion: '¿Seguro que quieres vaciar la cesta?', addedToList: 'añadido a la cesta', removedFromList: 'eliminado de la cesta', listCleared: 'Cesta vaciada.',
     demoCopyNotice: 'Modo demo: copia el mensaje y compártelo cuando dispongas del contacto confirmado.', messageCopied: 'Mensaje copiado.', copyManually: 'No se pudo copiar automáticamente. Selecciona y copia el mensaje manualmente.', whatsappAccess: 'WhatsApp y contacto',
   },
   en: {

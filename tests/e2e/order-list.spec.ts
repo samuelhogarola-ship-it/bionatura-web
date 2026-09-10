@@ -15,7 +15,7 @@ test('adds, edits, persists and removes a product', async ({ page }) => {
   await expect(page.getByTestId('order-count')).toHaveText('1');
 
   await page.reload();
-  await page.getByRole('button', { name: /tu lista/i }).click();
+  await page.getByRole('button', { name: /tu cesta/i }).click();
   const dialog = page.getByRole('dialog');
   await expect(dialog).toContainText('2 kg');
   await dialog.getByRole('button', { name: /eliminar tomates/i }).click();
@@ -31,29 +31,29 @@ test('validates and stores a custom quantity', async ({ page }) => {
 
   await product.getByLabel(/especifica la medida/i).fill('una caja pequeña');
   await product.getByRole('button', { name: /añadir/i }).click();
-  await page.getByRole('button', { name: /tu lista/i }).click();
+  await page.getByRole('button', { name: /tu cesta/i }).click();
   await expect(page.getByRole('dialog')).toContainText('una caja pequeña');
 });
 
 test('clearing the list requires an inline confirmation', async ({ page }) => {
   await page.locator('[data-product-id="tomato"]').getByRole('button', { name: /añadir/i }).click();
-  await page.getByRole('button', { name: /tu lista/i }).click();
+  await page.getByRole('button', { name: /tu cesta/i }).click();
   const dialog = page.getByRole('dialog');
 
-  await dialog.getByRole('button', { name: /vaciar lista/i }).click();
+  await dialog.getByRole('button', { name: /vaciar cesta/i }).click();
   await expect(dialog.getByRole('button', { name: /^vaciar$/i })).toBeVisible();
   await dialog.getByRole('button', { name: /^vaciar$/i }).click();
   await expect(dialog).toBeVisible();
-  await expect(dialog).toContainText(/tu lista está vacía/i);
+  await expect(dialog).toContainText(/tu cesta está vacía/i);
   await expect(page.getByTestId('order-count')).toHaveText('0');
 });
 
 test('dialog has an internal live region and manages initial, Escape and return focus', async ({ page }) => {
-  const opener = page.getByRole('button', { name: /tu lista/i });
+  const opener = page.getByRole('button', { name: /tu cesta/i });
   await opener.click();
   const dialog = page.getByRole('dialog');
 
-  await expect(dialog.getByRole('button', { name: /cerrar lista/i })).toBeFocused();
+  await expect(dialog.getByRole('button', { name: /cerrar cesta/i })).toBeFocused();
   await expect(dialog.locator('[aria-live="polite"]')).toHaveCount(1);
   expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([]);
 
@@ -65,14 +65,14 @@ test('dialog has an internal live region and manages initial, Escape and return 
 test('removing lines moves focus to the next action or the list heading', async ({ page }) => {
   await page.locator('[data-product-id="tomato"]').getByRole('button', { name: /añadir/i }).click();
   await page.locator('[data-product-id="courgette"]').getByRole('button', { name: /añadir/i }).click();
-  await page.getByRole('button', { name: /tu lista/i }).click();
+  await page.getByRole('button', { name: /tu cesta/i }).click();
   const dialog = page.getByRole('dialog');
 
   await dialog.getByRole('button', { name: /eliminar tomates/i }).click();
   const lastRemove = dialog.getByRole('button', { name: /eliminar calabacines/i });
   await expect(lastRemove).toBeFocused();
   await lastRemove.click();
-  await expect(dialog.getByRole('heading', { name: /tu lista/i })).toBeFocused();
+  await expect(dialog.getByRole('heading', { name: /tu cesta/i })).toBeFocused();
 });
 
 test('custom quantity error is programmatically described by its input', async ({ page }) => {

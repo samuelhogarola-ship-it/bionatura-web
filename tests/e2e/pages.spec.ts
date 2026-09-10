@@ -8,12 +8,19 @@ test('Spanish home explains offer, place and process above the fold', async ({ p
   await expect(page.getByRole('link', { name: /ver catálogo/i }).first()).toBeVisible();
   await expect(page.locator('main h1')).toHaveCount(1);
   await expect(page.locator('.home-hero img')).toHaveAttribute('loading', 'eager');
+  const heroQuality = await page.locator('.home-hero img').evaluate((image: HTMLImageElement) => ({
+    currentSrc: image.currentSrc,
+    naturalWidth: image.naturalWidth,
+    viewportWidth: window.innerWidth,
+  }));
+  expect(heroQuality.currentSrc).toContain('garden-mixed-leaf-rows-hero-2k');
+  expect(heroQuality.naturalWidth).toBeGreaterThanOrEqual(heroQuality.viewportWidth);
+  await expect(page.locator('[data-bionatura-mascot] img')).toBeVisible();
 });
 
 test('the localized narrative pages expose their complete core content', async ({ page }) => {
   const cases = [
     ['/en/about/', /About us/i, /Gallery/i],
-    ['/fi/miten-se-toimii/', /Näin se toimii/i, /Mitä tapahtuu seuraavaksi/i],
     ['/da/kontakt/', /Kontakt/i, /afventer bekræftelse/i],
   ] as const;
 
@@ -24,13 +31,21 @@ test('the localized narrative pages expose their complete core content', async (
   }
 });
 
-test('contact page does not expose unconfirmed contact or pickup fields', async ({ page }) => {
+test('contact page exposes the confirmed phone and WhatsApp without presenting the registered office as pickup', async ({ page }) => {
   await page.goto('/es/contacto/');
 
-  await expect(page.getByText(/pendiente de confirmar/i).first()).toBeVisible();
-  await expect(page.locator('a[href^="tel:"]')).toHaveCount(0);
+  await expect(page.getByText(/635 648 872/).first()).toBeVisible();
+  await expect(page.locator('a[href^="tel:"]')).toHaveAttribute('href', 'tel:+34635648872');
   await expect(page.locator('a[href^="mailto:"]')).toHaveCount(0);
-  await expect(page.locator('a[href*="wa.me"]')).toHaveCount(0);
+  await expect(page.locator('main a[href*="wa.me/34635648872"]')).toBeVisible();
+  await expect(page.locator('main')).toContainText(/campo de Los Pacos/i);
   await expect(page.getByText('Calle Tórtolas, 11')).toHaveCount(0);
-  await expect(page.getByText(/punto de recogida/i)).toHaveCount(0);
+  await expect(page.locator('main')).not.toContainText(/modo demo/i);
+});
+
+test('footer uses the requested local message and credits WF-Studio', async ({ page }) => {
+  await page.goto('/es/');
+
+  await expect(page.locator('footer')).toContainText('Tus productos biológicos en Fuengirola');
+  await expect(page.locator('footer')).toContainText('Web por WF-Studio');
 });

@@ -20,7 +20,6 @@ const links: Array<[PageKey, string]> = [
   ['catalog', copy.navCatalog],
   ['gallery', copy.navGallery],
   ['about', copy.navAbout],
-  ['howItWorks', copy.navHow],
   ['contact', copy.navContact],
 ];
 ---
@@ -64,7 +63,6 @@ const links: Array<[PageKey, string]> = [
     const inertTargets = Array.from(document.querySelectorAll<HTMLElement>([
       'main',
       'footer',
-      '.site-header__utility',
       '.site-header__main > .brand',
       '.desktop-navigation',
       '.site-header__actions > :not(.mobile-menu)',

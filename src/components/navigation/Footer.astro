@@ -8,10 +8,10 @@ interface Props {
 
 const { locale } = Astro.props;
 const copy: Record<Locale, { note: string; legal: string; privacy: string; cookies: string; nav: string }> = {
-  es: { note: 'Productos de temporada y una consulta sencilla desde Fuengirola.', legal: 'Aviso legal', privacy: 'Privacidad', cookies: 'Cookies', nav: 'Información legal' },
-  en: { note: 'Seasonal products and a simple enquiry from Fuengirola.', legal: 'Legal notice', privacy: 'Privacy', cookies: 'Cookies', nav: 'Legal information' },
-  fi: { note: 'Kausituotteita ja helppo tapa kysyä Fuengirolassa.', legal: 'Oikeudellinen huomautus', privacy: 'Tietosuoja', cookies: 'Evästeet', nav: 'Oikeudelliset tiedot' },
-  da: { note: 'Sæsonvarer og en enkel forespørgsel fra Fuengirola.', legal: 'Juridisk meddelelse', privacy: 'Privatliv', cookies: 'Cookies', nav: 'Juridisk information' },
+  es: { note: 'Tus productos biológicos en Fuengirola', legal: 'Aviso legal', privacy: 'Privacidad', cookies: 'Cookies', nav: 'Información legal' },
+  en: { note: 'Your organic products in Fuengirola', legal: 'Legal notice', privacy: 'Privacy', cookies: 'Cookies', nav: 'Legal information' },
+  fi: { note: 'Luomutuotteesi Fuengirolassa', legal: 'Oikeudellinen huomautus', privacy: 'Tietosuoja', cookies: 'Evästeet', nav: 'Oikeudelliset tiedot' },
+  da: { note: 'Dine økologiske varer i Fuengirola', legal: 'Juridisk meddelelse', privacy: 'Privatliv', cookies: 'Cookies', nav: 'Juridisk information' },
 };
 const legalLinks: Array<[PageKey, string]> = [
   ['legalNotice', copy[locale].legal],
@@ -35,5 +35,6 @@ const legalLinks: Array<[PageKey, string]> = [
   <div class="page-shell site-footer__base">
     <p>© {new Date().getFullYear()} Bionatura</p>
     <p>Los Pacos · Fuengirola</p>
+    <p>Web por WF-Studio</p>
   </div>
 </footer>

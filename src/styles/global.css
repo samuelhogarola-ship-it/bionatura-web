@@ -17,7 +17,7 @@ body {
   margin: 0;
   min-width: 20rem;
   background:
-    linear-gradient(90deg, transparent 49.9%, rgb(75 48 38 / 0.025) 50%, transparent 50.1%) 0 0 / 3rem 3rem,
+    linear-gradient(90deg, transparent 49.9%, rgb(23 63 42 / 0.025) 50%, transparent 50.1%) 0 0 / 3rem 3rem,
     var(--color-paper);
   font-size: var(--text-base);
   line-height: 1.65;

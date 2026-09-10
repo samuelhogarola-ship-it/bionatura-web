@@ -4,7 +4,6 @@ import { catalog } from './catalog';
 import { contact } from './contact';
 import { gallery } from './gallery';
 import { home } from './home';
-import { howItWorks } from './how-it-works';
 import { cookies, legalNotice, privacy } from './legal';
 
 export const pages = {
@@ -12,7 +11,6 @@ export const pages = {
   catalog,
   gallery,
   about,
-  howItWorks,
   contact,
   legalNotice,
   privacy,

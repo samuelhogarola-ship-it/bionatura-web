@@ -3,7 +3,7 @@ import { expect, test } from '@playwright/test';
 test.describe('mobile navigation', () => {
   test.skip(({ isMobile }) => !isMobile, 'Mobile navigation behavior');
 
-  test('menu is keyboard operable and preserves page on language change', async ({ page }) => {
+  test('menu is keyboard operable and compact language selector preserves the current page', async ({ page }) => {
     await page.goto('/es/catalogo/');
     const trigger = page.getByRole('button', { name: /menú/i });
 
@@ -13,7 +13,8 @@ test.describe('mobile navigation', () => {
     await page.keyboard.press('Escape');
     await expect(trigger).toBeFocused();
 
-    await page.getByRole('link', { name: 'English' }).click();
+    await expect(page.locator('.site-header__utility')).toHaveCount(0);
+    await page.getByRole('combobox', { name: /idioma/i }).selectOption('en');
     await expect(page).toHaveURL(/\/en\/catalog\/$/);
   });
 
@@ -43,6 +44,7 @@ test.describe('desktop navigation', () => {
     expect(page.viewportSize()?.width).toBeGreaterThanOrEqual(1200);
     await expect(page.locator('.desktop-navigation')).toBeVisible();
     await expect(page.locator('[data-menu-trigger]')).toBeHidden();
+    await expect(page.getByRole('link', { name: /cómo funciona/i })).toHaveCount(0);
   });
 
   test('closing breakpoint clears mobile menu state', async ({ page }) => {

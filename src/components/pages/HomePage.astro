@@ -1,6 +1,8 @@
 ---
 import ResponsiveImage from '@/components/media/ResponsiveImage.astro';
 import GalleryGrid from '@/components/media/GalleryGrid.astro';
+import heroAsset from '@/assets/media/garden-mixed-leaf-rows-hero-2k.png';
+import mascotAsset from '@/assets/brand/bionatura-mascot-lettuce.png';
 import { mediaItems } from '@/data/media';
 import { products } from '@/data/products';
 import { pathFor, type Locale } from '@/i18n/config';
@@ -8,7 +10,7 @@ import { home } from '@/i18n/pages/home';
 const { locale } = Astro.props as { locale: Locale };
 const copy = home[locale];
 const c = {
-  es: { season:'La temporada, ahora', seasonBody:'La selección cambia con el momento del año. El catálogo es orientativo y confirmamos cada disponibilidad.', featured:'Una selección para empezar', process:'Del catálogo a tu lista', steps:['Explora los productos','Prepara una lista sin compromiso','Confirma disponibilidad y acuerda la recogida'], usual:'Productos habituales', story:'Un proyecto cercano', storyBody:'Bionatura comparte productos, escenas del huerto y una forma sencilla de preparar consultas desde Fuengirola.', gallery:'Desde el huerto', contact:'Hablamos antes de la recogida', contactBody:'El contacto, el horario y el punto de recogida están pendientes de confirmar. La recogida se acuerda después de verificar la disponibilidad.', order:'Prepara tu pedido', catalog:'Ver catálogo', notice:'Productos, cantidades y disponibilidad son orientativos hasta recibir confirmación.' },
+  es: { season:'La temporada, ahora', seasonBody:'La selección cambia con el momento del año. El catálogo es orientativo y confirmamos cada disponibilidad.', featured:'Una selección para empezar', process:'Del catálogo a tu cesta', steps:['Explora los productos','Prepara una cesta sin compromiso','Confirma disponibilidad y acuerda la recogida'], usual:'Productos habituales', story:'Un proyecto cercano', storyBody:'Bionatura comparte productos, escenas del huerto y una forma sencilla de preparar consultas desde Fuengirola.', gallery:'Desde el huerto', contact:'Hablamos antes de la recogida', contactBody:'Escríbenos o llama al 635 648 872. Cultivamos en el campo de Los Pacos y acordamos contigo la recogida después de verificar la disponibilidad.', order:'Prepara tu pedido', catalog:'Ver catálogo', notice:'Productos, cantidades y disponibilidad son orientativos hasta recibir confirmación.' },
   en: { season:'The season, now', seasonBody:'The selection changes through the year. The catalog is a guide and each item is confirmed.', featured:'A selection to begin', process:'From catalog to your list', steps:['Explore the products','Prepare a no-obligation list','Confirm availability and arrange collection'], usual:'Regular products', story:'A local project', storyBody:'Bionatura shares products, garden scenes and a simple way to prepare enquiries from Fuengirola.', gallery:'From the garden', contact:'We talk before collection', contactBody:'Contact details, opening times and the collection point are pending confirmation. Collection is arranged after availability is checked.', order:'Prepare your order', catalog:'View catalog', notice:'Products, quantities and availability are indicative until confirmed.' },
   fi: { season:'Kausi juuri nyt', seasonBody:'Valikoima muuttuu vuoden mittaan. Luettelo on ohjeellinen ja jokainen saatavuus vahvistetaan.', featured:'Valikoima alkuun', process:'Luettelosta listallesi', steps:['Tutustu tuotteisiin','Kokoa sitoumukseton lista','Vahvista saatavuus ja sovi noudosta'], usual:'Tavalliset tuotteet', story:'Läheinen projekti', storyBody:'Bionatura jakaa tuotteita, kuvia kasvimaalta ja helpon tavan valmistella kysely Fuengirolassa.', gallery:'Kasvimaalta', contact:'Keskustelemme ennen noutoa', contactBody:'Yhteystiedot, aukioloajat ja noutopaikka odottavat vahvistusta. Noudosta sovitaan saatavuuden tarkistamisen jälkeen.', order:'Kokoa tilauslistasi', catalog:'Katso tuotteet', notice:'Tuotteet, määrät ja saatavuus ovat ohjeellisia, kunnes ne vahvistetaan.' },
   da: { season:'Sæsonen lige nu', seasonBody:'Udvalget skifter gennem året. Kataloget er vejledende, og hver tilgængelighed bekræftes.', featured:'Et udvalg til at begynde', process:'Fra katalog til din liste', steps:['Se varerne','Lav en uforpligtende liste','Bekræft tilgængelighed og aftal afhentning'], usual:'Faste varer', story:'Et lokalt projekt', storyBody:'Bionatura deler varer, billeder fra haven og en enkel måde at forberede forespørgsler fra Fuengirola.', gallery:'Fra haven', contact:'Vi taler sammen før afhentning', contactBody:'Kontaktoplysninger, åbningstider og afhentningssted afventer bekræftelse. Afhentning aftales, efter tilgængeligheden er kontrolleret.', order:'Forbered din bestillingsliste', catalog:'Se katalog', notice:'Varer, mængder og tilgængelighed er vejledende, indtil de bekræftes.' },
@@ -17,7 +19,7 @@ const hero = mediaItems.find((item) => item.id === 'mixed-leaf-rows')!;
 ---
 <article class="home-page">
   <section class="home-hero">
-    <ResponsiveImage src={hero.asset} alt={hero.alt[locale]} sizes="100vw" priority />
+    <ResponsiveImage src={heroAsset} alt={hero.alt[locale]} sizes="(min-width: 64rem) 1536px, 100vw" priority />
     <div class="home-hero__copy page-shell"><p>Bionatura · Fuengirola</p><h1>{copy.h1}</h1><p>{copy.intro}</p><div><a class="button button--leaf" href={pathFor(locale,'catalog')}>{c.order}</a><a class="button" href={pathFor(locale,'catalog')}>{c.catalog}</a></div></div>
   </section>
   <section class="home-section page-shell"><p class="eyebrow">{c.season}</p><h2>{c.season}</h2><p>{c.seasonBody}</p></section>
@@ -27,5 +29,5 @@ const hero = mediaItems.find((item) => item.id === 'mixed-leaf-rows')!;
   <section class="home-story"><div class="page-shell"><h2>{c.story}</h2><p>{c.storyBody}</p></div></section>
   <section class="home-section page-shell"><h2>{c.gallery}</h2><GalleryGrid {locale} limit={4} /></section>
   <section class="home-section home-contact page-shell"><h2>{c.contact}</h2><p>{c.contactBody}</p></section>
-  <section class="home-final"><div class="page-shell"><h2>{c.order}</h2><a class="button button--leaf" href={pathFor(locale,'catalog')}>{c.catalog}</a><p>{c.notice}</p></div></section>
+  <section class="home-final"><div class="page-shell home-final__layout"><div><h2>{c.order}</h2><a class="button button--leaf" href={pathFor(locale,'catalog')}>{c.catalog}</a><p>{c.notice}</p></div><figure data-bionatura-mascot><ResponsiveImage src={mascotAsset} alt="Mascota lechuga de Bionatura" sizes="(min-width: 48rem) 15rem, 10rem" /></figure></div></section>
 </article>
