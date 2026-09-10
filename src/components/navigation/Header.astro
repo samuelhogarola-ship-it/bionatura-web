@@ -1,0 +1,60 @@
+---
+import Brand from './Brand.astro';
+import LanguageSwitcher from './LanguageSwitcher.astro';
+import MobileMenu from './MobileMenu.astro';
+import { pathFor, type Locale, type PageKey } from '@/i18n/config';
+import { ui } from '@/i18n/ui';
+
+interface Props {
+  locale: Locale;
+  page: PageKey;
+}
+
+const { locale, page } = Astro.props;
+const copy = ui[locale];
+const navLabel: Record<Locale, string> = {
+  es: 'Navegación principal',
+  en: 'Main navigation',
+  fi: 'Päänavigointi',
+  da: 'Primær navigation',
+};
+const links: Array<[PageKey, string]> = [
+  ['home', copy.navHome],
+  ['catalog', copy.navCatalog],
+  ['gallery', copy.navGallery],
+  ['about', copy.navAbout],
+  ['howItWorks', copy.navHow],
+  ['contact', copy.navContact],
+];
+---
+
+<header class="site-header">
+  <div class="site-header__utility page-shell">
+    <p>Bionatura <span aria-hidden="true">—</span> Fuengirola</p>
+    <LanguageSwitcher locale={locale} page={page} />
+  </div>
+  <div class="site-header__main page-shell">
+    <Brand locale={locale} />
+
+    <nav class="desktop-navigation" aria-label={navLabel[locale]}>
+      <ul>
+        {links.map(([key, label]) => (
+          <li>
+            <a href={pathFor(locale, key)} aria-current={key === page ? 'page' : undefined}>{label}</a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+
+    <div class="site-header__actions">
+      <a class="order-count" href={pathFor(locale, 'catalog')}>
+        <span class="order-count__label">{copy.yourList}</span>
+        <span class="order-count__value" data-order-count aria-live="polite">0</span>
+      </a>
+      <a class="button button--leaf site-header__cta" href={pathFor(locale, 'catalog')}>
+        {copy.prepareOrder}
+      </a>
+      <MobileMenu locale={locale} page={page} />
+    </div>
+  </div>
+</header>

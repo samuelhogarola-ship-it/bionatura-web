@@ -1,0 +1,43 @@
+---
+import { alternateLinks, pathFor, type Locale, type PageKey } from '@/i18n/config';
+
+interface Props {
+  locale: Locale;
+  page: PageKey;
+  title: string;
+  description: string;
+  image?: string;
+}
+
+const { locale, page, title, description, image } = Astro.props;
+const base = Astro.site ?? new URL('https://bionatura.es');
+const canonical = new URL(pathFor(locale, page), base);
+const imageUrl = image ? new URL(image, base) : undefined;
+const ogLocales: Record<Locale, string> = {
+  es: 'es_ES',
+  en: 'en_GB',
+  fi: 'fi_FI',
+  da: 'da_DK',
+};
+const alternates = alternateLinks(page);
+---
+
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width" />
+<meta name="generator" content={Astro.generator} />
+<title>{title}</title>
+<meta name="description" content={description} />
+<link rel="canonical" href={canonical} />
+{alternates.map(({ locale: hreflang, href }) => (
+  <link rel="alternate" hreflang={hreflang} href={new URL(href, base)} />
+))}
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="Bionatura" />
+<meta property="og:title" content={title} />
+<meta property="og:description" content={description} />
+<meta property="og:url" content={canonical} />
+<meta property="og:locale" content={ogLocales[locale]} />
+{Object.entries(ogLocales).filter(([key]) => key !== locale).map(([, value]) => (
+  <meta property="og:locale:alternate" content={value} />
+))}
+{imageUrl && <meta property="og:image" content={imageUrl} />}

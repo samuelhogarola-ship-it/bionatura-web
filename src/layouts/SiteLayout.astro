@@ -1,0 +1,40 @@
+---
+import Header from '@/components/navigation/Header.astro';
+import Footer from '@/components/navigation/Footer.astro';
+import SeoHead from '@/components/SeoHead.astro';
+import '@/styles/global.css';
+import '@/styles/components.css';
+import type { Locale, PageKey } from '@/i18n/config';
+
+interface Props {
+  locale: Locale;
+  page: PageKey;
+  title: string;
+  description: string;
+  image?: string;
+}
+
+const { locale, page, title, description, image } = Astro.props;
+const skipLabel: Record<Locale, string> = {
+  es: 'Saltar al contenido',
+  en: 'Skip to content',
+  fi: 'Siirry sisältöön',
+  da: 'Gå til indhold',
+};
+---
+
+<!doctype html>
+<html lang={locale}>
+  <head>
+    <SeoHead {locale} {page} {title} {description} {image} />
+    <slot name="head" />
+  </head>
+  <body>
+    <a class="skip-link" href="#contenido">{skipLabel[locale]}</a>
+    <Header {locale} {page} />
+    <main id="contenido" tabindex="-1">
+      <slot />
+    </main>
+    <Footer {locale} />
+  </body>
+</html>

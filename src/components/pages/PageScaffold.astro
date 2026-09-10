@@ -10,14 +10,21 @@ interface Props {
 const { copy, locale } = Astro.props;
 ---
 
-<main>
-  <h1>{copy.h1}</h1>
-  <p>{copy.intro}</p>
-  {copy.sections.map((section) => (
-    <section>
-      <h2>{section.title}</h2>
-      <p>{section.body}</p>
-    </section>
-  ))}
-  <a href={pathFor(locale, copy.ctaPage)}>{copy.cta}</a>
-</main>
+<article class="editorial-page">
+  <div class="page-shell">
+    <p class="editorial-page__eyebrow">Bionatura · Fuengirola</p>
+    <h1>{copy.h1}</h1>
+    <p class="editorial-page__intro">{copy.intro}</p>
+    <div class="editorial-page__sections">
+      {copy.sections.map((section) => (
+        <section>
+          <h2>{section.title}</h2>
+          <p>{section.body}</p>
+        </section>
+      ))}
+    </div>
+    <p class="editorial-page__cta">
+      <a class="button button--leaf" href={pathFor(locale, copy.ctaPage)}>{copy.cta}</a>
+    </p>
+  </div>
+</article>

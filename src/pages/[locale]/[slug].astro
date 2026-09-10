@@ -1,5 +1,6 @@
 ---
 import PageScaffold from '@/components/pages/PageScaffold.astro';
+import SiteLayout from '@/layouts/SiteLayout.astro';
 import { LOCALES, PAGE_KEYS, routes, type Locale, type PageKey } from '@/i18n/config';
 import { pages } from '@/i18n/pages';
 
@@ -16,11 +17,6 @@ const { locale, page } = Astro.props as { locale: Locale; page: PageKey };
 const copy = pages[page][locale];
 ---
 
-<html lang={locale}>
-  <head>
-    <meta charset="utf-8" />
-    <meta name="description" content={copy.description} />
-    <title>{copy.title}</title>
-  </head>
-  <body><PageScaffold copy={copy} locale={locale} /></body>
-</html>
+<SiteLayout locale={locale} page={page} title={copy.title} description={copy.description}>
+  <PageScaffold copy={copy} locale={locale} />
+</SiteLayout>

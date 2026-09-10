@@ -1,0 +1,39 @@
+---
+import Brand from './Brand.astro';
+import { pathFor, type Locale, type PageKey } from '@/i18n/config';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const copy: Record<Locale, { note: string; legal: string; privacy: string; cookies: string; nav: string }> = {
+  es: { note: 'Alimentos ecológicos de temporada, cultivados cerca de casa.', legal: 'Aviso legal', privacy: 'Privacidad', cookies: 'Cookies', nav: 'Información legal' },
+  en: { note: 'Seasonal organic food, grown close to home.', legal: 'Legal notice', privacy: 'Privacy', cookies: 'Cookies', nav: 'Legal information' },
+  fi: { note: 'Luomukauden tuotteita läheltä.', legal: 'Oikeudellinen huomautus', privacy: 'Tietosuoja', cookies: 'Evästeet', nav: 'Oikeudelliset tiedot' },
+  da: { note: 'Økologiske sæsonvarer dyrket tæt på.', legal: 'Juridisk meddelelse', privacy: 'Privatliv', cookies: 'Cookies', nav: 'Juridisk information' },
+};
+const legalLinks: Array<[PageKey, string]> = [
+  ['legalNotice', copy[locale].legal],
+  ['privacy', copy[locale].privacy],
+  ['cookies', copy[locale].cookies],
+];
+---
+
+<footer class="site-footer">
+  <div class="page-shell site-footer__grid">
+    <div>
+      <Brand locale={locale} />
+      <p class="site-footer__note">{copy[locale].note}</p>
+    </div>
+    <nav aria-label={copy[locale].nav}>
+      <ul>
+        {legalLinks.map(([page, label]) => <li><a href={pathFor(locale, page)}>{label}</a></li>)}
+      </ul>
+    </nav>
+  </div>
+  <div class="page-shell site-footer__base">
+    <p>© {new Date().getFullYear()} Bionatura</p>
+    <p>Los Pacos · Fuengirola</p>
+  </div>
+</footer>
