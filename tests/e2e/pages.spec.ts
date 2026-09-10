@@ -17,6 +17,7 @@ test('Spanish home explains offer, place and process above the fold', async ({ p
   expect(heroQuality.naturalWidth).toBeGreaterThanOrEqual(heroQuality.viewportWidth);
   await expect(page.locator('[data-bionatura-mascot] img')).toBeVisible();
   await expect(page.getByRole('heading', { name: 'Una selección para empezar' })).toHaveCount(0);
+  await expect(page.getByRole('heading', { name: 'Productos habituales' })).toHaveCount(0);
   const seasonSection = page.locator('.home-season');
   await expect(seasonSection.getByRole('link', { name: 'Ver catálogo' })).toHaveAttribute('href', '/es/catalogo/');
   await expect(page.locator('.home-season')).toHaveCSS('background-color', 'rgb(237, 247, 233)');
