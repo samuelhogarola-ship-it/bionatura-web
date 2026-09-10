@@ -26,7 +26,6 @@ const links = alternateLinks(page).filter(
 
 <div class="language-switcher">
   <label class="sr-only" for={`language-${locale}`}>{languageLabel[locale]}</label>
-  <span class="language-switcher__icon" aria-hidden="true">◎</span>
   <select id={`language-${locale}`} data-language-select aria-label={languageLabel[locale]}>
     {links.map((link) => (
       <option value={link.locale} data-href={link.href} selected={link.locale === locale} lang={link.locale}>

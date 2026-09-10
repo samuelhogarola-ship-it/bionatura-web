@@ -258,11 +258,6 @@
   font-size: var(--text-xs);
 }
 
-.language-switcher__icon {
-  color: var(--color-leaf-dark);
-  font-size: 1rem;
-}
-
 .language-switcher select {
   max-width: 4.25rem;
   min-height: 2.5rem;
