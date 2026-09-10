@@ -14,9 +14,11 @@ const validProductIds = new Set(productById.keys());
 const dialog = document.querySelector<HTMLDialogElement>('[data-order-dialog]');
 const linesElement = document.querySelector<HTMLUListElement>('[data-order-lines]');
 const emptyElement = document.querySelector<HTMLElement>('[data-order-empty]');
-const announcement = document.querySelector<HTMLElement>('[data-order-announcement]');
+const pageAnnouncement = document.querySelector<HTMLElement>('[data-order-announcement="page"]');
+const dialogAnnouncement = document.querySelector<HTMLElement>('[data-order-announcement="dialog"]');
 const clearButton = document.querySelector<HTMLButtonElement>('[data-order-clear]');
 const clearConfirmation = document.querySelector<HTMLElement>('[data-order-clear-confirmation]');
+const orderHeading = document.querySelector<HTMLElement>('[data-order-heading]');
 let returnFocus: HTMLElement | null = null;
 
 function readOrder(): OrderState {
@@ -30,6 +32,7 @@ function readOrder(): OrderState {
 let state = readOrder();
 
 function announce(message: string) {
+  const announcement = dialog?.open ? dialogAnnouncement : pageAnnouncement;
   if (announcement) announcement.textContent = message;
 }
 
@@ -106,36 +109,48 @@ document.addEventListener('click', (event) => {
     if (state.lines.length === 0) return;
     const message = formatOrderMessage(locale, state, products);
     const fallback = document.querySelector<HTMLTextAreaElement>('[data-copy-fallback]');
-    const copyWithFallback = () => {
-      if (!fallback) return;
+    const copyWithFallback = (): boolean => {
+      if (!fallback) return false;
       fallback.hidden = false;
       fallback.value = message;
+      fallback.focus();
       fallback.select();
-      document.execCommand('copy');
-      fallback.hidden = true;
+      try {
+        const copied = document.execCommand('copy');
+        if (copied) fallback.hidden = true;
+        return copied;
+      } catch {
+        return false;
+      }
     };
-    if (navigator.clipboard?.writeText) {
+    const useFallback = () => announce(copyWithFallback() ? copy.messageCopied : copy.copyManually);
+    try {
+      if (!navigator.clipboard?.writeText) {
+        useFallback();
+        return;
+      }
       navigator.clipboard.writeText(message).then(
-        () => announce(copy.messageCopied),
         () => {
-          copyWithFallback();
+          if (fallback) fallback.hidden = true;
           announce(copy.messageCopied);
         },
+        useFallback,
       );
-    } else {
-      copyWithFallback();
-      announce(copy.messageCopied);
+    } catch {
+      useFallback();
     }
     return;
   }
 
-  const whatsappLink = target?.closest<HTMLAnchorElement>('[data-whatsapp-action]');
-  if (whatsappLink) {
-    if (state.lines.length === 0 || !whatsappLink.dataset.whatsappPhone) {
+  const whatsappAction = target?.closest<HTMLButtonElement>('[data-whatsapp-action]');
+  if (whatsappAction) {
+    if (state.lines.length === 0 || !whatsappAction.dataset.whatsappPhone) {
       event.preventDefault();
       return;
     }
-    whatsappLink.href = buildWhatsAppUrl(whatsappLink.dataset.whatsappPhone, formatOrderMessage(locale, state, products));
+    const url = buildWhatsAppUrl(whatsappAction.dataset.whatsappPhone, formatOrderMessage(locale, state, products));
+    window.open(url, '_blank', 'noopener,noreferrer');
+    return;
   }
 
   const opener = target?.closest<HTMLElement>('[data-order-open]');
@@ -175,8 +190,12 @@ document.addEventListener('click', (event) => {
 
   const removeButton = target?.closest<HTMLButtonElement>('[data-order-remove]');
   if (removeButton?.dataset.orderRemove) {
+    const removedIndex = state.lines.findIndex((line) => line.productId === removeButton.dataset.orderRemove);
     const product = productById.get(removeButton.dataset.orderRemove);
     update(removeLine(state, removeButton.dataset.orderRemove), `${product?.name[locale] ?? ''}: ${copy.removedFromList}`);
+    const remainingRemoveButtons = Array.from(dialog?.querySelectorAll<HTMLButtonElement>('[data-order-remove]') ?? []);
+    const nextFocus = remainingRemoveButtons[Math.min(removedIndex, remainingRemoveButtons.length - 1)];
+    (nextFocus ?? orderHeading)?.focus();
     return;
   }
 

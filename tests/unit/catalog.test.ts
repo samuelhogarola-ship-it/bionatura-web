@@ -37,6 +37,15 @@ describe('catalog validation', () => {
     expect(() => assertValidCatalog([product({ price: { amount: 0, currency: 'EUR', unitLabel: {} } })])).toThrow(/price/);
   });
 
+  it('requires a localized unit label whenever a price exists', () => {
+    expect(() => assertValidCatalog([product({
+      price: { amount: 2, currency: 'EUR', unitLabel: { es: 'kg', en: 'kg', fi: 'kg' } },
+    })])).toThrow(/unitLabel.*da/i);
+    expect(() => assertValidCatalog([product({
+      price: { amount: 2, currency: 'EUR', unitLabel: { es: 'kg', en: 'kg', fi: 'kg', da: 'kg' } },
+    })])).not.toThrow();
+  });
+
   it('rejects prices whose runtime currency is not EUR', () => {
     const nonEurPrice = { amount: 2, currency: 'USD' as unknown as 'EUR', unitLabel: {} };
     expect(() => assertValidCatalog([product({ price: nonEurPrice })])).toThrow(/currency/);

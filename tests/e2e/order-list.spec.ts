@@ -1,3 +1,4 @@
+import AxeBuilder from '@axe-core/playwright';
 import { expect, test } from '@playwright/test';
 
 test.beforeEach(async ({ page }) => {
@@ -45,4 +46,42 @@ test('clearing the list requires an inline confirmation', async ({ page }) => {
   await expect(dialog).toBeVisible();
   await expect(dialog).toContainText(/tu lista está vacía/i);
   await expect(page.getByTestId('order-count')).toHaveText('0');
+});
+
+test('dialog has an internal live region and manages initial, Escape and return focus', async ({ page }) => {
+  const opener = page.getByRole('button', { name: /tu lista/i });
+  await opener.click();
+  const dialog = page.getByRole('dialog');
+
+  await expect(dialog.getByRole('button', { name: /cerrar lista/i })).toBeFocused();
+  await expect(dialog.locator('[aria-live="polite"]')).toHaveCount(1);
+  expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([]);
+
+  await page.keyboard.press('Escape');
+  await expect(dialog).not.toBeVisible();
+  await expect(opener).toBeFocused();
+});
+
+test('removing lines moves focus to the next action or the list heading', async ({ page }) => {
+  await page.locator('[data-product-id="tomato"]').getByRole('button', { name: /añadir/i }).click();
+  await page.locator('[data-product-id="courgette"]').getByRole('button', { name: /añadir/i }).click();
+  await page.getByRole('button', { name: /tu lista/i }).click();
+  const dialog = page.getByRole('dialog');
+
+  await dialog.getByRole('button', { name: /eliminar tomates/i }).click();
+  const lastRemove = dialog.getByRole('button', { name: /eliminar calabacines/i });
+  await expect(lastRemove).toBeFocused();
+  await lastRemove.click();
+  await expect(dialog.getByRole('heading', { name: /tu lista/i })).toBeFocused();
+});
+
+test('custom quantity error is programmatically described by its input', async ({ page }) => {
+  const product = page.locator('[data-product-id="tomato"]');
+  await product.locator('[data-quantity]').selectOption('custom');
+  const input = product.getByLabel(/especifica la medida/i);
+  await product.getByRole('button', { name: /añadir/i }).click();
+
+  const describedBy = await input.getAttribute('aria-describedby');
+  expect(describedBy).toBeTruthy();
+  await expect(page.locator(`#${describedBy}`)).toBeVisible();
 });

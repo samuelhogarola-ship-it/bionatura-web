@@ -27,3 +27,85 @@ test('copy action creates a localized message only after a click', async ({ page
 
   await expect.poll(() => page.evaluate(() => navigator.clipboard.readText())).toContain('Tomates: 1 kg');
 });
+
+test('failed clipboard fallback keeps a selectable manual message and reports failure honestly', async ({ page }) => {
+  await page.clock.install({ time: new Date('2026-07-15T10:00:00+02:00') });
+  await page.goto('/es/catalogo/');
+  await page.evaluate(() => localStorage.clear());
+  await page.reload();
+  await page.evaluate(() => {
+    Object.defineProperty(navigator, 'clipboard', {
+      configurable: true,
+      value: { writeText: () => Promise.reject(new Error('clipboard unavailable')) },
+    });
+    document.execCommand = () => false;
+  });
+
+  await page.locator('[data-product-id="tomato"]').getByRole('button', { name: /añadir/i }).click();
+  await page.getByRole('button', { name: /tu lista/i }).click();
+  await page.getByRole('button', { name: /copiar mensaje/i }).click();
+
+  const manualMessage = page.getByRole('textbox', { name: /copiar mensaje/i });
+  await expect(manualMessage).toBeVisible();
+  await expect(manualMessage).toHaveAttribute('readonly', '');
+  await expect(manualMessage).toHaveValue(/Tomates: 1 kg/);
+  await expect(page.getByRole('dialog')).toContainText(/no se pudo copiar/i);
+  await expect(page.getByRole('dialog')).not.toContainText('Mensaje copiado.');
+});
+
+test('clipboard and fallback exceptions still expose the manual message', async ({ page }) => {
+  await page.clock.install({ time: new Date('2026-07-15T10:00:00+02:00') });
+  await page.goto('/es/catalogo/');
+  await page.evaluate(() => localStorage.clear());
+  await page.reload();
+  await page.evaluate(() => {
+    Object.defineProperty(navigator, 'clipboard', {
+      configurable: true,
+      value: { writeText: () => { throw new Error('clipboard exception'); } },
+    });
+    document.execCommand = () => { throw new Error('fallback exception'); };
+  });
+
+  await page.locator('[data-product-id="tomato"]').getByRole('button', { name: /añadir/i }).click();
+  await page.getByRole('button', { name: /tu lista/i }).click();
+  await page.getByRole('button', { name: /copiar mensaje/i }).click();
+
+  await expect(page.getByRole('textbox', { name: /copiar mensaje/i })).toBeVisible();
+  await expect(page.getByRole('dialog')).toContainText(/no se pudo copiar/i);
+});
+
+test('confirmed fixture uses a native keyboard action to open a wa.me enquiry', async ({ page }) => {
+  await page.clock.install({ time: new Date('2026-07-15T10:00:00+02:00') });
+  await page.goto('/es/catalogo/');
+  await page.evaluate(() => localStorage.clear());
+  await page.reload();
+  await page.locator('[data-product-id="tomato"]').getByRole('button', { name: /añadir/i }).click();
+  await page.getByRole('button', { name: /tu lista/i }).click();
+  await page.evaluate(() => {
+    Object.defineProperty(window, 'open', {
+      configurable: true,
+      value: (url: string | URL | undefined) => {
+        document.body.dataset.openedWhatsappUrl = String(url);
+        return null;
+      },
+    });
+    const action = document.createElement('button');
+    action.type = 'button';
+    action.dataset.whatsappAction = '';
+    action.dataset.whatsappPhone = '+34 611 222 333';
+    action.textContent = 'Consultar fixture';
+    document.querySelector('.whatsapp-action')?.replaceChildren(action);
+  });
+
+  const action = page.getByRole('button', { name: 'Consultar fixture' });
+  await action.focus();
+  await action.press('Enter');
+  await expect(page.locator('body')).toHaveAttribute('data-opened-whatsapp-url', /https:\/\/wa\.me\/34611222333\?text=/);
+});
+
+test('pending contact pages explicitly identify demo mode in every locale', async ({ page }) => {
+  for (const path of ['/es/contacto/', '/en/contact/', '/fi/yhteystiedot/', '/da/kontakt/']) {
+    await page.goto(path);
+    await expect(page.locator('main')).toContainText(/demo/i);
+  }
+});

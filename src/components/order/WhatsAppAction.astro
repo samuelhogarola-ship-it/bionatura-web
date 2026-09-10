@@ -15,15 +15,12 @@ const confirmed = business.whatsapp.status === 'confirmed' && business.whatsapp.
 <div class="whatsapp-action">
   <p class="whatsapp-action__notice">{copy.availabilityNotice}</p>
   {confirmed ? (
-    <a
+    <button
       class="button button--leaf"
+      type="button"
       data-whatsapp-action
       data-whatsapp-phone={business.whatsapp.value}
-      target="_blank"
-      rel="noopener noreferrer"
-      role="link"
-      tabindex="0"
-    >{copy.consultWhatsapp}</a>
+    >{copy.consultWhatsapp}</button>
   ) : (
     <>
       <p class="whatsapp-action__demo"><strong>{copy.pendingContact}.</strong> {copy.demoCopyNotice}</p>

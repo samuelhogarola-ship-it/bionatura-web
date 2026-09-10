@@ -19,6 +19,8 @@ test('September selects autumn and keyboard changes season', async ({ page }) =>
   await page.getByRole('tab', { name: /otoño/i }).press('ArrowRight');
   await expect(page.getByRole('tab', { name: /invierno/i })).toHaveAttribute('aria-selected', 'true');
   await expect(page.getByRole('tabpanel', { name: /invierno/i })).toBeVisible();
+  await expect(page.getByRole('tab', { name: /otoño/i }).getByText(/ahora/i)).toBeVisible();
+  await expect(page.getByRole('tab', { name: /invierno/i }).getByText(/ahora/i)).toBeHidden();
 });
 
 test('catalog has no automatically detectable accessibility violations', async ({ page }) => {

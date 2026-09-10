@@ -13,6 +13,7 @@ interface Props {
 const { locale, product, instanceId } = Astro.props;
 const quantityId = `quantity-${product.id}-${instanceId}`;
 const customId = `custom-quantity-${product.id}-${instanceId}`;
+const customErrorId = `custom-quantity-error-${product.id}-${instanceId}`;
 const labels = {
   g: (value: QuantityOption['value']) => `${value} g`,
   kg: (value: QuantityOption['value']) => `${value} kg`,
@@ -35,7 +36,7 @@ const price = product.price
     {price && (
       <p class="product-card__price">
         <strong>{price}</strong>
-        {product.price?.unitLabel[locale] && <span> / {product.price.unitLabel[locale]}</span>}
+        <span> / {product.price!.unitLabel[locale]}</span>
       </p>
     )}
     <div class="product-card__controls">
@@ -49,8 +50,8 @@ const price = product.price
       {product.allowCustomQuantity && (
         <div class="product-card__custom" data-custom-quantity hidden>
           <label for={customId}>{ui[locale].customQuantityLabel}</label>
-          <input id={customId} type="text" maxlength="40" data-custom-quantity-input />
-          <p data-custom-error hidden>{ui[locale].customQuantityError}</p>
+          <input id={customId} type="text" maxlength="40" aria-describedby={customErrorId} data-custom-quantity-input />
+          <p id={customErrorId} data-custom-error hidden>{ui[locale].customQuantityError}</p>
         </div>
       )}
       <button class="button button--leaf" type="button" data-add-product>{ui[locale].addToList}</button>

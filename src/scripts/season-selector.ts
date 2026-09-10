@@ -11,6 +11,7 @@ for (const selector of document.querySelectorAll<HTMLElement>('[data-season-sele
 
   selector.dataset.enhanced = 'true';
   tablist.setAttribute('role', 'tablist');
+  const madridSeason = currentSeason();
 
   const activate = (season: Season, moveFocus = false) => {
     for (const tab of tabs) {
@@ -18,7 +19,7 @@ for (const selector of document.querySelectorAll<HTMLElement>('[data-season-sele
       tab.setAttribute('role', 'tab');
       tab.setAttribute('aria-selected', String(active));
       tab.tabIndex = active ? 0 : -1;
-      tab.querySelector<HTMLElement>('[data-current-season-label]')!.hidden = !active;
+      tab.querySelector<HTMLElement>('[data-current-season-label]')!.hidden = tab.dataset.seasonTab !== madridSeason;
       if (active && moveFocus) tab.focus();
     }
     for (const panel of panels) {
@@ -44,5 +45,5 @@ for (const selector of document.querySelectorAll<HTMLElement>('[data-season-sele
     });
   }
 
-  activate(currentSeason());
+  activate(madridSeason);
 }

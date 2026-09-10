@@ -11,7 +11,7 @@ export const ui = {
     seasonNavigation: 'Temporadas', currentSeason: 'Ahora', seasonSelection: 'Selección de temporada', regularSelection: 'Durante todo el año', alwaysAvailable: 'Productos habituales',
     unitSingular: 'unidad', unitPlural: 'unidades', oneDozen: '1 docena', dozenPlural: 'docenas', customQuantityLabel: 'Especifica la medida', customQuantityError: 'Escribe una cantidad de hasta 40 caracteres.',
     orderEyebrow: 'Consulta sin compromiso', closeList: 'Cerrar lista', clearQuestion: '¿Seguro que quieres vaciar la lista?', addedToList: 'añadido a la lista', removedFromList: 'eliminado de la lista', listCleared: 'Lista vaciada.',
-    demoCopyNotice: 'Modo demo: copia el mensaje y compártelo cuando dispongas del contacto confirmado.', messageCopied: 'Mensaje copiado.', whatsappAccess: 'WhatsApp y contacto',
+    demoCopyNotice: 'Modo demo: copia el mensaje y compártelo cuando dispongas del contacto confirmado.', messageCopied: 'Mensaje copiado.', copyManually: 'No se pudo copiar automáticamente. Selecciona y copia el mensaje manualmente.', whatsappAccess: 'WhatsApp y contacto',
   },
   en: {
     navHome: 'Home', navCatalog: 'Catalog', navGallery: 'Gallery', navAbout: 'About us', navHow: 'How it works', navContact: 'Contact',
@@ -23,7 +23,7 @@ export const ui = {
     seasonNavigation: 'Seasons', currentSeason: 'Now', seasonSelection: 'Seasonal selection', regularSelection: 'All year round', alwaysAvailable: 'Regular products',
     unitSingular: 'unit', unitPlural: 'units', oneDozen: '1 dozen', dozenPlural: 'dozen', customQuantityLabel: 'Specify another amount', customQuantityError: 'Enter a quantity of up to 40 characters.',
     orderEyebrow: 'No-obligation enquiry', closeList: 'Close list', clearQuestion: 'Are you sure you want to clear the list?', addedToList: 'added to the list', removedFromList: 'removed from the list', listCleared: 'List cleared.',
-    demoCopyNotice: 'Demo mode: copy the message and share it once you have confirmed contact details.', messageCopied: 'Message copied.', whatsappAccess: 'WhatsApp and contact',
+    demoCopyNotice: 'Demo mode: copy the message and share it once you have confirmed contact details.', messageCopied: 'Message copied.', copyManually: 'Automatic copy failed. Select and copy the message manually.', whatsappAccess: 'WhatsApp and contact',
   },
   fi: {
     navHome: 'Etusivu', navCatalog: 'Tuotteet', navGallery: 'Galleria', navAbout: 'Meistä', navHow: 'Näin se toimii', navContact: 'Yhteystiedot',
@@ -35,7 +35,7 @@ export const ui = {
     seasonNavigation: 'Vuodenajat', currentSeason: 'Nyt', seasonSelection: 'Kausivalikoima', regularSelection: 'Ympäri vuoden', alwaysAvailable: 'Vakiotuotteet',
     unitSingular: 'kappale', unitPlural: 'kappaletta', oneDozen: '1 tusina', dozenPlural: 'tusinaa', customQuantityLabel: 'Kirjoita määrä', customQuantityError: 'Kirjoita enintään 40 merkin määrä.',
     orderEyebrow: 'Sitoumukseton kysely', closeList: 'Sulje lista', clearQuestion: 'Haluatko varmasti tyhjentää listan?', addedToList: 'lisätty listalle', removedFromList: 'poistettu listalta', listCleared: 'Lista tyhjennetty.',
-    demoCopyNotice: 'Demotila: kopioi viesti ja jaa se, kun vahvistettu yhteystieto on saatavilla.', messageCopied: 'Viesti kopioitu.', whatsappAccess: 'WhatsApp ja yhteystiedot',
+    demoCopyNotice: 'Demotila: kopioi viesti ja jaa se, kun vahvistettu yhteystieto on saatavilla.', messageCopied: 'Viesti kopioitu.', copyManually: 'Automaattinen kopiointi epäonnistui. Valitse ja kopioi viesti käsin.', whatsappAccess: 'WhatsApp ja yhteystiedot',
   },
   da: {
     navHome: 'Forside', navCatalog: 'Katalog', navGallery: 'Galleri', navAbout: 'Om os', navHow: 'Sådan fungerer det', navContact: 'Kontakt',
@@ -47,6 +47,6 @@ export const ui = {
     seasonNavigation: 'Årstider', currentSeason: 'Nu', seasonSelection: 'Sæsonudvalg', regularSelection: 'Hele året', alwaysAvailable: 'Faste varer',
     unitSingular: 'styk', unitPlural: 'styk', oneDozen: '1 dusin', dozenPlural: 'dusin', customQuantityLabel: 'Skriv mængden', customQuantityError: 'Skriv en mængde på højst 40 tegn.',
     orderEyebrow: 'Uforpligtende forespørgsel', closeList: 'Luk listen', clearQuestion: 'Er du sikker på, at du vil tømme listen?', addedToList: 'føjet til listen', removedFromList: 'fjernet fra listen', listCleared: 'Listen er tømt.',
-    demoCopyNotice: 'Demotilstand: kopiér beskeden, og del den, når du har bekræftede kontaktoplysninger.', messageCopied: 'Beskeden er kopieret.', whatsappAccess: 'WhatsApp og kontakt',
+    demoCopyNotice: 'Demotilstand: kopiér beskeden, og del den, når du har bekræftede kontaktoplysninger.', messageCopied: 'Beskeden er kopieret.', copyManually: 'Automatisk kopiering mislykkedes. Markér og kopiér beskeden manuelt.', whatsappAccess: 'WhatsApp og kontakt',
   },
 } as const satisfies Record<Locale, Record<string, string>>;

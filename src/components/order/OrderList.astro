@@ -16,7 +16,7 @@ const copy = ui[locale];
     <header class="order-dialog__header">
       <div>
         <p>{copy.orderEyebrow}</p>
-        <h2 id="order-dialog-title">{copy.yourList}</h2>
+        <h2 id="order-dialog-title" tabindex="-1" data-order-heading>{copy.yourList}</h2>
       </div>
       <button class="order-dialog__close" type="button" data-order-close aria-label={copy.closeList}>×</button>
     </header>
@@ -24,6 +24,7 @@ const copy = ui[locale];
     <div class="order-dialog__content">
       <p data-order-empty>{copy.emptyList}</p>
       <ul class="order-dialog__lines" data-order-lines></ul>
+      <p class="sr-only" aria-live="polite" aria-atomic="true" data-order-announcement="dialog"></p>
     </div>
 
     <div class="order-dialog__footer">
@@ -40,4 +41,4 @@ const copy = ui[locale];
   </div>
 </dialog>
 
-<p class="sr-only" aria-live="polite" aria-atomic="true" data-order-announcement></p>
+<p class="sr-only" aria-live="polite" aria-atomic="true" data-order-announcement="page"></p>

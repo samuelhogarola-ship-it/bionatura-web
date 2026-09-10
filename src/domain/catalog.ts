@@ -73,5 +73,12 @@ export function assertValidCatalog(catalog: Product[]): void {
     if (product.price && (!Number.isFinite(product.price.amount) || product.price.amount <= 0)) {
       throw new Error(`price must be positive in product ${product.id}`);
     }
+    if (product.price) {
+      for (const locale of locales) {
+        if (typeof product.price.unitLabel[locale] !== 'string' || product.price.unitLabel[locale]?.trim() === '') {
+          throw new Error(`price unitLabel translation missing for ${locale} in product ${product.id}`);
+        }
+      }
+    }
   }
 }
