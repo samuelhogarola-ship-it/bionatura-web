@@ -9,8 +9,14 @@ const pendingField = (): ValidatedField<string> => ({ status: 'pending', value: 
 
 export const business = {
   name: 'Bionatura',
+  legalName: 'Bionatura del Sur S.L.',
+  taxId: 'B92371301',
+  registeredAddress: {
+    status: 'confirmed',
+    value: { street: 'Calle Tórtolas, 11', postalCode: '29640', locality: 'Fuengirola', country: 'ES' },
+  },
   whatsapp: pendingField(),
   phone: pendingField(),
   email: pendingField(),
   pickup: pendingField(),
-} satisfies Record<string, string | ValidatedField<string>>;
+};

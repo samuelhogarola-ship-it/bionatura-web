@@ -1,0 +1,4 @@
+---
+import {pathFor,type Locale,type PageKey} from '@/i18n/config'; const {locale,page,current}=Astro.props as {locale:Locale;page:PageKey;current:string}; const home={es:'Inicio',en:'Home',fi:'Etusivu',da:'Forside'}[locale];
+---
+{page!=='home'&&<nav class="breadcrumbs page-shell" aria-label="Breadcrumb"><ol><li><a href={pathFor(locale,'home')}>{home}</a></li><li aria-current="page">{current}</li></ol></nav>}

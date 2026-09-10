@@ -1,5 +1,5 @@
 ---
-import PageScaffold from '@/components/pages/PageScaffold.astro';
+import HomePage from '@/components/pages/HomePage.astro';
 import SiteLayout from '@/layouts/SiteLayout.astro';
 import { LOCALES, type Locale } from '@/i18n/config';
 import { home } from '@/i18n/pages/home';
@@ -13,5 +13,5 @@ const copy = home[locale];
 ---
 
 <SiteLayout locale={locale} page="home" title={copy.title} description={copy.description}>
-  <PageScaffold copy={copy} locale={locale} />
+  <HomePage {locale} />
 </SiteLayout>

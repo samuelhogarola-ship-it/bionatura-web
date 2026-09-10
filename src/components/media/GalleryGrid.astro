@@ -1,0 +1,30 @@
+---
+import ResponsiveImage from './ResponsiveImage.astro';
+import Lightbox from './Lightbox.astro';
+import { mediaForGroup, mediaGroupCopy, mediaGroups } from '@/data/media';
+import type { Locale } from '@/i18n/config';
+const { locale, limit } = Astro.props as { locale: Locale; limit?: number };
+const labels = { es: 'Ampliar', en: 'Enlarge', fi: 'Suurenna', da: 'Forstør' }[locale];
+let shown = 0;
+---
+<div class="gallery-grid">
+  {mediaGroups.map((group) => {
+    const remaining = limit === undefined ? Infinity : limit - shown;
+    const items = mediaForGroup(group).slice(0, Math.max(0, remaining));
+    shown += items.length;
+    if (!items.length) return null;
+    const groupCopy = mediaGroupCopy[locale][group];
+    return <section class="gallery-group" aria-labelledby={`gallery-${group}`}>
+      <header><h2 id={`gallery-${group}`}>{groupCopy.title}</h2><p>{groupCopy.intro}</p></header>
+      <div class="gallery-group__images">
+        {items.map((item) => <figure>
+          <button type="button" data-gallery-open data-caption={item.caption[locale]} aria-label={`${labels}: ${item.alt[locale]}`}>
+            <ResponsiveImage src={item.asset} alt={item.alt[locale]} />
+          </button>
+          <figcaption>{item.caption[locale]}</figcaption>
+        </figure>)}
+      </div>
+    </section>;
+  })}
+</div>
+<Lightbox {locale} />

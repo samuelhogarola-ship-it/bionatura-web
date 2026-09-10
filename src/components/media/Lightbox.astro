@@ -1,0 +1,38 @@
+---
+import type { Locale } from '@/i18n/config';
+const { locale } = Astro.props as { locale: Locale };
+const copy = {
+  es: { close: 'Cerrar', prev: 'Imagen anterior', next: 'Imagen siguiente' },
+  en: { close: 'Close', prev: 'Previous image', next: 'Next image' },
+  fi: { close: 'Sulje', prev: 'Edellinen kuva', next: 'Seuraava kuva' },
+  da: { close: 'Luk', prev: 'Forrige billede', next: 'Næste billede' },
+}[locale];
+---
+<dialog class="lightbox" data-lightbox aria-label="Bionatura">
+  <button type="button" data-lightbox-close aria-label={copy.close}>×</button>
+  <button type="button" data-lightbox-prev aria-label={copy.prev}>←</button>
+  <figure><img data-lightbox-image src="" alt="" /><figcaption data-lightbox-caption></figcaption></figure>
+  <button type="button" data-lightbox-next aria-label={copy.next}>→</button>
+</dialog>
+<script>
+  const dialog = document.querySelector<HTMLDialogElement>('[data-lightbox]');
+  const triggers = [...document.querySelectorAll<HTMLButtonElement>('[data-gallery-open]')];
+  const image = dialog?.querySelector<HTMLImageElement>('[data-lightbox-image]');
+  const caption = dialog?.querySelector<HTMLElement>('[data-lightbox-caption]');
+  let index = 0;
+  let opener: HTMLButtonElement | null = null;
+  const show = (next: number) => {
+    if (!dialog || !image || !caption || !triggers.length) return;
+    index = (next + triggers.length) % triggers.length;
+    const trigger = triggers[index];
+    const thumb = trigger.querySelector('img');
+    image.src = thumb?.currentSrc || thumb?.src || '';
+    image.alt = thumb?.alt || '';
+    caption.textContent = trigger.dataset.caption || '';
+  };
+  triggers.forEach((trigger, itemIndex) => trigger.addEventListener('click', () => { opener = trigger; show(itemIndex); dialog?.showModal(); }));
+  dialog?.querySelector('[data-lightbox-close]')?.addEventListener('click', () => dialog.close());
+  dialog?.querySelector('[data-lightbox-prev]')?.addEventListener('click', () => show(index - 1));
+  dialog?.querySelector('[data-lightbox-next]')?.addEventListener('click', () => show(index + 1));
+  dialog?.addEventListener('close', () => opener?.focus());
+</script>

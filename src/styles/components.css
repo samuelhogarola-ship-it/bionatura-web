@@ -699,6 +699,53 @@
   transform: rotate(22deg);
 }
 
+.eyebrow { color: var(--color-leaf-dark); font-size: var(--text-xs); font-weight: 800; letter-spacing: .1em; text-transform: uppercase; }
+.breadcrumbs { padding-block: var(--space-3); }
+.breadcrumbs ol { display:flex; margin:0; padding:0; gap:.5rem; list-style:none; font-size:var(--text-xs); }
+.breadcrumbs li+li::before { content:'/ '; color:var(--color-ink-soft); }
+.home-hero { position:relative; min-height:clamp(34rem,72vh,52rem); display:grid; align-items:end; overflow:hidden; background:var(--color-soil-deep); }
+.home-hero picture,.home-hero picture img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }
+.home-hero::after { content:''; position:absolute; inset:0; background:linear-gradient(0deg,rgb(22 31 22/.88),rgb(22 31 22/.05) 70%); }
+.home-hero__copy { position:relative; z-index:1; padding-block:var(--space-8) var(--space-7); color:var(--color-paper); }
+.home-hero__copy h1 { max-width:13ch; color:inherit; }
+.home-hero__copy>p:nth-of-type(2) { max-width:34rem; font-family:var(--font-display); font-size:var(--text-lg); }
+.home-hero__copy>div { display:flex; flex-wrap:wrap; gap:.75rem; }
+.home-hero__copy .button:not(.button--leaf) { color:var(--color-paper); }
+.home-section,.home-story,.home-process,.home-final { padding-block:var(--space-8); }
+.home-section>p,.home-story p,.home-contact p,.home-final p { max-width:45rem; }
+.home-featured>div,.steps,.pending-fields { display:grid; gap:var(--space-5); }
+.home-featured article { padding-block:var(--space-5); border-top:1px solid var(--color-line); }
+.home-featured article span,.steps li>span { color:var(--color-leaf-dark); font-family:var(--font-display); font-size:var(--text-xl); }
+.home-process,.home-final { background:var(--color-soil-deep); color:var(--color-paper); }
+.home-process h2,.home-final h2 { color:var(--color-paper); }
+.home-process ol,.steps { margin:var(--space-6) 0 0; padding:0; list-style:none; }
+.home-process li { padding:var(--space-5) 0; border-top:1px solid rgb(255 255 255/.22); font-family:var(--font-display); font-size:var(--text-lg); }
+.home-process li span { display:inline-grid; width:2.5rem; height:2.5rem; margin-right:1rem; place-items:center; border:1px solid currentColor; border-radius:50%; }
+.home-story { background:var(--color-sage); }
+.about-photos,.gallery-group__images { display:grid; gap:var(--space-4); }
+.about-photos figure,.gallery-group figure { margin:0; }
+.about-photos img,.gallery-group img { width:100%; aspect-ratio:4/3; object-fit:cover; }
+.about-photos figcaption,.gallery-group figcaption { margin-top:.5rem; color:var(--color-ink-soft); font-size:var(--text-xs); }
+.steps li { padding:var(--space-5); border:1px solid var(--color-line); background:var(--color-paper); }
+.after { margin-block:var(--space-7); padding:var(--space-6); background:var(--color-sage); }
+.gallery-page { padding-block:var(--space-7); }
+.gallery-group { padding-block:var(--space-7); border-top:1px solid var(--color-line); }
+.gallery-group header { max-width:42rem; }
+.gallery-group button { width:100%; padding:0; border:0; background:none; cursor:zoom-in; }
+.gallery-group:nth-child(odd) figure:first-child img { aspect-ratio:3/4; }
+.gallery-video { padding-block:var(--space-7); }
+.video-pending { padding:var(--space-5); border:1px dashed var(--color-line); }
+.lightbox { width:min(92vw,70rem); max-width:none; padding:var(--space-4); border:0; background:var(--color-soil-deep); color:var(--color-paper); }
+.lightbox::backdrop { background:rgb(0 0 0/.82); }
+.lightbox[open] { display:grid; grid-template-columns:auto 1fr auto; align-items:center; gap:var(--space-3); }
+.lightbox figure { margin:0; }
+.lightbox img { max-height:75vh; margin:auto; }
+.lightbox button { min-width:2.75rem; min-height:2.75rem; border:1px solid currentColor; border-radius:50%; background:transparent; color:inherit; cursor:pointer; }
+.lightbox [data-lightbox-close] { position:absolute; top:.75rem; right:.75rem; }
+.legal-page section { margin-block:var(--space-7); }
+.not-found { width:min(100% - 2rem,45rem); margin:10vh auto; }
+@media(min-width:48rem){.home-featured>div,.steps,.pending-fields{grid-template-columns:repeat(3,1fr)}.about-photos,.gallery-group__images{grid-template-columns:repeat(2,1fr)}.gallery-group__images figure:nth-child(3n){grid-column:span 2}.pending-fields{grid-template-columns:repeat(2,1fr)}}
+
 .editorial-page__eyebrow {
   margin-bottom: var(--space-5);
   color: var(--color-leaf-dark);

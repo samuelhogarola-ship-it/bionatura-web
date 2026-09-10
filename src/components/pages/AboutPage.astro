@@ -1,0 +1,6 @@
+---
+import ResponsiveImage from '@/components/media/ResponsiveImage.astro'; import { mediaItems } from '@/data/media'; import { pathFor, type Locale } from '@/i18n/config'; import { about } from '@/i18n/pages/about';
+const {locale}=Astro.props as {locale:Locale}; const copy=about[locale]; const photos=mediaItems.filter((i)=>['grower-greenhouse','market-stall-team'].includes(i.id));
+const extra={es:['Persona y proyecto','El huerto','Filosofía','Cercanía'],en:['People and project','The garden','Approach','Closeness'],fi:['Ihmiset ja projekti','Kasvimaa','Ajatus','Läheisyys'],da:['Mennesker og projekt','Køkkenhaven','Tilgang','Nærhed']}[locale];
+---
+<article class="editorial-page"><div class="page-shell"><p class="eyebrow">Bionatura · Fuengirola</p><h1>{copy.h1}</h1><p class="editorial-page__intro">{copy.intro}</p><div class="about-photos">{photos.map((item)=><figure><ResponsiveImage src={item.asset} alt={item.alt[locale]} /><figcaption>{item.caption[locale]}</figcaption></figure>)}</div><div class="editorial-page__sections">{extra.map((title,index)=><section><h2>{title}</h2><p>{index===1?copy.sections[0].body:copy.intro}</p></section>)}</div><a class="button button--leaf" href={pathFor(locale,'gallery')}>{locale==='es'?'Ver galería':locale==='en'?'View gallery':locale==='fi'?'Katso galleria':'Se galleri'}</a></div></article>

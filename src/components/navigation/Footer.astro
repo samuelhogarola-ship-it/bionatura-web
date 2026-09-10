@@ -8,10 +8,10 @@ interface Props {
 
 const { locale } = Astro.props;
 const copy: Record<Locale, { note: string; legal: string; privacy: string; cookies: string; nav: string }> = {
-  es: { note: 'Alimentos ecológicos de temporada, cultivados cerca de casa.', legal: 'Aviso legal', privacy: 'Privacidad', cookies: 'Cookies', nav: 'Información legal' },
-  en: { note: 'Seasonal organic food, grown close to home.', legal: 'Legal notice', privacy: 'Privacy', cookies: 'Cookies', nav: 'Legal information' },
-  fi: { note: 'Luomukauden tuotteita läheltä.', legal: 'Oikeudellinen huomautus', privacy: 'Tietosuoja', cookies: 'Evästeet', nav: 'Oikeudelliset tiedot' },
-  da: { note: 'Økologiske sæsonvarer dyrket tæt på.', legal: 'Juridisk meddelelse', privacy: 'Privatliv', cookies: 'Cookies', nav: 'Juridisk information' },
+  es: { note: 'Productos de temporada y una consulta sencilla desde Fuengirola.', legal: 'Aviso legal', privacy: 'Privacidad', cookies: 'Cookies', nav: 'Información legal' },
+  en: { note: 'Seasonal products and a simple enquiry from Fuengirola.', legal: 'Legal notice', privacy: 'Privacy', cookies: 'Cookies', nav: 'Legal information' },
+  fi: { note: 'Kausituotteita ja helppo tapa kysyä Fuengirolassa.', legal: 'Oikeudellinen huomautus', privacy: 'Tietosuoja', cookies: 'Evästeet', nav: 'Oikeudelliset tiedot' },
+  da: { note: 'Sæsonvarer og en enkel forespørgsel fra Fuengirola.', legal: 'Juridisk meddelelse', privacy: 'Privatliv', cookies: 'Cookies', nav: 'Juridisk information' },
 };
 const legalLinks: Array<[PageKey, string]> = [
   ['legalNotice', copy[locale].legal],

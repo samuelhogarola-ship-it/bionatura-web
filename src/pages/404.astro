@@ -1,0 +1,4 @@
+---
+const links=[['Español','/es/'],['English','/en/'],['Suomi','/fi/'],['Dansk','/da/']];
+---
+<!doctype html><html lang="es"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width"/><meta name="robots" content="noindex"/><title>Página no encontrada | Bionatura</title></head><body><main class="not-found"><p>Bionatura · Fuengirola</p><h1>Página no encontrada</h1><p>Elige un idioma para volver al inicio.</p><nav aria-label="Idiomas"><ul>{links.map(([label,href])=><li><a href={href}>{label}</a></li>)}</ul></nav></main></body></html>

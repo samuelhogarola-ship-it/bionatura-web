@@ -4,6 +4,8 @@ import Footer from '@/components/navigation/Footer.astro';
 import SeoHead from '@/components/SeoHead.astro';
 import OrderList from '@/components/order/OrderList.astro';
 import FloatingWhatsApp from '@/components/order/FloatingWhatsApp.astro';
+import Breadcrumbs from '@/components/Breadcrumbs.astro';
+import StructuredData from '@/components/StructuredData.astro';
 import '@/styles/global.css';
 import '@/styles/components.css';
 import type { Locale, PageKey } from '@/i18n/config';
@@ -17,6 +19,7 @@ interface Props {
 }
 
 const { locale, page, title, description, image } = Astro.props;
+const current = title.split('|')[0].trim();
 const skipLabel: Record<Locale, string> = {
   es: 'Saltar al contenido',
   en: 'Skip to content',
@@ -29,11 +32,13 @@ const skipLabel: Record<Locale, string> = {
 <html lang={locale}>
   <head>
     <SeoHead {locale} {page} {title} {description} {image} />
+    <StructuredData {locale} {page} {current} />
     <slot name="head" />
   </head>
   <body>
     <a class="skip-link" href="#contenido">{skipLabel[locale]}</a>
     <Header {locale} {page} />
+    <Breadcrumbs {locale} {page} {current} />
     <main id="contenido" tabindex="-1">
       <slot />
     </main>

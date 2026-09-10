@@ -1,0 +1,4 @@
+---
+import GalleryGrid from '@/components/media/GalleryGrid.astro'; import DeferredVideo from '@/components/media/DeferredVideo.astro'; import type {Locale} from '@/i18n/config'; import {gallery} from '@/i18n/pages/gallery'; const {locale}=Astro.props as {locale:Locale}; const copy=gallery[locale];
+---
+<article class="gallery-page"><header class="page-shell"><p class="eyebrow">Bionatura · Fuengirola</p><h1>{copy.h1}</h1><p class="editorial-page__intro">{copy.intro}</p></header><div class="page-shell"><GalleryGrid {locale}/><section class="gallery-video"><h2>{locale==='es'?'Vídeo':locale==='en'?'Video':locale==='fi'?'Video':'Video'}</h2><DeferredVideo {locale}/></section></div></article>
