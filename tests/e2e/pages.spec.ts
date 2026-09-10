@@ -16,6 +16,7 @@ test('Spanish home explains offer, place and process above the fold', async ({ p
   expect(heroQuality.currentSrc).toContain('garden-mixed-leaf-rows-hero-2k');
   expect(heroQuality.naturalWidth).toBeGreaterThanOrEqual(heroQuality.viewportWidth);
   await expect(page.locator('[data-bionatura-mascot] img')).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Una selección para empezar' })).toHaveCount(0);
   await expect(page.locator('[data-bionatura-mascot]')).toContainText('¿Preparamos tu cesta?');
   const mascotWidth = await page.locator('[data-bionatura-mascot]').evaluate((element) => element.getBoundingClientRect().width);
   expect(mascotWidth).toBeGreaterThanOrEqual(300);
