@@ -10,6 +10,12 @@ const { locale } = Astro.props;
 ---
 
 <button class="order-count" type="button" data-order-open>
+  <span class="order-count__visual" aria-hidden="true">
+    <svg viewBox="0 0 32 32" width="32" height="32" fill="none">
+      <path d="M5 8h3l2.2 13.2a2 2 0 0 0 2 1.7h10.7a2 2 0 0 0 1.9-1.5L27 12H9" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" />
+      <circle cx="13" cy="26" r="1.6" fill="currentColor" /><circle cx="23" cy="26" r="1.6" fill="currentColor" />
+    </svg>
+    <span class="order-count__value" data-order-count data-order-badge data-testid="order-count">0</span>
+  </span>
   <span class="order-count__label">{ui[locale].yourList}</span>
-  <span class="order-count__value" data-order-count data-testid="order-count">0</span>
 </button>

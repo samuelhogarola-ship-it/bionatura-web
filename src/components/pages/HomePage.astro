@@ -16,6 +16,12 @@ const c = {
   da: { season:'Sæsonen lige nu', seasonBody:'Udvalget skifter gennem året. Kataloget er vejledende, og hver tilgængelighed bekræftes.', featured:'Et udvalg til at begynde', process:'Fra katalog til din liste', steps:['Se varerne','Lav en uforpligtende liste','Bekræft tilgængelighed og aftal afhentning'], usual:'Faste varer', story:'Et lokalt projekt', storyBody:'Bionatura deler varer, billeder fra haven og en enkel måde at forberede forespørgsler fra Fuengirola.', gallery:'Fra haven', contact:'Vi taler sammen før afhentning', contactBody:'Kontaktoplysninger, åbningstider og afhentningssted afventer bekræftelse. Afhentning aftales, efter tilgængeligheden er kontrolleret.', order:'Forbered din bestillingsliste', catalog:'Se katalog', notice:'Varer, mængder og tilgængelighed er vejledende, indtil de bekræftes.' },
 }[locale];
 const hero = mediaItems.find((item) => item.id === 'mixed-leaf-rows')!;
+const mascotGreeting = {
+  es: { hello: '¡Hola!', message: '¿Preparamos tu cesta?' },
+  en: { hello: 'Hello!', message: 'Shall we prepare your basket?' },
+  fi: { hello: 'Hei!', message: 'Kootaanko ostoskori?' },
+  da: { hello: 'Hej!', message: 'Skal vi gøre din kurv klar?' },
+}[locale];
 ---
 <article class="home-page">
   <section class="home-hero">
@@ -29,5 +35,5 @@ const hero = mediaItems.find((item) => item.id === 'mixed-leaf-rows')!;
   <section class="home-story"><div class="page-shell"><h2>{c.story}</h2><p>{c.storyBody}</p></div></section>
   <section class="home-section page-shell"><h2>{c.gallery}</h2><GalleryGrid {locale} limit={4} /></section>
   <section class="home-section home-contact page-shell"><h2>{c.contact}</h2><p>{c.contactBody}</p></section>
-  <section class="home-final"><div class="page-shell home-final__layout"><div><h2>{c.order}</h2><a class="button button--leaf" href={pathFor(locale,'catalog')}>{c.catalog}</a><p>{c.notice}</p></div><figure data-bionatura-mascot><ResponsiveImage src={mascotAsset} alt="Mascota lechuga de Bionatura" sizes="(min-width: 48rem) 15rem, 10rem" /></figure></div></section>
+  <section class="home-final"><div class="page-shell home-final__layout"><div><h2>{c.order}</h2><a class="button button--leaf" href={pathFor(locale,'catalog')}>{c.catalog}</a><p>{c.notice}</p></div><figure data-bionatura-mascot><figcaption><strong>{mascotGreeting.hello}</strong> {mascotGreeting.message}</figcaption><div><ResponsiveImage src={mascotAsset} alt="Mascota lechuga de Bionatura" sizes="(min-width: 48rem) 28rem, 16rem" /></div></figure></div></section>
 </article>

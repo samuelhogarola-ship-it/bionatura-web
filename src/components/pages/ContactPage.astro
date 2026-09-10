@@ -2,6 +2,7 @@
 import { business } from '@/data/business';
 import { pathFor, type Locale } from '@/i18n/config';
 import { contact } from '@/i18n/pages/contact';
+import Mascot from '@/components/brand/Mascot.astro';
 
 const { locale } = Astro.props as { locale: Locale };
 const copy = contact[locale];
@@ -23,8 +24,10 @@ const whatsappHref = `https://wa.me/${business.whatsapp.value?.replace(/\D/g, ''
 
 <article class="editorial-page contact-page">
   <div class="page-shell">
-    <h1>{copy.h1}</h1>
-    <p class="editorial-page__intro">{copy.intro}</p>
+    <div class="contact-page__intro-grid">
+      <div><h1>{copy.h1}</h1><p class="editorial-page__intro">{copy.intro}</p></div>
+      <Mascot {locale} context="contact" />
+    </div>
     <div class="pending-fields contact-fields">
       <section>
         <h2>{labels.phone}</h2>

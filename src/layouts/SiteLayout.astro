@@ -4,6 +4,7 @@ import Footer from '@/components/navigation/Footer.astro';
 import SeoHead from '@/components/SeoHead.astro';
 import OrderList from '@/components/order/OrderList.astro';
 import FloatingWhatsApp from '@/components/order/FloatingWhatsApp.astro';
+import MascotWelcome from '@/components/brand/MascotWelcome.astro';
 import Breadcrumbs from '@/components/Breadcrumbs.astro';
 import StructuredData from '@/components/StructuredData.astro';
 import '@/styles/global.css';
@@ -43,6 +44,7 @@ const skipLabel: Record<Locale, string> = {
       <slot />
     </main>
     <OrderList {locale} />
+    <MascotWelcome {locale} />
     <Footer {locale} />
     <FloatingWhatsApp {locale} />
     <script src="../scripts/order-controller.ts"></script>

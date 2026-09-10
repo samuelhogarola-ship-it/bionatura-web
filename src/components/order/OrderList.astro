@@ -2,6 +2,7 @@
 import type { Locale } from '@/i18n/config';
 import { ui } from '@/i18n/ui';
 import WhatsAppAction from './WhatsAppAction.astro';
+import Mascot from '@/components/brand/Mascot.astro';
 
 interface Props {
   locale: Locale;
@@ -22,7 +23,10 @@ const copy = ui[locale];
     </header>
 
     <div class="order-dialog__content">
-      <p data-order-empty>{copy.emptyList}</p>
+      <div class="order-dialog__empty" data-order-empty-state>
+        <Mascot {locale} context="basket" />
+        <p data-order-empty>{copy.emptyList}</p>
+      </div>
       <ul class="order-dialog__lines" data-order-lines></ul>
       <p class="sr-only" aria-live="polite" aria-atomic="true" data-order-announcement="dialog"></p>
     </div>

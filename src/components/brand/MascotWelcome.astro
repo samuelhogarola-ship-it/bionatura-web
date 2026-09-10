@@ -1,0 +1,38 @@
+---
+import mascotAsset from '@/assets/brand/bionatura-mascot-lettuce.png';
+import ResponsiveImage from '@/components/media/ResponsiveImage.astro';
+import type { Locale } from '@/i18n/config';
+
+const { locale } = Astro.props as { locale: Locale };
+const copy = {
+  es: { greeting: '¡Hola!', message: 'Soy la lechuguita de Bionatura. ¿Preparamos tu cesta?', close: 'Cerrar saludo' },
+  en: { greeting: 'Hello!', message: 'I am Bionatura’s little lettuce. Shall we prepare your basket?', close: 'Close greeting' },
+  fi: { greeting: 'Hei!', message: 'Olen Bionaturan pieni salaatti. Kootaanko ostoskori?', close: 'Sulje tervehdys' },
+  da: { greeting: 'Hej!', message: 'Jeg er Bionaturas lille salat. Skal vi gøre din kurv klar?', close: 'Luk hilsen' },
+}[locale];
+---
+
+<aside class="mascot-welcome" data-mascot-welcome hidden aria-label={copy.greeting}>
+  <ResponsiveImage src={mascotAsset} alt="" sizes="6rem" />
+  <div>
+    <strong>{copy.greeting}</strong>
+    <p>{copy.message}</p>
+  </div>
+  <button type="button" data-mascot-welcome-close aria-label={copy.close}>×</button>
+</aside>
+
+<script>
+  const storageKey = 'bionatura.mascot-welcome.seen';
+  const welcome = document.querySelector<HTMLElement>('[data-mascot-welcome]');
+  if (welcome) {
+    try {
+      welcome.hidden = sessionStorage.getItem(storageKey) === '1';
+    } catch {
+      welcome.hidden = false;
+    }
+    welcome.querySelector('[data-mascot-welcome-close]')?.addEventListener('click', () => {
+      welcome.hidden = true;
+      try { sessionStorage.setItem(storageKey, '1'); } catch { /* The greeting can still be dismissed. */ }
+    });
+  }
+</script>

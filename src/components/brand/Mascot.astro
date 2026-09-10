@@ -1,0 +1,27 @@
+---
+import mascotAsset from '@/assets/brand/bionatura-mascot-lettuce.png';
+import ResponsiveImage from '@/components/media/ResponsiveImage.astro';
+import type { Locale } from '@/i18n/config';
+
+interface Props {
+  locale: Locale;
+  context: 'catalog' | 'contact' | 'basket';
+  message?: string;
+}
+
+const { locale, context, message } = Astro.props;
+const priority = context === 'catalog' || context === 'contact';
+const alt = {
+  es: 'Mascota lechuga de Bionatura',
+  en: 'Bionatura lettuce mascot',
+  fi: 'Bionaturan salaattimaskotti',
+  da: 'Bionaturas salatmaskot',
+}[locale];
+---
+
+<figure class:list={['mascot', `mascot--${context}`]} data-mascot-context={context}>
+  <div class="mascot__shape">
+    <ResponsiveImage src={mascotAsset} {alt} sizes="(min-width: 48rem) 12rem, 8rem" {priority} />
+  </div>
+  {message && <figcaption>{message}</figcaption>}
+</figure>

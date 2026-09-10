@@ -16,6 +16,33 @@ test('Spanish home explains offer, place and process above the fold', async ({ p
   expect(heroQuality.currentSrc).toContain('garden-mixed-leaf-rows-hero-2k');
   expect(heroQuality.naturalWidth).toBeGreaterThanOrEqual(heroQuality.viewportWidth);
   await expect(page.locator('[data-bionatura-mascot] img')).toBeVisible();
+  await expect(page.locator('[data-bionatura-mascot]')).toContainText('¿Preparamos tu cesta?');
+  const mascotWidth = await page.locator('[data-bionatura-mascot]').evaluate((element) => element.getBoundingClientRect().width);
+  expect(mascotWidth).toBeGreaterThanOrEqual(300);
+});
+
+test('mascot welcomes once per browser session without blocking the page', async ({ page }) => {
+  await page.goto('/es/');
+
+  const welcome = page.locator('[data-mascot-welcome]');
+  await expect(welcome).toBeVisible();
+  await expect(welcome).toContainText('¡Hola!');
+  await expect(page.getByRole('link', { name: /ver catálogo/i }).first()).toBeVisible();
+  await welcome.getByRole('button', { name: /cerrar saludo/i }).click();
+  await expect(welcome).toBeHidden();
+
+  await page.reload();
+  await expect(welcome).toBeHidden();
+});
+
+test('mascot guides visitors in catalog and contact', async ({ page }) => {
+  await page.goto('/es/catalogo/');
+  const catalogMascot = page.locator('[data-mascot-context="catalog"] img');
+  await expect(catalogMascot).toBeVisible();
+  await expect(catalogMascot).toHaveAttribute('loading', 'eager');
+
+  await page.goto('/es/contacto/');
+  await expect(page.locator('[data-mascot-context="contact"] img')).toBeVisible();
 });
 
 test('the localized narrative pages expose their complete core content', async ({ page }) => {

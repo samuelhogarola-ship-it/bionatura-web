@@ -14,6 +14,7 @@ const validProductIds = new Set(productById.keys());
 const dialog = document.querySelector<HTMLDialogElement>('[data-order-dialog]');
 const linesElement = document.querySelector<HTMLUListElement>('[data-order-lines]');
 const emptyElement = document.querySelector<HTMLElement>('[data-order-empty]');
+const emptyStateElement = document.querySelector<HTMLElement>('[data-order-empty-state]');
 const pageAnnouncement = document.querySelector<HTMLElement>('[data-order-announcement="page"]');
 const dialogAnnouncement = document.querySelector<HTMLElement>('[data-order-announcement="dialog"]');
 const clearButton = document.querySelector<HTMLButtonElement>('[data-order-clear]');
@@ -53,6 +54,7 @@ function render() {
 
   linesElement.replaceChildren();
   emptyElement.hidden = state.lines.length > 0;
+  if (emptyStateElement) emptyStateElement.hidden = state.lines.length > 0;
   linesElement.hidden = state.lines.length === 0;
   clearButton?.toggleAttribute('disabled', state.lines.length === 0);
   for (const action of document.querySelectorAll<HTMLButtonElement | HTMLAnchorElement>('[data-copy-order-message], [data-whatsapp-action]')) {

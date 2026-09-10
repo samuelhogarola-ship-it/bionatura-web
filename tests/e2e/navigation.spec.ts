@@ -45,6 +45,9 @@ test.describe('desktop navigation', () => {
     await expect(page.locator('.desktop-navigation')).toBeVisible();
     await expect(page.locator('[data-menu-trigger]')).toBeHidden();
     await expect(page.getByRole('link', { name: /cómo funciona/i })).toHaveCount(0);
+    const basket = page.getByRole('button', { name: /tu cesta/i });
+    await expect(basket.locator('svg')).toBeVisible();
+    await expect(basket.locator('[data-order-badge]')).toHaveText('0');
   });
 
   test('closing breakpoint clears mobile menu state', async ({ page }) => {

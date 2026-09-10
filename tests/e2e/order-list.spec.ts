@@ -22,6 +22,12 @@ test('adds, edits, persists and removes a product', async ({ page }) => {
   await expect(page.getByTestId('order-count')).toHaveText('0');
 });
 
+test('empty basket uses the mascot as a guide', async ({ page }) => {
+  await page.getByRole('button', { name: /tu cesta/i }).click();
+
+  await expect(page.getByRole('dialog').locator('[data-mascot-context="basket"] img')).toBeVisible();
+});
+
 test('validates and stores a custom quantity', async ({ page }) => {
   const product = page.locator('[data-product-id="tomato"]');
   await product.locator('[data-quantity]').selectOption('custom');

@@ -7,6 +7,7 @@ import type { Season } from '@/domain/catalog';
 import type { Locale } from '@/i18n/config';
 import { pages } from '@/i18n/pages';
 import { ui } from '@/i18n/ui';
+import Mascot from '@/components/brand/Mascot.astro';
 
 interface Props {
   locale: Locale;
@@ -19,10 +20,13 @@ const seasons: Season[] = ['spring', 'summer', 'autumn', 'winter'];
 
 <article class="catalog-page" data-season-selector>
   <header class="catalog-page__hero page-shell">
-    <p class="catalog-page__eyebrow">Bionatura · Fuengirola</p>
-    <h1>{copy.h1}</h1>
-    <p class="catalog-page__intro">{copy.intro}</p>
-    <p class="catalog-page__notice">{ui[locale].availabilityNotice}</p>
+    <div>
+      <p class="catalog-page__eyebrow">Bionatura · Fuengirola</p>
+      <h1>{copy.h1}</h1>
+      <p class="catalog-page__intro">{copy.intro}</p>
+      <p class="catalog-page__notice">{ui[locale].availabilityNotice}</p>
+    </div>
+    <Mascot {locale} context="catalog" />
   </header>
 
   <div class="page-shell">
