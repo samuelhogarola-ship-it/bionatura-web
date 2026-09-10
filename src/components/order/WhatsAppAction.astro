@@ -1,0 +1,34 @@
+---
+import { business } from '@/data/business';
+import type { Locale } from '@/i18n/config';
+import { ui } from '@/i18n/ui';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const copy = ui[locale];
+const confirmed = business.whatsapp.status === 'confirmed' && business.whatsapp.value !== null;
+---
+
+<div class="whatsapp-action">
+  <p class="whatsapp-action__notice">{copy.availabilityNotice}</p>
+  {confirmed ? (
+    <a
+      class="button button--leaf"
+      data-whatsapp-action
+      data-whatsapp-phone={business.whatsapp.value}
+      target="_blank"
+      rel="noopener noreferrer"
+      role="link"
+      tabindex="0"
+    >{copy.consultWhatsapp}</a>
+  ) : (
+    <>
+      <p class="whatsapp-action__demo"><strong>{copy.pendingContact}.</strong> {copy.demoCopyNotice}</p>
+      <button class="button button--leaf" type="button" data-copy-order-message>{copy.copyMessage}</button>
+      <textarea class="copy-fallback" readonly data-copy-fallback aria-label={copy.copyMessage} hidden></textarea>
+    </>
+  )}
+</div>

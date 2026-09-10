@@ -2,6 +2,8 @@
 import Header from '@/components/navigation/Header.astro';
 import Footer from '@/components/navigation/Footer.astro';
 import SeoHead from '@/components/SeoHead.astro';
+import OrderList from '@/components/order/OrderList.astro';
+import FloatingWhatsApp from '@/components/order/FloatingWhatsApp.astro';
 import '@/styles/global.css';
 import '@/styles/components.css';
 import type { Locale, PageKey } from '@/i18n/config';
@@ -35,6 +37,9 @@ const skipLabel: Record<Locale, string> = {
     <main id="contenido" tabindex="-1">
       <slot />
     </main>
+    <OrderList {locale} />
     <Footer {locale} />
+    <FloatingWhatsApp {locale} />
+    <script src="../scripts/order-controller.ts"></script>
   </body>
 </html>

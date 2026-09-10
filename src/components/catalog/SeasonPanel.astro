@@ -1,0 +1,29 @@
+---
+import ProductCard from './ProductCard.astro';
+import type { Locale } from '@/i18n/config';
+import { ui } from '@/i18n/ui';
+import type { Product, Season } from '@/domain/catalog';
+
+interface Props {
+  locale: Locale;
+  season: Season;
+  products: Product[];
+}
+
+const { locale, season, products } = Astro.props;
+---
+
+<section
+  class="season-panel"
+  id={`season-panel-${season}`}
+  data-season-panel={season}
+  aria-labelledby={`season-tab-${season}`}
+>
+  <div class="season-panel__heading">
+    <p>{ui[locale].seasonSelection}</p>
+    <h2>{ui[locale][season]}</h2>
+  </div>
+  <div class="product-grid">
+    {products.map((product) => <ProductCard {locale} {product} instanceId={season} />)}
+  </div>
+</section>

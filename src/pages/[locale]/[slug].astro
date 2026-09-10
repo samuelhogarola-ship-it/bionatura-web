@@ -1,5 +1,6 @@
 ---
 import PageScaffold from '@/components/pages/PageScaffold.astro';
+import CatalogPage from '@/components/catalog/CatalogPage.astro';
 import SiteLayout from '@/layouts/SiteLayout.astro';
 import { LOCALES, PAGE_KEYS, routes, type Locale, type PageKey } from '@/i18n/config';
 import { pages } from '@/i18n/pages';
@@ -18,5 +19,5 @@ const copy = pages[page][locale];
 ---
 
 <SiteLayout locale={locale} page={page} title={copy.title} description={copy.description}>
-  <PageScaffold copy={copy} locale={locale} />
+  {page === 'catalog' ? <CatalogPage {locale} /> : <PageScaffold copy={copy} locale={locale} />}
 </SiteLayout>

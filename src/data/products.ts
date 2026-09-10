@@ -15,7 +15,7 @@ const makeProduct = (id: string, slug: Copy, name: Copy, categoryId: string, sea
 });
 
 export const products: Product[] = [
-  makeProduct('tomato', copy('tomate', 'tomato', 'tomaatti', 'tomat'), copy('Tomates', 'Tomatoes', 'Tomaatit', 'Tomater'), 'vegetables', ['summer'], false, [{ id: '1kg', value: 1, unit: 'kg' }], true),
+  makeProduct('tomato', copy('tomate', 'tomato', 'tomaatti', 'tomat'), copy('Tomates', 'Tomatoes', 'Tomaatit', 'Tomater'), 'vegetables', ['summer'], false, [{ id: '1kg', value: 1, unit: 'kg' }, { id: '2kg', value: 2, unit: 'kg' }], true),
   makeProduct('potato', copy('patata', 'potato', 'peruna', 'kartoffel'), copy('Patatas', 'Potatoes', 'Perunat', 'Kartofler'), 'vegetables', ['spring', 'autumn'], false, [{ id: '1kg', value: 1, unit: 'kg' }]),
   makeProduct('pepper', copy('pimiento', 'pepper', 'paprika', 'peberfrugt'), copy('Pimientos', 'Peppers', 'Paprikat', 'Peberfrugter'), 'vegetables', ['summer', 'autumn'], false, [{ id: '500g', value: 500, unit: 'g' }]),
   makeProduct('courgette', copy('calabacín', 'courgette', 'kesäkurpitsa', 'squash'), copy('Calabacines', 'Courgettes', 'Kesäkurpitsat', 'Squash'), 'vegetables', ['summer'], false, [{ id: '1kg', value: 1, unit: 'kg' }]),

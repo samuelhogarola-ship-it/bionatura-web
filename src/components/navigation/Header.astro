@@ -2,6 +2,7 @@
 import Brand from './Brand.astro';
 import LanguageSwitcher from './LanguageSwitcher.astro';
 import MobileMenu from './MobileMenu.astro';
+import OrderCount from '@/components/order/OrderCount.astro';
 import { pathFor, type Locale, type PageKey } from '@/i18n/config';
 import { ui } from '@/i18n/ui';
 
@@ -47,10 +48,7 @@ const links: Array<[PageKey, string]> = [
     </nav>
 
     <div class="site-header__actions">
-      <a class="order-count" href={pathFor(locale, 'catalog')}>
-        <span class="order-count__label">{copy.yourList}</span>
-        <span class="order-count__value" data-order-count aria-live="polite">0</span>
-      </a>
+      <OrderCount {locale} />
       <a class="button button--leaf site-header__cta" href={pathFor(locale, 'catalog')}>
         {copy.prepareOrder}
       </a>

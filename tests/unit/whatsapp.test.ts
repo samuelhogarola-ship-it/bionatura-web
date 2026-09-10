@@ -1,6 +1,7 @@
 import { expect, it } from 'vitest';
 import { buildWhatsAppUrl, formatOrderMessage, normalizePhoneE164 } from '../../src/domain/whatsapp';
 import { products } from '../../src/data/products';
+import type { ValidatedField } from '../../src/data/business';
 
 const state = { version: 1 as const, lines: [{ productId: 'tomato', quantityLabel: '2 kg' }] };
 
@@ -32,4 +33,13 @@ it.each(['', '1234567', '1234567890123456', 'abc-def'])('rejects an invalid phon
 
 it('normalizes a valid E.164 phone to digits', () => {
   expect(normalizePhoneE164('+34 600 000 000')).toBe('34600000000');
+});
+
+it('builds wa.me for an injected confirmed fixture without making it production data', () => {
+  const confirmedFixture: ValidatedField<string> = { status: 'confirmed', value: '+34 611 222 333' };
+  const url = confirmedFixture.status === 'confirmed' && confirmedFixture.value
+    ? buildWhatsAppUrl(confirmedFixture.value, 'Fixture message')
+    : null;
+
+  expect(url).toBe('https://wa.me/34611222333?text=Fixture%20message');
 });

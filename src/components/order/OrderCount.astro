@@ -1,0 +1,15 @@
+---
+import type { Locale } from '@/i18n/config';
+import { ui } from '@/i18n/ui';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+---
+
+<button class="order-count" type="button" data-order-open>
+  <span class="order-count__label">{ui[locale].yourList}</span>
+  <span class="order-count__value" data-order-count data-testid="order-count">0</span>
+</button>

@@ -1,0 +1,29 @@
+---
+import { business } from '@/data/business';
+import { buildWhatsAppUrl } from '@/domain/whatsapp';
+import { pathFor, type Locale } from '@/i18n/config';
+import { ui } from '@/i18n/ui';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const confirmed = business.whatsapp.status === 'confirmed' && business.whatsapp.value !== null;
+const href = confirmed
+  ? buildWhatsAppUrl(business.whatsapp.value!, ui[locale].whatsappIntro)
+  : pathFor(locale, 'contact');
+---
+
+<aside aria-label={ui[locale].whatsappAccess}>
+  <a
+    class="floating-whatsapp"
+    href={href}
+    aria-label={ui[locale].whatsappAccess}
+    target={confirmed ? '_blank' : undefined}
+    rel={confirmed ? 'noopener noreferrer' : undefined}
+  >
+    <span aria-hidden="true">W</span>
+    <span class="floating-whatsapp__label">{ui[locale].whatsappAccess}</span>
+  </a>
+</aside>

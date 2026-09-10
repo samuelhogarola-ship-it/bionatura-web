@@ -1,0 +1,44 @@
+---
+import SeasonPanel from './SeasonPanel.astro';
+import SeasonSelector from './SeasonSelector.astro';
+import ProductCard from './ProductCard.astro';
+import { alwaysAvailableProducts, seasonalProducts } from '@/data/products';
+import type { Season } from '@/domain/catalog';
+import type { Locale } from '@/i18n/config';
+import { pages } from '@/i18n/pages';
+import { ui } from '@/i18n/ui';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const copy = pages.catalog[locale];
+const seasons: Season[] = ['spring', 'summer', 'autumn', 'winter'];
+---
+
+<article class="catalog-page" data-season-selector>
+  <header class="catalog-page__hero page-shell">
+    <p class="catalog-page__eyebrow">Bionatura · Fuengirola</p>
+    <h1>{copy.h1}</h1>
+    <p class="catalog-page__intro">{copy.intro}</p>
+    <p class="catalog-page__notice">{ui[locale].availabilityNotice}</p>
+  </header>
+
+  <div class="page-shell">
+    <SeasonSelector {locale} />
+    <div class="season-panels">
+      {seasons.map((season) => <SeasonPanel {locale} {season} products={seasonalProducts(season)} />)}
+    </div>
+
+    <section class="always-available" aria-labelledby="always-available-title">
+      <p>{ui[locale].regularSelection}</p>
+      <h2 id="always-available-title">{ui[locale].alwaysAvailable}</h2>
+      <div class="product-grid">
+        {alwaysAvailableProducts().map((product) => <ProductCard {locale} {product} instanceId="regular" />)}
+      </div>
+    </section>
+  </div>
+</article>
+
+<script src="../../scripts/season-selector.ts"></script>

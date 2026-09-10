@@ -1,0 +1,59 @@
+---
+import productPlaceholder from '@/assets/demo/product-placeholder.svg';
+import type { Product, QuantityOption } from '@/domain/catalog';
+import type { Locale } from '@/i18n/config';
+import { ui } from '@/i18n/ui';
+
+interface Props {
+  locale: Locale;
+  product: Product;
+  instanceId: string;
+}
+
+const { locale, product, instanceId } = Astro.props;
+const quantityId = `quantity-${product.id}-${instanceId}`;
+const customId = `custom-quantity-${product.id}-${instanceId}`;
+const labels = {
+  g: (value: QuantityOption['value']) => `${value} g`,
+  kg: (value: QuantityOption['value']) => `${value} kg`,
+  unit: (value: QuantityOption['value']) => `${value} ${Number(value) === 1 ? ui[locale].unitSingular : ui[locale].unitPlural}`,
+  dozen: (value: QuantityOption['value']) => Number(value) === 1 ? ui[locale].oneDozen : `${value} ${ui[locale].dozenPlural}`,
+  custom: () => ui[locale].customQuantity,
+};
+const optionLabel = (option: QuantityOption) => option.labels?.[locale] ?? labels[option.unit](option.value);
+const price = product.price
+  ? new Intl.NumberFormat(locale, { style: 'currency', currency: 'EUR' }).format(product.price.amount)
+  : null;
+---
+
+<article class="product-card" data-product-id={product.id} data-product-name={product.name[locale]}>
+  <img src={productPlaceholder.src} width="480" height="360" alt={product.imageAlt[locale]} loading="lazy" />
+  <div class="product-card__body">
+    {product.demoOnly && <p class="product-card__demo">{ui[locale].demoProduct}</p>}
+    <h3>{product.name[locale]}</h3>
+    <p>{product.shortDescription[locale]}</p>
+    {price && (
+      <p class="product-card__price">
+        <strong>{price}</strong>
+        {product.price?.unitLabel[locale] && <span> / {product.price.unitLabel[locale]}</span>}
+      </p>
+    )}
+    <div class="product-card__controls">
+      <label for={quantityId}>{ui[locale].quantity}</label>
+      <select id={quantityId} data-quantity>
+        {product.quantityOptions.map((option) => (
+          <option value={option.id}>{optionLabel(option)}</option>
+        ))}
+        {product.allowCustomQuantity && <option value="custom">{ui[locale].customQuantity}</option>}
+      </select>
+      {product.allowCustomQuantity && (
+        <div class="product-card__custom" data-custom-quantity hidden>
+          <label for={customId}>{ui[locale].customQuantityLabel}</label>
+          <input id={customId} type="text" maxlength="40" data-custom-quantity-input />
+          <p data-custom-error hidden>{ui[locale].customQuantityError}</p>
+        </div>
+      )}
+      <button class="button button--leaf" type="button" data-add-product>{ui[locale].addToList}</button>
+    </div>
+  </div>
+</article>

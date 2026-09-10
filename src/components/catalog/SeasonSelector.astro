@@ -1,0 +1,33 @@
+---
+import type { Locale } from '@/i18n/config';
+import { ui } from '@/i18n/ui';
+import type { Season } from '@/domain/catalog';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const seasons: Array<{ id: Season; symbol: string }> = [
+  { id: 'spring', symbol: '✿' },
+  { id: 'summer', symbol: '☀' },
+  { id: 'autumn', symbol: '⌁' },
+  { id: 'winter', symbol: '❄' },
+];
+---
+
+<nav class="season-selector" aria-label={ui[locale].seasonNavigation} data-season-tabs>
+  {seasons.map(({ id, symbol }) => (
+    <button
+      class="season-selector__button"
+      type="button"
+      id={`season-tab-${id}`}
+      data-season-tab={id}
+      aria-controls={`season-panel-${id}`}
+    >
+      <span aria-hidden="true">{symbol}</span>
+      <span>{ui[locale][id]}</span>
+      <small data-current-season-label hidden>{ui[locale].currentSeason}</small>
+    </button>
+  ))}
+</nav>
