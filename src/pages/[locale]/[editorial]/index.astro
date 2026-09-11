@@ -1,6 +1,7 @@
 ---
 import SiteLayout from '@/layouts/SiteLayout.astro';
 import EditorialIndex from '@/components/editorial/EditorialIndex.astro';
+import EditorialStructuredData from '@/components/editorial/EditorialStructuredData.astro';
 import { DEFAULT_LOCALE, LOCALES, editorialIndexPath, editorialRoutes, type Locale } from '@/i18n/config';
 
 const indexMetadata: Record<Locale, { title: string; description: string }> = {
@@ -38,5 +39,6 @@ const alternates = [
   {alternates}
   breadcrumbs={[{ label: homeLabel, href: `/${locale}/` }, { label: indexLabel }]}
 >
+  <EditorialStructuredData slot="head" {locale} title={indexLabel} description={metadata.description} />
   <EditorialIndex {locale} />
 </SiteLayout>

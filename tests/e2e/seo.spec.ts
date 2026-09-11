@@ -1,5 +1,32 @@
 import { expect, test } from '@playwright/test';
 
+type StructuredData = Record<string, unknown>;
+
+async function readStructuredData(page: import('@playwright/test').Page): Promise<StructuredData[]> {
+  return Promise.all(
+    (await page.locator('script[type="application/ld+json"]').allTextContents()).map(
+      async (content) => JSON.parse(content) as StructuredData,
+    ),
+  );
+}
+
+test('Spanish pages use specific local titles and descriptions', async ({ page }) => {
+  const pages = [
+    ['/es/', /productos biológicos.*Fuengirola/i, /Los Pacos|Fuengirola/i],
+    ['/es/catalogo/', /catálogo.*Fuengirola/i, /temporada.*Fuengirola/i],
+    ['/es/nosotros/', /Bionatura.*Los Pacos/i, /huerto.*Fuengirola/i],
+    ['/es/contacto/', /contacta.*Bionatura.*Fuengirola/i, /Los Pacos.*recogida/i],
+    ['/es/galeria/', /huerto.*Los Pacos/i, /Fuengirola/i],
+  ] as const;
+
+  for (const [path, title, description] of pages) {
+    await page.goto(path);
+    await expect(page).toHaveTitle(title);
+    await expect(page.locator('meta[name="description"]')).toHaveAttribute('content', description);
+    await expect(page.locator('meta[name="keywords"]')).toHaveCount(0);
+  }
+});
+
 test('catalog emits canonical and all language alternates', async ({ page }) => {
   await page.goto('/en/catalog/');
   await expect(page.locator('link[rel="canonical"]')).toHaveAttribute('href', 'https://bionatura.es/en/catalog/');
@@ -8,23 +35,43 @@ test('catalog emits canonical and all language alternates', async ({ page }) => 
   }
 });
 
-test('structured data contains only confirmed Organization and breadcrumb facts', async ({ page }) => {
+test('structured data describes the website and organization without shop claims', async ({ page }) => {
   await page.goto('/es/contacto/');
-  const scripts = page.locator('script[type="application/ld+json"]');
-  await expect(scripts).toHaveCount(2);
-  const json = await scripts.allTextContents();
-  const structuredData = json.join('\n');
+  const schemas = await readStructuredData(page);
+  const website = schemas.find((schema) => schema['@type'] === 'WebSite');
+  const organization = schemas.find((schema) => schema['@type'] === 'Organization');
+  const structuredData = JSON.stringify(schemas);
 
-  expect(structuredData).toContain('Bionatura del Sur S.L.');
-  expect(structuredData).toContain('B92371301');
-  expect(structuredData).toContain('Calle Tórtolas, 11');
-  expect(structuredData).toContain('29640');
-  expect(structuredData).toContain('BreadcrumbList');
+  expect(website).toMatchObject({
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    name: 'Bionatura',
+    url: 'https://bionatura.es/',
+  });
+  expect(organization).toMatchObject({
+    '@context': 'https://schema.org',
+    '@type': 'Organization',
+    name: 'Bionatura del Sur S.L.',
+    alternateName: 'Bionatura',
+    taxID: 'B92371301',
+    areaServed: { '@type': 'City', name: 'Fuengirola' },
+    address: {
+      '@type': 'PostalAddress',
+      streetAddress: 'Calle Tórtolas, 11',
+      postalCode: '29640',
+      addressLocality: 'Fuengirola',
+      addressCountry: 'ES',
+    },
+  });
+  expect(schemas.some((schema) => schema['@type'] === 'BreadcrumbList')).toBe(true);
   expect(structuredData).not.toContain('telephone');
   expect(structuredData).not.toContain('pickup');
   expect(structuredData).not.toContain('LocalBusiness');
   expect(structuredData).not.toContain('Product');
   expect(structuredData).not.toContain('Offer');
+  expect(structuredData).not.toContain('AggregateRating');
+  expect(structuredData).not.toContain('openingHours');
+  expect(structuredData).not.toContain('price');
 });
 
 test('legal identity is visible on legal pages but not presented as a shop or collection point', async ({ page }) => {

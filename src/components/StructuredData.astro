@@ -1,5 +1,67 @@
 ---
-import {business} from '@/data/business'; import {pathFor,type Locale,type PageKey} from '@/i18n/config'; const {locale,page,current}=Astro.props as {locale:Locale;page:PageKey;current:string}; const base=Astro.site??new URL('https://bionatura.es'); const organization={'@context':'https://schema.org','@type':'Organization',name:business.legalName,alternateName:business.name,url:new URL('/',base).href,taxID:business.taxId,address:{'@type':'PostalAddress',streetAddress:business.registeredAddress.value.street,postalCode:business.registeredAddress.value.postalCode,addressLocality:business.registeredAddress.value.locality,addressCountry:business.registeredAddress.value.country}}; const home={es:'Inicio',en:'Home',fi:'Etusivu',da:'Forside'}[locale]; const breadcrumb={'@context':'https://schema.org','@type':'BreadcrumbList',itemListElement:[{'@type':'ListItem',position:1,name:home,item:new URL(pathFor(locale,'home'),base).href},...(page==='home'?[]:[{'@type':'ListItem',position:2,name:current,item:new URL(pathFor(locale,page),base).href}])]};
+import { business } from '@/data/business';
+import { pathFor, type Locale, type PageKey } from '@/i18n/config';
+
+interface BreadcrumbItem {
+  label: string;
+  href?: string;
+}
+
+interface Props {
+  locale: Locale;
+  page: PageKey;
+  current: string;
+  canonicalPath?: string;
+  breadcrumbs?: BreadcrumbItem[];
+}
+
+const { locale, page, current, canonicalPath, breadcrumbs } = Astro.props;
+const base = Astro.site ?? new URL('https://bionatura.es');
+const siteUrl = new URL('/', base).href;
+const currentUrl = new URL(canonicalPath ?? pathFor(locale, page), base).href;
+const organization = {
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  '@id': `${siteUrl}#organization`,
+  name: business.legalName,
+  alternateName: business.name,
+  url: siteUrl,
+  taxID: business.taxId,
+  areaServed: { '@type': 'City', name: 'Fuengirola' },
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: business.registeredAddress.value.street,
+    postalCode: business.registeredAddress.value.postalCode,
+    addressLocality: business.registeredAddress.value.locality,
+    addressCountry: business.registeredAddress.value.country,
+  },
+};
+const website = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  '@id': `${siteUrl}#website`,
+  name: business.name,
+  url: siteUrl,
+  inLanguage: ['es', 'en', 'fi', 'da'],
+  publisher: { '@id': `${siteUrl}#organization` },
+};
+const home = { es: 'Inicio', en: 'Home', fi: 'Etusivu', da: 'Forside' }[locale];
+const breadcrumbItems = breadcrumbs ?? [
+  { label: home, href: pathFor(locale, 'home') },
+  ...(page === 'home' ? [] : [{ label: current, href: pathFor(locale, page) }]),
+];
+const breadcrumb = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: breadcrumbItems.map((item, index) => ({
+    '@type': 'ListItem',
+    position: index + 1,
+    name: item.label,
+    item: new URL(item.href ?? currentUrl, base).href,
+  })),
+};
 ---
+
+<script is:inline type="application/ld+json" set:html={JSON.stringify(website)}></script>
 <script is:inline type="application/ld+json" set:html={JSON.stringify(organization)}></script>
 <script is:inline type="application/ld+json" set:html={JSON.stringify(breadcrumb)}></script>

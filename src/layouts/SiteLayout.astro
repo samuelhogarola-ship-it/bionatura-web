@@ -39,7 +39,7 @@ const skipLabel: Record<Locale, string> = {
 <html lang={locale}>
   <head>
     <SeoHead {locale} {page} {title} {description} {image} {canonicalPath} {alternates} {ogType} {publishedAt} {modifiedAt} />
-    <StructuredData {locale} {page} {current} />
+    <StructuredData {locale} {page} {current} {canonicalPath} {breadcrumbs} />
     <slot name="head" />
   </head>
   <body>

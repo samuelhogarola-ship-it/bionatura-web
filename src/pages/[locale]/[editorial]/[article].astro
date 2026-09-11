@@ -1,6 +1,7 @@
 ---
 import SiteLayout from '@/layouts/SiteLayout.astro';
 import EditorialArticle from '@/components/editorial/EditorialArticle.astro';
+import EditorialStructuredData from '@/components/editorial/EditorialStructuredData.astro';
 import { editorialAlternates, editorialItemBySlug, editorialItems, editorialPath } from '@/data/editorial';
 import { LOCALES, editorialIndexPath, editorialRoutes, type Locale } from '@/i18n/config';
 
@@ -44,5 +45,6 @@ const homeLabel = { es: 'Inicio', en: 'Home', fi: 'Etusivu', da: 'Forside' }[loc
     { label: content.title },
   ]}
 >
+  <EditorialStructuredData slot="head" {locale} {item} />
   <EditorialArticle {locale} {item} />
 </SiteLayout>

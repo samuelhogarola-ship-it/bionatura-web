@@ -1,0 +1,88 @@
+---
+import { business } from '@/data/business';
+import { editorialItems, editorialPath } from '@/data/editorial';
+import type { EditorialItem } from '@/domain/editorial';
+import { editorialIndexPath, type Locale } from '@/i18n/config';
+
+type Props =
+  | { locale: Locale; item: EditorialItem; title?: never; description?: never }
+  | { locale: Locale; item?: never; title: string; description: string };
+
+const props = Astro.props as Props;
+const base = Astro.site ?? new URL('https://bionatura.es');
+const siteUrl = new URL('/', base).href;
+const author = { '@type': 'Organization', name: business.name, url: siteUrl };
+const schemas: Record<string, unknown>[] = [];
+
+if (props.item) {
+  const { item, locale } = props;
+  const content = item.locales[locale];
+  const pageUrl = new URL(editorialPath(locale, item), base).href;
+  const common = {
+    '@context': 'https://schema.org',
+    image: new URL(item.image.src, base).href,
+    author,
+    publisher: author,
+    datePublished: item.publishedAt,
+    ...(item.modifiedAt ? { dateModified: item.modifiedAt } : {}),
+    mainEntityOfPage: pageUrl,
+    inLanguage: locale,
+  };
+
+  if (item.type === 'recipe') {
+    schemas.push({
+      ...common,
+      '@type': 'Recipe',
+      name: content.title,
+      description: content.description,
+      recipeYield: item.recipe.yield[locale],
+      prepTime: item.recipe.prepTime,
+      ...(item.recipe.cookTime ? { cookTime: item.recipe.cookTime } : {}),
+      recipeIngredient: item.recipe.ingredients[locale],
+      recipeInstructions: item.recipe.instructions[locale].map((text, index) => ({
+        '@type': 'HowToStep',
+        position: index + 1,
+        text,
+      })),
+    });
+  } else {
+    schemas.push({
+      ...common,
+      '@type': 'Article',
+      headline: content.title,
+      description: content.description,
+    });
+  }
+} else {
+  const { locale, title, description } = props;
+  const pageUrl = new URL(editorialIndexPath(locale), base).href;
+  const itemListId = `${pageUrl}#editorial-list`;
+  schemas.push(
+    {
+      '@context': 'https://schema.org',
+      '@type': 'CollectionPage',
+      name: title,
+      description,
+      url: pageUrl,
+      inLanguage: locale,
+      mainEntity: { '@id': itemListId },
+    },
+    {
+      '@context': 'https://schema.org',
+      '@type': 'ItemList',
+      '@id': itemListId,
+      numberOfItems: editorialItems.length,
+      itemListElement: editorialItems.map((item, index) => ({
+        '@type': 'ListItem',
+        position: index + 1,
+        name: item.locales[locale].title,
+        url: new URL(editorialPath(locale, item), base).href,
+      })),
+    },
+  );
+}
+---
+
+{schemas.map((schema) => (
+  <script is:inline type="application/ld+json" set:html={JSON.stringify(schema)}></script>
+))}
