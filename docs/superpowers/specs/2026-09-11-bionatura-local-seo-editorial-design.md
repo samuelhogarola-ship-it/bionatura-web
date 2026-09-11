@@ -146,6 +146,14 @@ Reuse the existing responsive image component and optimized local assets. Editor
 
 Every image has meaningful localized alt text unless decorative. Dates use semantic `time` elements. Recipe lists, article cards, breadcrumbs, and navigation have accessible names and correct landmark structure.
 
+## Enriched WhatsApp shopping list
+
+The basket's WhatsApp action must produce a visually scannable shopping-list message in all four languages. Use WhatsApp-compatible plain-text enrichment—asterisk bold, numbered items, short headings, whitespace, and restrained symbols—rather than an administrative paragraph.
+
+The list itself is primary. Each item shows its localized product name and quantity on separate lines. Secondary information follows the list: a Bionatura reference, generation date, total number of product lines, the no-obligation availability question, and the previously arranged Los Pacos collection note.
+
+The same complete message must be used in the `wa.me` URL, native share text, copied fallback text, and downloaded text file. The file name includes the generated Bionatura reference. The reference must be safe for filenames and reproducible in automated tests. Do not add customer identity, prices, totals, stock, delivery promises, or unconfirmed collection details.
+
 ## Validation and acceptance criteria
 
 The feature is complete when:
@@ -157,9 +165,10 @@ The feature is complete when:
 5. Each article has a unique localized title, description, H1, visible author, date, and relevant image.
 6. Recipe structured data contains all required visible recipe properties; article pages emit `Article`, not `Recipe`.
 7. Organization data does not present the registered office as a shop or collection point.
-8. Existing order-list, WhatsApp, catalog, gallery, legal, and navigation flows remain functional.
-9. Automated unit and browser tests cover routing, locale parity, metadata, structured data, internal links, responsive navigation, and accessibility.
-10. `npm test` and `npm run build` succeed before the changes are published.
+8. WhatsApp receives an enriched localized shopping list whose message, share text, copy fallback, and reference-named file remain consistent.
+9. Existing order-list, WhatsApp, catalog, gallery, legal, and navigation flows remain functional.
+10. Automated unit and browser tests cover routing, locale parity, metadata, structured data, internal links, responsive navigation, and accessibility.
+11. `npm test` and `npm run build` succeed before the changes are published.
 
 ## Out of scope
 

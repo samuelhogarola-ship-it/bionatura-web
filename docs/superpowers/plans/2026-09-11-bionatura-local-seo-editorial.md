@@ -389,7 +389,83 @@ git add src/i18n/pages src/components/StructuredData.astro src/components/editor
 git commit -m "feat: strengthen local SEO and editorial schema"
 ```
 
-### Task 6: Full regression, sitemap, and delivery
+### Task 6: Enriched WhatsApp shopping-list message
+
+**Files:**
+- Modify: `src/domain/whatsapp.ts`
+- Modify: `src/scripts/order-controller.ts`
+- Modify: `src/i18n/ui.ts`
+- Modify: `tests/unit/whatsapp.test.ts`
+- Modify: `tests/e2e/whatsapp.spec.ts`
+
+**Interfaces:**
+- Consumes: `OrderState`, localized catalog product names, and the existing WhatsApp/copy/share actions.
+- Produces: `OrderMessageContext`, `createOrderReference(date, state)`, `formatOrderMessage(locale, state, products, context)`, and `createOrderFile(message, reference)`.
+
+- [ ] **Step 1: Write failing unit tests for the enriched four-language message**
+
+Use a fixed date and a two-line order. Assert the Spanish message includes WhatsApp bold markers, a shopping-list heading, two numbered items with quantities on their own lines, total line count, reference, formatted date, availability question, and Los Pacos collection note. Parameterize the structural assertions across `es`, `en`, `fi`, and `da`.
+
+```ts
+const context = { reference: 'BN-20260911-A1B2', createdAt: new Date('2026-09-11T10:42:00+02:00') };
+expect(formatOrderMessage('es', state, products, context)).toContain('*LISTA DE LA COMPRA · BIONATURA*');
+expect(formatOrderMessage('es', state, products, context)).toContain('*1. Tomates*\nCantidad: 2 kg');
+expect(createOrderFile('contenido', context.reference).name).toBe('pedido-bionatura-BN-20260911-A1B2.txt');
+```
+
+- [ ] **Step 2: Run focused tests and confirm the old paragraph format fails**
+
+Run: `npm run test:unit -- tests/unit/whatsapp.test.ts`
+
+Expected: FAIL because context-aware formatting and reference filenames do not exist.
+
+- [ ] **Step 3: Implement a deterministic, filename-safe reference and localized enriched template**
+
+Format the reference as `BN-YYYYMMDD-XXXX`, where `XXXX` is an uppercase hexadecimal checksum derived from the ordered product IDs, quantities, and the provided date. The same inputs must produce the same reference in tests. Keep every locale's headings and collection/availability wording in `src/i18n/ui.ts`.
+
+Use this visual hierarchy in Spanish and natural equivalents in the other locales:
+
+```text
+*LISTA DE LA COMPRA · BIONATURA*
+
+*1. Tomates*
+Cantidad: 2 kg
+
+*2. Cebolla roja*
+Cantidad: 1 kg
+
+──────────────
+*2 productos en la lista*
+
+¿Podéis confirmarme la disponibilidad?
+La recogida se acuerda previamente en Los Pacos, Fuengirola.
+
+Referencia: BN-20260911-A1B2
+Fecha: 11/09/2026
+```
+
+- [ ] **Step 4: Use one message context consistently across every action**
+
+When the order changes, create one context and use the resulting message for the anchor URL. On click, native share, downloaded file, and copy fallback must use that same current message/reference. Empty baskets remain disabled. `createOrderFile` must return `pedido-bionatura-<REFERENCE>.txt` with `text/plain` content.
+
+- [ ] **Step 5: Extend browser tests for URL, native sharing, file content/name, and fallback consistency**
+
+Freeze the browser clock, add at least two products, and decode the `wa.me` `text` parameter. Assert bold heading, numbered product blocks, quantities, reference, Los Pacos note, and absence of price/total/customer fields. For native sharing, assert `ShareData.text` equals the generated file text and the filename includes the same reference.
+
+- [ ] **Step 6: Run focused and full verification**
+
+Run: `npm run test:unit -- tests/unit/whatsapp.test.ts && npx playwright test tests/e2e/whatsapp.spec.ts && npm test`
+
+Expected: all focused and full tests pass with only intentional viewport skips.
+
+- [ ] **Step 7: Commit the enriched list**
+
+```bash
+git add src/domain/whatsapp.ts src/scripts/order-controller.ts src/i18n/ui.ts tests/unit/whatsapp.test.ts tests/e2e/whatsapp.spec.ts
+git commit -m "feat: enrich WhatsApp shopping list"
+```
+
+### Task 7: Full regression, sitemap, and delivery
 
 **Files:**
 - Modify only files required to fix failures found by the commands below.
