@@ -2,9 +2,9 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Reject impossible or out-of-order editorial dates and verify each recipe page publishes its exact canonical and alternate URL matrix.
+**Goal:** Reject impossible or out-of-order editorial dates and verify every recipe page publishes its exact canonical and alternate URL matrix.
 
-**Architecture:** Keep editorial validation inside `assertValidEditorial`, using a small Gregorian date helper that preserves its existing item-specific validation errors. Strengthen the Playwright assertion at the rendered document boundary with literal URLs for one recipe across all locales.
+**Architecture:** Keep editorial validation inside `assertValidEditorial`, using a small Gregorian date helper that preserves its existing item-specific validation errors. Strengthen the Playwright assertion at the rendered document boundary with literal URLs for every recipe across all locales.
 
 **Tech Stack:** TypeScript, Vitest, Astro, Playwright.
 
@@ -55,12 +55,12 @@ Expected: all editorial unit tests pass.
 - Modify: `tests/e2e/editorial.spec.ts`
 
 **Interfaces:**
-- Consumes: the public recipe page at `/es/huerto-recetas/ensalada-tomate-cebolla-roja-aceite-oliva-bio/`.
-- Produces: exact canonical and `es`, `en`, `fi`, `da`, and `x-default` alternate link assertions.
+- Consumes: every public Spanish recipe page.
+- Produces: exact canonical and `es`, `en`, `fi`, `da`, and `x-default` alternate link assertions for each recipe.
 
 - [x] **Step 1: Write the exact metadata expectations**
 
-Replace the regex/count-only test with literal fully qualified `https://bionatura.es/...` URLs for all six links associated with the tomato salad recipe.
+Replace the regex/count-only test with parameterized, literal, fully qualified `https://bionatura.es/...` URLs for all six links associated with every recipe.
 
 - [x] **Step 2: Run the editorial E2E spec**
 

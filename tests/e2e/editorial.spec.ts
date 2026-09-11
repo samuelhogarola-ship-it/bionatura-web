@@ -10,23 +10,43 @@ async function readStructuredData(page: import('@playwright/test').Page): Promis
   );
 }
 
-test('tomato salad publishes the exact canonical and alternate route matrix', async ({ page }) => {
-  await page.goto('/es/huerto-recetas/ensalada-tomate-cebolla-roja-aceite-oliva-bio/');
-  const expectedUrls = {
-    canonical: 'https://bionatura.es/es/huerto-recetas/ensalada-tomate-cebolla-roja-aceite-oliva-bio/',
-    es: 'https://bionatura.es/es/huerto-recetas/ensalada-tomate-cebolla-roja-aceite-oliva-bio/',
-    en: 'https://bionatura.es/en/garden-recipes/tomato-red-onion-organic-olive-oil-salad/',
-    fi: 'https://bionatura.es/fi/puutarha-reseptit/tomaatti-punasipuli-luomuoliivioljy-salaatti/',
-    da: 'https://bionatura.es/da/have-opskrifter/tomat-roedloeg-oekologisk-olivenolie-salat/',
-    'x-default': 'https://bionatura.es/es/huerto-recetas/ensalada-tomate-cebolla-roja-aceite-oliva-bio/',
-  } as const;
+const recipeRouteMatrices = [
+  {
+    name: 'tomato salad',
+    route: '/es/huerto-recetas/ensalada-tomate-cebolla-roja-aceite-oliva-bio/',
+    urls: {
+      canonical: 'https://bionatura.es/es/huerto-recetas/ensalada-tomate-cebolla-roja-aceite-oliva-bio/',
+      es: 'https://bionatura.es/es/huerto-recetas/ensalada-tomate-cebolla-roja-aceite-oliva-bio/',
+      en: 'https://bionatura.es/en/garden-recipes/tomato-red-onion-organic-olive-oil-salad/',
+      fi: 'https://bionatura.es/fi/puutarha-reseptit/tomaatti-punasipuli-luomuoliivioljy-salaatti/',
+      da: 'https://bionatura.es/da/have-opskrifter/tomat-roedloeg-oekologisk-olivenolie-salat/',
+      'x-default': 'https://bionatura.es/es/huerto-recetas/ensalada-tomate-cebolla-roja-aceite-oliva-bio/',
+    },
+  },
+  {
+    name: 'Mediterranean courgettes',
+    route: '/es/huerto-recetas/calabacines-mediterraneos-sencillos/',
+    urls: {
+      canonical: 'https://bionatura.es/es/huerto-recetas/calabacines-mediterraneos-sencillos/',
+      es: 'https://bionatura.es/es/huerto-recetas/calabacines-mediterraneos-sencillos/',
+      en: 'https://bionatura.es/en/garden-recipes/simple-mediterranean-courgettes/',
+      fi: 'https://bionatura.es/fi/puutarha-reseptit/helpot-valimerelliset-kesakurpitsat/',
+      da: 'https://bionatura.es/da/have-opskrifter/enkle-middelhavs-squash/',
+      'x-default': 'https://bionatura.es/es/huerto-recetas/calabacines-mediterraneos-sencillos/',
+    },
+  },
+] as const;
 
-  await expect(page.locator('link[rel="canonical"]')).toHaveAttribute('href', expectedUrls.canonical);
-  for (const [language, href] of Object.entries(expectedUrls).filter(([language]) => language !== 'canonical')) {
-    await expect(page.locator(`link[rel="alternate"][hreflang="${language}"]`)).toHaveCount(1);
-    await expect(page.locator(`link[rel="alternate"][hreflang="${language}"]`)).toHaveAttribute('href', href);
-  }
-});
+for (const recipe of recipeRouteMatrices) {
+  test(`${recipe.name} publishes the exact canonical and alternate route matrix`, async ({ page }) => {
+    await page.goto(recipe.route);
+    await expect(page.locator('link[rel="canonical"]')).toHaveAttribute('href', recipe.urls.canonical);
+    for (const [language, href] of Object.entries(recipe.urls).filter(([language]) => language !== 'canonical')) {
+      await expect(page.locator(`link[rel="alternate"][hreflang="${language}"]`)).toHaveCount(1);
+      await expect(page.locator(`link[rel="alternate"][hreflang="${language}"]`)).toHaveAttribute('href', href);
+    }
+  });
+}
 
 test('editorial indexes and details expose complete Open Graph and X metadata with their visible photographs', async ({ page }) => {
   const pages = [

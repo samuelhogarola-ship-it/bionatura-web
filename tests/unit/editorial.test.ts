@@ -59,6 +59,16 @@ describe('editorial content', () => {
     expect(() => assertValidEditorial(withFirstItemDates('2024-02-29', '2024-02-29'), productIds)).not.toThrow();
   });
 
+  it('enforces Gregorian century leap years and rejects year zero', () => {
+    expect(() => assertValidEditorial(withFirstItemDates('1900-02-29'), productIds)).toThrow(
+      'publishedAt must be YYYY-MM-DD for editorial item seasonal-produce-fuengirola',
+    );
+    expect(() => assertValidEditorial(withFirstItemDates('2000-02-29'), productIds)).not.toThrow();
+    expect(() => assertValidEditorial(withFirstItemDates('0000-01-01'), productIds)).toThrow(
+      'publishedAt must be YYYY-MM-DD for editorial item seasonal-produce-fuengirola',
+    );
+  });
+
   it('rejects a modified date before the published date with the editorial item context', () => {
     expect(() => assertValidEditorial(withFirstItemDates('2026-03-01', '2026-02-28'), productIds)).toThrow(
       'modifiedAt cannot be earlier than publishedAt for editorial item seasonal-produce-fuengirola',
