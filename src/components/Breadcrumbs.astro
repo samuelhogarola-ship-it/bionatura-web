@@ -1,4 +1,25 @@
 ---
-import {pathFor,type Locale,type PageKey} from '@/i18n/config'; const {locale,page,current}=Astro.props as {locale:Locale;page:PageKey;current:string}; const home={es:'Inicio',en:'Home',fi:'Etusivu',da:'Forside'}[locale];
+import { pathFor, type Locale, type PageKey } from '@/i18n/config';
+
+interface BreadcrumbItem { label: string; href?: string }
+interface Props { locale: Locale; page: PageKey; current: string; items?: BreadcrumbItem[] }
+
+const { locale, page, current, items } = Astro.props;
+const home = { es: 'Inicio', en: 'Home', fi: 'Etusivu', da: 'Forside' }[locale];
+const trail = items ?? (page === 'home' ? [] : [
+  { label: home, href: pathFor(locale, 'home') },
+  { label: current },
+]);
 ---
-{page!=='home'&&<nav class="breadcrumbs page-shell" aria-label="Breadcrumb"><ol><li><a href={pathFor(locale,'home')}>{home}</a></li><li aria-current="page">{current}</li></ol></nav>}
+
+{trail.length > 0 && (
+  <nav class="breadcrumbs page-shell" aria-label="Breadcrumb">
+    <ol>
+      {trail.map((item, index) => (
+        <li aria-current={index === trail.length - 1 ? 'page' : undefined}>
+          {item.href && index !== trail.length - 1 ? <a href={item.href}>{item.label}</a> : item.label}
+        </li>
+      ))}
+    </ol>
+  </nav>
+)}

@@ -22,9 +22,10 @@ interface Props {
   ogType?: string;
   publishedAt?: string;
   modifiedAt?: string;
+  breadcrumbs?: { label: string; href?: string }[];
 }
 
-const { locale, page, title, description, image, canonicalPath, alternates, ogType, publishedAt, modifiedAt } = Astro.props;
+const { locale, page, title, description, image, canonicalPath, alternates, ogType, publishedAt, modifiedAt, breadcrumbs } = Astro.props;
 const current = title.split('|')[0].trim();
 const skipLabel: Record<Locale, string> = {
   es: 'Saltar al contenido',
@@ -44,7 +45,7 @@ const skipLabel: Record<Locale, string> = {
   <body>
     <a class="skip-link" href="#contenido">{skipLabel[locale]}</a>
     <Header {locale} {page} />
-    <Breadcrumbs {locale} {page} {current} />
+    <Breadcrumbs {locale} {page} {current} items={breadcrumbs} />
     <main id="contenido" tabindex="-1">
       <slot />
     </main>

@@ -1,0 +1,43 @@
+---
+import type { RecipeContent } from '@/domain/editorial';
+import type { Locale } from '@/i18n/config';
+
+interface Props {
+  locale: Locale;
+  recipe: RecipeContent;
+}
+
+const { locale, recipe } = Astro.props;
+const copy = {
+  es: { label: 'Datos de la receta', yield: 'Raciones', prep: 'Preparación', cook: 'Cocción', ingredients: 'Ingredientes', instructions: 'Preparación' },
+  en: { label: 'Recipe details', yield: 'Servings', prep: 'Preparation', cook: 'Cooking', ingredients: 'Ingredients', instructions: 'Method' },
+  fi: { label: 'Reseptin tiedot', yield: 'Annoksia', prep: 'Valmistelu', cook: 'Kypsennys', ingredients: 'Ainekset', instructions: 'Valmistus' },
+  da: { label: 'Opskriftens detaljer', yield: 'Portioner', prep: 'Forberedelse', cook: 'Tilberedning', ingredients: 'Ingredienser', instructions: 'Fremgangsmåde' },
+}[locale];
+
+const formatDuration = (duration: string) => {
+  const match = /^PT(?:(\d+)H)?(?:(\d+)M)?$/.exec(duration);
+  if (!match) return duration;
+  const hours = Number(match[1] ?? 0);
+  const minutes = Number(match[2] ?? 0);
+  return [hours ? `${hours} h` : '', minutes ? `${minutes} min` : ''].filter(Boolean).join(' ');
+};
+---
+
+<section class="recipe-details" aria-label={copy.label}>
+  <dl class="recipe-details__facts">
+    <div><dt>{copy.yield}</dt><dd>{recipe.yield[locale]}</dd></div>
+    <div><dt>{copy.prep}</dt><dd>{formatDuration(recipe.prepTime)}</dd></div>
+    {recipe.cookTime && <div><dt>{copy.cook}</dt><dd>{formatDuration(recipe.cookTime)}</dd></div>}
+  </dl>
+  <div class="recipe-details__columns">
+    <section>
+      <h2>{copy.ingredients}</h2>
+      <ul>{recipe.ingredients[locale].map((ingredient) => <li>{ingredient}</li>)}</ul>
+    </section>
+    <section>
+      <h2>{copy.instructions}</h2>
+      <ol>{recipe.instructions[locale].map((instruction) => <li>{instruction}</li>)}</ol>
+    </section>
+  </div>
+</section>

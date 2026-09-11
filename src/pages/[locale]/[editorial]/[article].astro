@@ -1,7 +1,8 @@
 ---
 import SiteLayout from '@/layouts/SiteLayout.astro';
+import EditorialArticle from '@/components/editorial/EditorialArticle.astro';
 import { editorialAlternates, editorialItemBySlug, editorialItems, editorialPath } from '@/data/editorial';
-import { LOCALES, editorialRoutes, type Locale } from '@/i18n/config';
+import { LOCALES, editorialIndexPath, editorialRoutes, type Locale } from '@/i18n/config';
 
 export function getStaticPaths() {
   return LOCALES.flatMap((locale) =>
@@ -22,6 +23,8 @@ if (editorial !== editorialRoutes[locale] || !article) throw new Error('Invalid 
 const item = editorialItemBySlug(locale, article);
 if (!item) throw new Error('Editorial item not found');
 const content = item.locales[locale];
+const indexLabel = { es: 'Huerto y recetas', en: 'Garden & recipes', fi: 'Puutarha ja reseptit', da: 'Have og opskrifter' }[locale];
+const homeLabel = { es: 'Inicio', en: 'Home', fi: 'Etusivu', da: 'Forside' }[locale];
 ---
 
 <SiteLayout
@@ -35,6 +38,11 @@ const content = item.locales[locale];
   ogType="article"
   publishedAt={item.publishedAt}
   modifiedAt={item.modifiedAt}
+  breadcrumbs={[
+    { label: homeLabel, href: `/${locale}/` },
+    { label: indexLabel, href: editorialIndexPath(locale) },
+    { label: content.title },
+  ]}
 >
-  <slot />
+  <EditorialArticle {locale} {item} />
 </SiteLayout>

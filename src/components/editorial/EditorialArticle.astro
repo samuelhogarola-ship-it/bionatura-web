@@ -1,0 +1,88 @@
+---
+import mascotAsset from '@/assets/brand/bionatura-mascot-lettuce.png';
+import ResponsiveImage from '@/components/media/ResponsiveImage.astro';
+import { editorialItems, editorialPath } from '@/data/editorial';
+import type { EditorialItem } from '@/domain/editorial';
+import { pathFor, type Locale } from '@/i18n/config';
+import RecipeDetails from './RecipeDetails.astro';
+import RelatedProducts from './RelatedProducts.astro';
+
+interface Props {
+  locale: Locale;
+  item: EditorialItem;
+}
+
+const { locale, item } = Astro.props;
+const content = item.locales[locale];
+const relatedArticles = item.relatedArticleIds
+  .map((id) => editorialItems.find((candidate) => candidate.id === id))
+  .filter((candidate) => candidate !== undefined);
+const localeTag: Record<Locale, string> = { es: 'es-ES', en: 'en-GB', fi: 'fi-FI', da: 'da-DK' };
+const publishedDate = new Intl.DateTimeFormat(localeTag[locale], { dateStyle: 'long' }).format(
+  new Date(`${item.publishedAt}T12:00:00Z`),
+);
+const copy = {
+  es: { article: 'Guía', recipe: 'Receta', author: 'Por Bionatura', published: 'Publicado el', related: 'También te puede interesar', cta: 'Consulta el catálogo orientativo y confirma la disponibilidad antes de la recogida.' },
+  en: { article: 'Guide', recipe: 'Recipe', author: 'By Bionatura', published: 'Published on', related: 'You may also like', cta: 'Browse the guide catalog and confirm availability before collection.' },
+  fi: { article: 'Opas', recipe: 'Resepti', author: 'Bionatura', published: 'Julkaistu', related: 'Tutustu myös näihin', cta: 'Tutustu ohjeelliseen luetteloon ja varmista saatavuus ennen noutoa.' },
+  da: { article: 'Guide', recipe: 'Opskrift', author: 'Af Bionatura', published: 'Udgivet den', related: 'Læs også', cta: 'Se det vejledende katalog, og bekræft tilgængeligheden før afhentning.' },
+}[locale];
+---
+
+<article class="editorial-article">
+  <header class="editorial-article__header page-shell">
+    <div class="editorial-article__heading reading-width">
+      <p class="editorial-article__type">{copy[item.type]}</p>
+      <h1>{content.title}</h1>
+      <p class="editorial-article__intro">{content.intro}</p>
+      <p class="editorial-article__byline">
+        <span>{copy.author}</span>
+        <span aria-hidden="true">·</span>
+        <span>{copy.published} <time datetime={item.publishedAt}>{publishedDate}</time></span>
+      </p>
+    </div>
+    <figure class="editorial-article__hero">
+      <ResponsiveImage
+        src={item.image}
+        alt={content.imageAlt}
+        sizes="(min-width: 68rem) 72rem, 100vw"
+        priority
+      />
+    </figure>
+  </header>
+
+  <div class="editorial-article__content page-shell">
+    <div class="editorial-article__body reading-width">
+      {item.type === 'recipe' && <RecipeDetails {locale} recipe={item.recipe} />}
+      <div class="editorial-article__sections">
+        {content.sections.map((section) => (
+          <section>
+            <h2>{section.heading}</h2>
+            {section.paragraphs.map((paragraph) => <p>{paragraph}</p>)}
+          </section>
+        ))}
+      </div>
+    </div>
+
+    <RelatedProducts {locale} productIds={item.relatedProductIds} />
+
+    {relatedArticles.length > 0 && (
+      <section class="related-articles" aria-labelledby="related-articles-title">
+        <h2 id="related-articles-title">{copy.related}</h2>
+        <ul>
+          {relatedArticles.map((related) => (
+            <li><a href={editorialPath(locale, related)}>{related.locales[locale].title}</a></li>
+          ))}
+        </ul>
+      </section>
+    )}
+
+    <aside class="editorial-article__cta">
+      <div>
+        <p>{copy.cta}</p>
+        <a class="button button--leaf" href={pathFor(locale, 'catalog')}>{content.ctaLabel}</a>
+      </div>
+      <ResponsiveImage src={mascotAsset} alt="" sizes="8rem" />
+    </aside>
+  </div>
+</article>

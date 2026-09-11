@@ -1,5 +1,6 @@
 ---
 import SiteLayout from '@/layouts/SiteLayout.astro';
+import EditorialIndex from '@/components/editorial/EditorialIndex.astro';
 import { DEFAULT_LOCALE, LOCALES, editorialIndexPath, editorialRoutes, type Locale } from '@/i18n/config';
 
 const indexMetadata: Record<Locale, { title: string; description: string }> = {
@@ -20,6 +21,8 @@ if (!localeParam || !LOCALES.includes(localeParam as Locale)) throw new Error('I
 const locale = localeParam as Locale;
 if (editorial !== editorialRoutes[locale]) throw new Error('Invalid editorial route');
 const metadata = indexMetadata[locale];
+const indexLabel = { es: 'Huerto y recetas', en: 'Garden & recipes', fi: 'Puutarha ja reseptit', da: 'Have og opskrifter' }[locale];
+const homeLabel = { es: 'Inicio', en: 'Home', fi: 'Etusivu', da: 'Forside' }[locale];
 const alternates = [
   ...LOCALES.map((alternateLocale) => ({ locale: alternateLocale, href: editorialIndexPath(alternateLocale) })),
   { locale: 'x-default' as const, href: editorialIndexPath(DEFAULT_LOCALE) },
@@ -33,6 +36,7 @@ const alternates = [
   description={metadata.description}
   canonicalPath={editorialIndexPath(locale)}
   {alternates}
+  breadcrumbs={[{ label: homeLabel, href: `/${locale}/` }, { label: indexLabel }]}
 >
-  <slot />
+  <EditorialIndex {locale} />
 </SiteLayout>

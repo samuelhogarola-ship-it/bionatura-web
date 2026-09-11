@@ -1,0 +1,42 @@
+---
+import { editorialItems } from '@/data/editorial';
+import type { Locale } from '@/i18n/config';
+import EditorialCard from './EditorialCard.astro';
+
+interface Props { locale: Locale }
+
+const { locale } = Astro.props;
+const copy = {
+  es: {
+    eyebrow: 'Bionatura · Fuengirola',
+    title: 'Huerto y recetas',
+    intro: 'Ideas sencillas para aprovechar los productos de temporada, conocer mejor el huerto de Los Pacos y preparar recetas en casa.',
+  },
+  en: {
+    eyebrow: 'Bionatura · Fuengirola',
+    title: 'Garden & recipes',
+    intro: 'Simple ideas for making the most of seasonal produce, learning about the Los Pacos garden and preparing recipes at home.',
+  },
+  fi: {
+    eyebrow: 'Bionatura · Fuengirola',
+    title: 'Puutarha ja reseptit',
+    intro: 'Helppoja ideoita sesonkituotteiden hyödyntämiseen, Los Pacosin puutarhaan tutustumiseen ja kotona kokkaamiseen.',
+  },
+  da: {
+    eyebrow: 'Bionatura · Fuengirola',
+    title: 'Have og opskrifter',
+    intro: 'Enkle idéer til sæsonens varer, viden om haven i Los Pacos og opskrifter, du kan lave derhjemme.',
+  },
+}[locale];
+---
+
+<section class="editorial-index">
+  <header class="editorial-index__header page-shell">
+    <p class="eyebrow">{copy.eyebrow}</p>
+    <h1>{copy.title}</h1>
+    <p class="editorial-index__intro">{copy.intro}</p>
+  </header>
+  <div class="editorial-index__grid page-shell">
+    {editorialItems.map((item) => <EditorialCard {item} {locale} />)}
+  </div>
+</section>
