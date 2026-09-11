@@ -50,6 +50,22 @@ export type EditorialItem = ArticleEditorialItem | RecipeEditorialItem;
 
 const locales: readonly Locale[] = ['es', 'en', 'fi', 'da'];
 
+function isGregorianDate(value: unknown): value is string {
+  if (typeof value !== 'string') return false;
+  const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value);
+  if (!match) return false;
+
+  const [, yearText, monthText, dayText] = match;
+  const year = Number(yearText);
+  const month = Number(monthText);
+  const day = Number(dayText);
+  if (year === 0 || month < 1 || month > 12) return false;
+
+  const isLeapYear = year % 4 === 0 && (year % 100 !== 0 || year % 400 === 0);
+  const daysInMonth = [31, isLeapYear ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+  return day >= 1 && day <= daysInMonth[month - 1];
+}
+
 function assertText(value: unknown, label: string, itemId: string): asserts value is string {
   if (typeof value !== 'string' || value.trim() === '') {
     throw new Error(`${label} missing for editorial item ${itemId}`);
@@ -122,8 +138,11 @@ export function assertValidEditorial(items: EditorialItem[], productIds: readonl
     if (itemIds.has(item.id)) throw new Error(`duplicate editorial item id: ${item.id}`);
     itemIds.add(item.id);
     assertText(item.publishedAt, 'publishedAt', item.id);
-    if (!/^\d{4}-\d{2}-\d{2}$/.test(item.publishedAt)) throw new Error(`publishedAt must be YYYY-MM-DD for editorial item ${item.id}`);
-    if (item.modifiedAt !== undefined && !/^\d{4}-\d{2}-\d{2}$/.test(item.modifiedAt)) throw new Error(`modifiedAt must be YYYY-MM-DD for editorial item ${item.id}`);
+    if (!isGregorianDate(item.publishedAt)) throw new Error(`publishedAt must be YYYY-MM-DD for editorial item ${item.id}`);
+    if (item.modifiedAt !== undefined && !isGregorianDate(item.modifiedAt)) throw new Error(`modifiedAt must be YYYY-MM-DD for editorial item ${item.id}`);
+    if (item.modifiedAt !== undefined && item.modifiedAt < item.publishedAt) {
+      throw new Error(`modifiedAt cannot be earlier than publishedAt for editorial item ${item.id}`);
+    }
     if (!item.image) throw new Error(`image missing for editorial item ${item.id}`);
     if (!Array.isArray(item.relatedProductIds)) throw new Error(`relatedProductIds missing for editorial item ${item.id}`);
     if (!Array.isArray(item.relatedArticleIds)) throw new Error(`relatedArticleIds missing for editorial item ${item.id}`);

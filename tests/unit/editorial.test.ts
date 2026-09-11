@@ -1,5 +1,11 @@
 import { describe, expect, it } from 'vitest';
+import { assertValidEditorial } from '../../src/domain/editorial';
 import { editorialAlternates, editorialItemBySlug, editorialItems, editorialPath } from '../../src/data/editorial';
+import { products } from '../../src/data/products';
+
+const productIds = products.map((product) => product.id);
+const withFirstItemDates = (publishedAt: string, modifiedAt?: string) =>
+  editorialItems.map((item, index) => (index === 0 ? { ...item, publishedAt, ...(modifiedAt === undefined ? {} : { modifiedAt }) } : item));
 
 describe('editorial content', () => {
   it('contains six complete items in four locales', () => {
@@ -35,5 +41,27 @@ describe('editorial content', () => {
         expect(item.locales[locale].ctaLabel).toBe(expected[locale]);
       }
     }
+  });
+
+  it('rejects an impossible Gregorian published date with the editorial item context', () => {
+    expect(() => assertValidEditorial(withFirstItemDates('2026-02-30'), productIds)).toThrow(
+      'publishedAt must be YYYY-MM-DD for editorial item seasonal-produce-fuengirola',
+    );
+  });
+
+  it('rejects an invalid leap modified date with the editorial item context', () => {
+    expect(() => assertValidEditorial(withFirstItemDates('2026-02-28', '2025-02-29'), productIds)).toThrow(
+      'modifiedAt must be YYYY-MM-DD for editorial item seasonal-produce-fuengirola',
+    );
+  });
+
+  it('accepts a valid Gregorian leap date', () => {
+    expect(() => assertValidEditorial(withFirstItemDates('2024-02-29', '2024-02-29'), productIds)).not.toThrow();
+  });
+
+  it('rejects a modified date before the published date with the editorial item context', () => {
+    expect(() => assertValidEditorial(withFirstItemDates('2026-03-01', '2026-02-28'), productIds)).toThrow(
+      'modifiedAt cannot be earlier than publishedAt for editorial item seasonal-produce-fuengirola',
+    );
   });
 });

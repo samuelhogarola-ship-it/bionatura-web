@@ -10,11 +10,21 @@ async function readStructuredData(page: import('@playwright/test').Page): Promis
   );
 }
 
-test('article canonical and alternates map the same item', async ({ page }) => {
+test('tomato salad publishes the exact canonical and alternate route matrix', async ({ page }) => {
   await page.goto('/es/huerto-recetas/ensalada-tomate-cebolla-roja-aceite-oliva-bio/');
-  await expect(page.locator('link[rel="canonical"]')).toHaveAttribute('href', /\/es\/huerto-recetas\/ensalada-/);
-  for (const language of ['es', 'en', 'fi', 'da', 'x-default']) {
+  const expectedUrls = {
+    canonical: 'https://bionatura.es/es/huerto-recetas/ensalada-tomate-cebolla-roja-aceite-oliva-bio/',
+    es: 'https://bionatura.es/es/huerto-recetas/ensalada-tomate-cebolla-roja-aceite-oliva-bio/',
+    en: 'https://bionatura.es/en/garden-recipes/tomato-red-onion-organic-olive-oil-salad/',
+    fi: 'https://bionatura.es/fi/puutarha-reseptit/tomaatti-punasipuli-luomuoliivioljy-salaatti/',
+    da: 'https://bionatura.es/da/have-opskrifter/tomat-roedloeg-oekologisk-olivenolie-salat/',
+    'x-default': 'https://bionatura.es/es/huerto-recetas/ensalada-tomate-cebolla-roja-aceite-oliva-bio/',
+  } as const;
+
+  await expect(page.locator('link[rel="canonical"]')).toHaveAttribute('href', expectedUrls.canonical);
+  for (const [language, href] of Object.entries(expectedUrls).filter(([language]) => language !== 'canonical')) {
     await expect(page.locator(`link[rel="alternate"][hreflang="${language}"]`)).toHaveCount(1);
+    await expect(page.locator(`link[rel="alternate"][hreflang="${language}"]`)).toHaveAttribute('href', href);
   }
 });
 
