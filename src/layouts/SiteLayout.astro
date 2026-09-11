@@ -9,7 +9,7 @@ import Breadcrumbs from '@/components/Breadcrumbs.astro';
 import StructuredData from '@/components/StructuredData.astro';
 import '@/styles/global.css';
 import '@/styles/components.css';
-import type { Locale, PageKey } from '@/i18n/config';
+import type { Locale, PageKey, SeoAlternate } from '@/i18n/config';
 
 interface Props {
   locale: Locale;
@@ -17,9 +17,14 @@ interface Props {
   title: string;
   description: string;
   image?: string;
+  canonicalPath?: string;
+  alternates?: SeoAlternate[];
+  ogType?: string;
+  publishedAt?: string;
+  modifiedAt?: string;
 }
 
-const { locale, page, title, description, image } = Astro.props;
+const { locale, page, title, description, image, canonicalPath, alternates, ogType, publishedAt, modifiedAt } = Astro.props;
 const current = title.split('|')[0].trim();
 const skipLabel: Record<Locale, string> = {
   es: 'Saltar al contenido',
@@ -32,7 +37,7 @@ const skipLabel: Record<Locale, string> = {
 <!doctype html>
 <html lang={locale}>
   <head>
-    <SeoHead {locale} {page} {title} {description} {image} />
+    <SeoHead {locale} {page} {title} {description} {image} {canonicalPath} {alternates} {ogType} {publishedAt} {modifiedAt} />
     <StructuredData {locale} {page} {current} />
     <slot name="head" />
   </head>

@@ -19,6 +19,18 @@ export type PageKey = keyof typeof routes;
 export const PAGE_KEYS = Object.keys(routes) as PageKey[];
 export type UiKey = keyof typeof ui.es;
 
+export const editorialRoutes: Record<Locale, string> = {
+  es: 'huerto-recetas',
+  en: 'garden-recipes',
+  fi: 'puutarha-reseptit',
+  da: 'have-opskrifter',
+};
+
+export interface SeoAlternate {
+  locale: Locale | 'x-default';
+  href: string;
+}
+
 export function isLocale(value: string): value is Locale {
   return (LOCALES as readonly string[]).includes(value);
 }
@@ -28,7 +40,9 @@ export function pathFor(locale: Locale, page: PageKey): string {
   return slug === '' ? `/${locale}/` : `/${locale}/${slug}/`;
 }
 
-export function alternateLinks(page: PageKey) {
+export const editorialIndexPath = (locale: Locale) => `/${locale}/${editorialRoutes[locale]}/`;
+
+export function alternateLinks(page: PageKey): SeoAlternate[] {
   return [
     ...LOCALES.map((locale) => ({ locale, href: pathFor(locale, page) })),
     { locale: 'x-default', href: pathFor(DEFAULT_LOCALE, page) },

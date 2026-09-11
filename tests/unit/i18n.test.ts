@@ -1,9 +1,14 @@
 import { describe, expect, it } from 'vitest';
-import { alternateLinks, pathFor, routes } from '../../src/i18n/config';
+import { alternateLinks, editorialIndexPath, pathFor, routes } from '../../src/i18n/config';
 import { pages } from '../../src/i18n/pages';
 import { ui } from '../../src/i18n/ui';
 
 describe('localized routes', () => {
+  it('builds translated editorial index paths', () => {
+    expect(editorialIndexPath('es')).toBe('/es/huerto-recetas/');
+    expect(editorialIndexPath('fi')).toBe('/fi/puutarha-reseptit/');
+  });
+
   it('builds translated catalog paths', () => {
     expect(pathFor('es', 'catalog')).toBe('/es/catalogo/');
     expect(pathFor('en', 'catalog')).toBe('/en/catalog/');
