@@ -2,7 +2,7 @@ import type { Locale } from './config';
 
 export const ui = {
   es: {
-    navHome: 'Inicio', navCatalog: 'Catálogo', navGallery: 'Galería', navAbout: 'Nosotros', navHow: 'Cómo funciona', navContact: 'Contacto',
+    navHome: 'Inicio', navCatalog: 'Catálogo', navGallery: 'Galería', navAbout: 'Nosotros', navHow: 'Cómo funciona', navContact: 'Contacto', navEditorial: 'Huerto y recetas',
     menuLabel: 'Menú', closeMenu: 'Cerrar menú', prepareOrder: 'Prepara tu pedido', viewCatalog: 'Ver catálogo', addToList: 'Añadir a la cesta', yourList: 'Tu cesta', emptyList: 'Tu cesta está vacía.',
     quantity: 'Cantidad', customQuantity: 'Otra cantidad', removeItem: 'Eliminar', clearList: 'Vaciar cesta', cancel: 'Cancelar', confirmClear: 'Vaciar',
     spring: 'Primavera', summer: 'Verano', autumn: 'Otoño', winter: 'Invierno', consultWhatsapp: 'Consultar por WhatsApp', copyMessage: 'Copiar mensaje',
@@ -14,7 +14,7 @@ export const ui = {
     demoCopyNotice: 'Modo demo: copia el mensaje y compártelo cuando dispongas del contacto confirmado.', messageCopied: 'Mensaje copiado.', copyManually: 'No se pudo copiar automáticamente. Selecciona y copia el mensaje manualmente.', whatsappAccess: 'WhatsApp y contacto',
   },
   en: {
-    navHome: 'Home', navCatalog: 'Catalog', navGallery: 'Gallery', navAbout: 'About us', navHow: 'How it works', navContact: 'Contact',
+    navHome: 'Home', navCatalog: 'Catalog', navGallery: 'Gallery', navAbout: 'About us', navHow: 'How it works', navContact: 'Contact', navEditorial: 'Garden & recipes',
     menuLabel: 'Menu', closeMenu: 'Close menu', prepareOrder: 'Prepare your order', viewCatalog: 'View catalog', addToList: 'Add to list', yourList: 'Your list', emptyList: 'Your list is empty.',
     quantity: 'Quantity', customQuantity: 'Other quantity', removeItem: 'Remove', clearList: 'Clear list', cancel: 'Cancel', confirmClear: 'Clear',
     spring: 'Spring', summer: 'Summer', autumn: 'Autumn', winter: 'Winter', consultWhatsapp: 'Ask via WhatsApp', copyMessage: 'Copy message',
@@ -26,7 +26,7 @@ export const ui = {
     demoCopyNotice: 'Demo mode: copy the message and share it once you have confirmed contact details.', messageCopied: 'Message copied.', copyManually: 'Automatic copy failed. Select and copy the message manually.', whatsappAccess: 'WhatsApp and contact',
   },
   fi: {
-    navHome: 'Etusivu', navCatalog: 'Tuotteet', navGallery: 'Galleria', navAbout: 'Meistä', navHow: 'Näin se toimii', navContact: 'Yhteystiedot',
+    navHome: 'Etusivu', navCatalog: 'Tuotteet', navGallery: 'Galleria', navAbout: 'Meistä', navHow: 'Näin se toimii', navContact: 'Yhteystiedot', navEditorial: 'Puutarha ja reseptit',
     menuLabel: 'Valikko', closeMenu: 'Sulje valikko', prepareOrder: 'Kokoa tilauslistasi', viewCatalog: 'Katso tuotteet', addToList: 'Lisää listalle', yourList: 'Ostoslistasi', emptyList: 'Listasi on tyhjä.',
     quantity: 'Määrä', customQuantity: 'Muu määrä', removeItem: 'Poista', clearList: 'Tyhjennä lista', cancel: 'Peruuta', confirmClear: 'Tyhjennä',
     spring: 'Kevät', summer: 'Kesä', autumn: 'Syksy', winter: 'Talvi', consultWhatsapp: 'Kysy WhatsAppissa', copyMessage: 'Kopioi viesti',
@@ -38,7 +38,7 @@ export const ui = {
     demoCopyNotice: 'Demotila: kopioi viesti ja jaa se, kun vahvistettu yhteystieto on saatavilla.', messageCopied: 'Viesti kopioitu.', copyManually: 'Automaattinen kopiointi epäonnistui. Valitse ja kopioi viesti käsin.', whatsappAccess: 'WhatsApp ja yhteystiedot',
   },
   da: {
-    navHome: 'Forside', navCatalog: 'Katalog', navGallery: 'Galleri', navAbout: 'Om os', navHow: 'Sådan fungerer det', navContact: 'Kontakt',
+    navHome: 'Forside', navCatalog: 'Katalog', navGallery: 'Galleri', navAbout: 'Om os', navHow: 'Sådan fungerer det', navContact: 'Kontakt', navEditorial: 'Have og opskrifter',
     menuLabel: 'Menu', closeMenu: 'Luk menu', prepareOrder: 'Forbered din bestillingsliste', viewCatalog: 'Se katalog', addToList: 'Føj til listen', yourList: 'Din liste', emptyList: 'Din liste er tom.',
     quantity: 'Mængde', customQuantity: 'Anden mængde', removeItem: 'Fjern', clearList: 'Tøm listen', cancel: 'Annuller', confirmClear: 'Tøm',
     spring: 'Forår', summer: 'Sommer', autumn: 'Efterår', winter: 'Vinter', consultWhatsapp: 'Spørg via WhatsApp', copyMessage: 'Kopiér besked',

@@ -27,7 +27,7 @@ test.describe('mobile navigation', () => {
 
     const mobileNavigation = page.locator('[data-menu-panel]').getByRole('navigation', { name: /principal/i });
     const firstLink = mobileNavigation.getByRole('link', { name: 'Inicio', exact: true });
-    const lastLink = mobileNavigation.getByRole('link', { name: 'Contacto', exact: true });
+    const lastLink = mobileNavigation.getByRole('link', { name: 'Huerto y recetas', exact: true });
     await expect(firstLink).toBeFocused();
 
     await page.keyboard.press('Shift+Tab');
@@ -51,6 +51,10 @@ test.describe('desktop navigation', () => {
     await expect(language.locator('.language-switcher__flag')).toHaveText('🇪🇸');
     await expect(language.getByText('ES', { exact: true })).toBeVisible();
     await expect(page.getByRole('link', { name: /cómo funciona/i })).toHaveCount(0);
+    await expect(page.locator('.desktop-navigation').getByRole('link', { name: 'Huerto y recetas', exact: true })).toHaveAttribute(
+      'href',
+      '/es/huerto-recetas/',
+    );
     const basket = page.getByRole('button', { name: /tu cesta/i });
     await expect(basket.locator('svg')).toBeVisible();
     await expect(basket.locator('[data-order-badge]')).toHaveText('0');
@@ -70,4 +74,14 @@ test.describe('desktop navigation', () => {
     await expect(panel).toBeHidden();
     await expect(page.locator('html')).not.toHaveClass(/menu-open/);
   });
+});
+
+test('language selector preserves the editorial item across locales', async ({ page }) => {
+  await page.goto('/es/huerto-recetas/como-elegir-tomates-huerto/');
+
+  const language = page.locator('.language-switcher');
+  await language.getByRole('button', { name: /idioma/i }).click();
+  await language.getByRole('link', { name: 'English', exact: true }).click();
+
+  await expect(page).toHaveURL('/en/garden-recipes/how-to-choose-garden-tomatoes/');
 });

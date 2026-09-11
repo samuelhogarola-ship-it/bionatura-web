@@ -37,6 +37,10 @@ test('Spanish home explains offer, place and process above the fold', async ({ p
     galleryFigures.nth(3).evaluate((element) => element.getBoundingClientRect().width),
   ]);
   expect(Math.abs(thirdWidth - fourthWidth)).toBeLessThanOrEqual(1);
+  await expect(page.locator('main').getByRole('link', { name: /productos de temporada en Fuengirola/i })).toHaveAttribute(
+    'href',
+    '/es/huerto-recetas/productos-temporada-fuengirola/',
+  );
 });
 
 test('mascot welcomes once per browser session without blocking the page', async ({ page }) => {
@@ -86,6 +90,28 @@ test('contact page exposes the confirmed phone and WhatsApp without presenting t
   await expect(page.locator('main')).toContainText(/campo de Los Pacos/i);
   await expect(page.getByText('Calle Tórtolas, 11')).toHaveCount(0);
   await expect(page.locator('main')).not.toContainText(/modo demo/i);
+  await expect(page.locator('main').getByRole('link', { name: /huerto de Los Pacos/i })).toHaveAttribute(
+    'href',
+    '/es/huerto-recetas/del-huerto-los-pacos-a-tu-cesta/',
+  );
+});
+
+test('About links the local story and catalog links relevant recipes', async ({ page }) => {
+  await page.goto('/es/nosotros/');
+  await expect(page.locator('main').getByRole('link', { name: /Los Pacos a tu cesta/i })).toHaveAttribute(
+    'href',
+    '/es/huerto-recetas/del-huerto-los-pacos-a-tu-cesta/',
+  );
+
+  await page.goto('/es/catalogo/');
+  await expect(page.locator('main').getByRole('link', { name: /ensalada de tomate/i })).toHaveAttribute(
+    'href',
+    '/es/huerto-recetas/ensalada-tomate-cebolla-roja-aceite-oliva-bio/',
+  );
+  await expect(page.locator('main').getByRole('link', { name: /calabacines mediterráneos/i })).toHaveAttribute(
+    'href',
+    '/es/huerto-recetas/calabacines-mediterraneos-sencillos/',
+  );
 });
 
 test('footer uses the requested local message and credits WF-Studio', async ({ page }) => {
@@ -94,5 +120,9 @@ test('footer uses the requested local message and credits WF-Studio', async ({ p
   const footerNote = page.locator('.site-footer__note');
   await expect(footerNote).toHaveText('Tus productos biológicos en Fuengirola');
   await expect(footerNote).toHaveCSS('font-style', 'normal');
+  await expect(page.locator('footer').getByRole('link', { name: 'Huerto y recetas', exact: true })).toHaveAttribute(
+    'href',
+    '/es/huerto-recetas/',
+  );
   await expect(page.locator('footer')).toContainText('Web por WF-Studio');
 });

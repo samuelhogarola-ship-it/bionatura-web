@@ -3,15 +3,16 @@ import Brand from './Brand.astro';
 import LanguageSwitcher from './LanguageSwitcher.astro';
 import MobileMenu from './MobileMenu.astro';
 import OrderCount from '@/components/order/OrderCount.astro';
-import { pathFor, type Locale, type PageKey } from '@/i18n/config';
+import { editorialIndexPath, pathFor, type Locale, type PageKey, type SeoAlternate } from '@/i18n/config';
 import { ui } from '@/i18n/ui';
 
 interface Props {
   locale: Locale;
   page: PageKey;
+  links?: SeoAlternate[];
 }
 
-const { locale, page } = Astro.props;
+const { locale, page, links: languageLinks } = Astro.props;
 const copy = ui[locale];
 const navLabel: Record<Locale, string> = {
   es: 'Navegación principal',
@@ -19,12 +20,14 @@ const navLabel: Record<Locale, string> = {
   fi: 'Päänavigointi',
   da: 'Primær navigation',
 };
-const links: Array<[PageKey, string]> = [
-  ['home', copy.navHome],
-  ['catalog', copy.navCatalog],
-  ['gallery', copy.navGallery],
-  ['about', copy.navAbout],
-  ['contact', copy.navContact],
+const isEditorial = Astro.url.pathname.startsWith(editorialIndexPath(locale));
+const links: Array<{ href: string; label: string; current: boolean }> = [
+  { href: pathFor(locale, 'home'), label: copy.navHome, current: !isEditorial && page === 'home' },
+  { href: pathFor(locale, 'catalog'), label: copy.navCatalog, current: page === 'catalog' },
+  { href: pathFor(locale, 'gallery'), label: copy.navGallery, current: page === 'gallery' },
+  { href: pathFor(locale, 'about'), label: copy.navAbout, current: page === 'about' },
+  { href: pathFor(locale, 'contact'), label: copy.navContact, current: page === 'contact' },
+  { href: editorialIndexPath(locale), label: copy.navEditorial, current: isEditorial },
 ];
 ---
 
@@ -34,16 +37,16 @@ const links: Array<[PageKey, string]> = [
 
     <nav class="desktop-navigation" aria-label={navLabel[locale]}>
       <ul>
-        {links.map(([key, label]) => (
+        {links.map(({ href, label, current }) => (
           <li>
-            <a href={pathFor(locale, key)} aria-current={key === page ? 'page' : undefined}>{label}</a>
+            <a {href} aria-current={current ? 'page' : undefined}>{label}</a>
           </li>
         ))}
       </ul>
     </nav>
 
     <div class="site-header__actions">
-      <LanguageSwitcher locale={locale} page={page} />
+      <LanguageSwitcher locale={locale} page={page} links={languageLinks} />
       <OrderCount {locale} />
       <a class="button button--leaf site-header__cta" href={pathFor(locale, 'catalog')}>
         {copy.prepareOrder}

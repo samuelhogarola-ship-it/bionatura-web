@@ -44,7 +44,7 @@ const skipLabel: Record<Locale, string> = {
   </head>
   <body>
     <a class="skip-link" href="#contenido">{skipLabel[locale]}</a>
-    <Header {locale} {page} />
+    <Header {locale} {page} links={alternates} />
     <Breadcrumbs {locale} {page} {current} items={breadcrumbs} />
     <main id="contenido" tabindex="-1">
       <slot />

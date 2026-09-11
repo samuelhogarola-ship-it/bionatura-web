@@ -1,5 +1,6 @@
 ---
 import { business } from '@/data/business';
+import { editorialItems, editorialPath } from '@/data/editorial';
 import { pathFor, type Locale } from '@/i18n/config';
 import { contact } from '@/i18n/pages/contact';
 import Mascot from '@/components/brand/Mascot.astro';
@@ -20,6 +21,13 @@ const labels = {
 }[locale];
 const phoneDisplay = '635 648 872';
 const whatsappHref = `https://wa.me/${business.whatsapp.value?.replace(/\D/g, '')}`;
+const localStory = editorialItems.find((item) => item.id === 'los-pacos-garden-to-basket')!;
+const localStoryLabel = {
+  es: 'Conoce el recorrido del huerto de Los Pacos a tu cesta',
+  en: 'Learn how the Los Pacos garden reaches your basket',
+  fi: 'Lue, miten Los Pacosin puutarha saavuttaa korisi',
+  da: 'Læs, hvordan haven i Los Pacos når din kurv',
+}[locale];
 ---
 
 <article class="editorial-page contact-page">
@@ -51,6 +59,7 @@ const whatsappHref = `https://wa.me/${business.whatsapp.value?.replace(/\D/g, ''
       </section>
     </div>
     <p>{copy.sections[0].body}</p>
+    <p><a href={editorialPath(locale, localStory)}>{localStoryLabel}</a></p>
     <a class="button button--leaf" href={pathFor(locale, 'catalog')}>{copy.cta}</a>
   </div>
 </article>

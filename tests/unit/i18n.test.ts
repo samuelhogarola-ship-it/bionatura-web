@@ -32,6 +32,20 @@ describe('UI copy', () => {
       expect(Object.keys(ui[locale]).sort()).toEqual(baseline);
     }
   });
+
+  it('provides a localized editorial navigation label in every locale', () => {
+    expect([
+      ui.es.navEditorial,
+      ui.en.navEditorial,
+      ui.fi.navEditorial,
+      ui.da.navEditorial,
+    ]).toEqual([
+      'Huerto y recetas',
+      'Garden & recipes',
+      'Puutarha ja reseptit',
+      'Have og opskrifter',
+    ]);
+  });
 });
 
 describe('page CTAs', () => {
