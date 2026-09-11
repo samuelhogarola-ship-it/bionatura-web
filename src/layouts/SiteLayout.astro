@@ -16,6 +16,7 @@ interface Props {
   page: PageKey;
   title: string;
   description: string;
+  breadcrumbLabel?: string;
   image?: string;
   canonicalPath?: string;
   alternates?: SeoAlternate[];
@@ -25,8 +26,8 @@ interface Props {
   breadcrumbs?: { label: string; href?: string }[];
 }
 
-const { locale, page, title, description, image, canonicalPath, alternates, ogType, publishedAt, modifiedAt, breadcrumbs } = Astro.props;
-const current = title.split('|')[0].trim();
+const { locale, page, title, description, breadcrumbLabel, image, canonicalPath, alternates, ogType, publishedAt, modifiedAt, breadcrumbs } = Astro.props;
+const current = breadcrumbLabel ?? title.split('|')[0].trim();
 const skipLabel: Record<Locale, string> = {
   es: 'Saltar al contenido',
   en: 'Skip to content',

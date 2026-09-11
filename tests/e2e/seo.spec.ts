@@ -10,13 +10,23 @@ async function readStructuredData(page: import('@playwright/test').Page): Promis
   );
 }
 
-test('Spanish pages use specific local titles and descriptions', async ({ page }) => {
+test('localized pages use specific local titles and descriptions', async ({ page }) => {
   const pages = [
     ['/es/', /productos biológicos.*Fuengirola/i, /Los Pacos|Fuengirola/i],
     ['/es/catalogo/', /catálogo.*Fuengirola/i, /temporada.*Fuengirola/i],
     ['/es/nosotros/', /Bionatura.*Los Pacos/i, /huerto.*Fuengirola/i],
     ['/es/contacto/', /contacta.*Bionatura.*Fuengirola/i, /Los Pacos.*recogida/i],
     ['/es/galeria/', /huerto.*Los Pacos/i, /Fuengirola/i],
+    ['/fi/', /luomutuotteita.*Fuengirolassa/i, /Los Pacos|Fuengirola/i],
+    ['/fi/tuotteet/', /Fuengirolan.*luomu.*sesonkituotteet/i, /Fuengirol/i],
+    ['/fi/meista/', /Los Pacosin.*Fuengirolassa/i, /Los Pacos.*Fuengirol/i],
+    ['/fi/yhteystiedot/', /Bionaturaan.*Fuengirolassa/i, /Los Pacos.*Fuengirol/i],
+    ['/fi/galleria/', /Los Pacosin.*galleria/i, /Los Pacos.*Fuengirol/i],
+    ['/da/', /økologiske.*Fuengirola/i, /Los Pacos|Fuengirola/i],
+    ['/da/katalog/', /økologiske.*Fuengirola/i, /Fuengirola/i],
+    ['/da/om-os/', /Los Pacos.*Fuengirola/i, /Los Pacos.*Fuengirola/i],
+    ['/da/kontakt/', /Bionatura.*Fuengirola/i, /Los Pacos.*Fuengirola/i],
+    ['/da/galleri/', /Los Pacos.*Bionatura/i, /Los Pacos.*Fuengirola/i],
   ] as const;
 
   for (const [path, title, description] of pages) {
@@ -24,6 +34,24 @@ test('Spanish pages use specific local titles and descriptions', async ({ page }
     await expect(page).toHaveTitle(title);
     await expect(page.locator('meta[name="description"]')).toHaveAttribute('content', description);
     await expect(page.locator('meta[name="keywords"]')).toHaveCount(0);
+  }
+});
+
+test('visible and structured breadcrumbs use concise localized page labels', async ({ page }) => {
+  const pages = [
+    ['/es/catalogo/', 'Catálogo'], ['/es/nosotros/', 'Nosotros'], ['/es/contacto/', 'Contacto'], ['/es/galeria/', 'Galería'],
+    ['/en/catalog/', 'Catalog'], ['/en/about/', 'About us'], ['/en/contact/', 'Contact'], ['/en/gallery/', 'Gallery'],
+    ['/fi/tuotteet/', 'Tuotteet'], ['/fi/meista/', 'Meistä'], ['/fi/yhteystiedot/', 'Yhteystiedot'], ['/fi/galleria/', 'Galleria'],
+    ['/da/katalog/', 'Katalog'], ['/da/om-os/', 'Om os'], ['/da/kontakt/', 'Kontakt'], ['/da/galleri/', 'Galleri'],
+  ] as const;
+
+  for (const [path, label] of pages) {
+    await page.goto(path);
+    await expect(page.getByRole('navigation', { name: 'Breadcrumb' }).locator('[aria-current="page"]')).toHaveText(label);
+    const schemas = await readStructuredData(page);
+    const breadcrumb = schemas.find((schema) => schema['@type'] === 'BreadcrumbList');
+    const items = breadcrumb?.itemListElement as Array<Record<string, unknown>>;
+    expect(items.at(-1)?.name).toBe(label);
   }
 });
 
@@ -36,42 +64,44 @@ test('catalog emits canonical and all language alternates', async ({ page }) => 
 });
 
 test('structured data describes the website and organization without shop claims', async ({ page }) => {
-  await page.goto('/es/contacto/');
-  const schemas = await readStructuredData(page);
-  const website = schemas.find((schema) => schema['@type'] === 'WebSite');
-  const organization = schemas.find((schema) => schema['@type'] === 'Organization');
-  const structuredData = JSON.stringify(schemas);
+  for (const path of ['/es/contacto/', '/fi/yhteystiedot/', '/da/kontakt/']) {
+    await page.goto(path);
+    const schemas = await readStructuredData(page);
+    const website = schemas.find((schema) => schema['@type'] === 'WebSite');
+    const organization = schemas.find((schema) => schema['@type'] === 'Organization');
+    const structuredData = JSON.stringify(schemas);
 
-  expect(website).toMatchObject({
-    '@context': 'https://schema.org',
-    '@type': 'WebSite',
-    name: 'Bionatura',
-    url: 'https://bionatura.es/',
-  });
-  expect(organization).toMatchObject({
-    '@context': 'https://schema.org',
-    '@type': 'Organization',
-    name: 'Bionatura del Sur S.L.',
-    alternateName: 'Bionatura',
-    taxID: 'B92371301',
-    areaServed: { '@type': 'City', name: 'Fuengirola' },
-    address: {
-      '@type': 'PostalAddress',
-      streetAddress: 'Calle Tórtolas, 11',
-      postalCode: '29640',
-      addressLocality: 'Fuengirola',
-      addressCountry: 'ES',
-    },
-  });
-  expect(schemas.some((schema) => schema['@type'] === 'BreadcrumbList')).toBe(true);
-  expect(structuredData).not.toContain('telephone');
-  expect(structuredData).not.toContain('pickup');
-  expect(structuredData).not.toContain('LocalBusiness');
-  expect(structuredData).not.toContain('Product');
-  expect(structuredData).not.toContain('Offer');
-  expect(structuredData).not.toContain('AggregateRating');
-  expect(structuredData).not.toContain('openingHours');
-  expect(structuredData).not.toContain('price');
+    expect(website).toMatchObject({
+      '@context': 'https://schema.org',
+      '@type': 'WebSite',
+      name: 'Bionatura',
+      url: 'https://bionatura.es/',
+    });
+    expect(organization).toMatchObject({
+      '@context': 'https://schema.org',
+      '@type': 'Organization',
+      name: 'Bionatura del Sur S.L.',
+      alternateName: 'Bionatura',
+      taxID: 'B92371301',
+      areaServed: { '@type': 'City', name: 'Fuengirola' },
+      address: {
+        '@type': 'PostalAddress',
+        streetAddress: 'Calle Tórtolas, 11',
+        postalCode: '29640',
+        addressLocality: 'Fuengirola',
+        addressCountry: 'ES',
+      },
+    });
+    expect(schemas.some((schema) => schema['@type'] === 'BreadcrumbList')).toBe(true);
+    expect(structuredData).not.toContain('telephone');
+    expect(structuredData).not.toContain('pickup');
+    expect(structuredData).not.toContain('LocalBusiness');
+    expect(structuredData).not.toContain('Product');
+    expect(structuredData).not.toContain('Offer');
+    expect(structuredData).not.toContain('AggregateRating');
+    expect(structuredData).not.toContain('openingHours');
+    expect(structuredData).not.toContain('price');
+  }
 });
 
 test('legal identity is visible on legal pages but not presented as a shop or collection point', async ({ page }) => {

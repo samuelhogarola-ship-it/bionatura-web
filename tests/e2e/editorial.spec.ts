@@ -18,6 +18,18 @@ test('article canonical and alternates map the same item', async ({ page }) => {
   }
 });
 
+test('editorial x-default alternates target the corresponding Spanish page', async ({ page }) => {
+  const pages = [
+    ['/fi/puutarha-reseptit/', 'https://bionatura.es/es/huerto-recetas/'],
+    ['/da/have-opskrifter/saadan-vaelger-du-tomater-fra-haven/', 'https://bionatura.es/es/huerto-recetas/como-elegir-tomates-huerto/'],
+  ] as const;
+
+  for (const [path, spanishUrl] of pages) {
+    await page.goto(path);
+    await expect(page.locator('link[rel="alternate"][hreflang="x-default"]')).toHaveAttribute('href', spanishUrl);
+  }
+});
+
 test('index exposes six useful entries and detail renders visible recipe facts', async ({ page }) => {
   await page.goto('/es/huerto-recetas/');
 
@@ -42,33 +54,41 @@ test('index exposes six useful entries and detail renders visible recipe facts',
 });
 
 test('index schema lists exactly the six visible editorial cards', async ({ page }) => {
-  await page.goto('/es/huerto-recetas/');
-  const schemas = await readStructuredData(page);
-  const collection = schemas.find((schema) => schema['@type'] === 'CollectionPage');
-  const itemList = schemas.find((schema) => schema['@type'] === 'ItemList');
-  const visibleCards = await page.locator('article.editorial-card').evaluateAll((cards) =>
-    cards.map((card) => ({
-      name: card.querySelector('h2')?.textContent?.trim(),
-      url: `https://bionatura.es${(card.querySelector('a') as HTMLAnchorElement).getAttribute('href')}`,
-    })),
-  );
+  const pages = [
+    ['/es/huerto-recetas/', 'Huerto y recetas', 'es'],
+    ['/fi/puutarha-reseptit/', 'Puutarha ja reseptit', 'fi'],
+    ['/da/have-opskrifter/', 'Have og opskrifter', 'da'],
+  ] as const;
 
-  expect(collection).toMatchObject({
-    '@context': 'https://schema.org',
-    '@type': 'CollectionPage',
-    name: 'Huerto y recetas',
-    url: 'https://bionatura.es/es/huerto-recetas/',
-    inLanguage: 'es',
-  });
-  expect(itemList?.numberOfItems).toBe(6);
-  expect(itemList?.itemListElement).toEqual(
-    visibleCards.map((card, index) => ({
-      '@type': 'ListItem',
-      position: index + 1,
-      name: card.name,
-      url: card.url,
-    })),
-  );
+  for (const [path, name, language] of pages) {
+    await page.goto(path);
+    const schemas = await readStructuredData(page);
+    const collection = schemas.find((schema) => schema['@type'] === 'CollectionPage');
+    const itemList = schemas.find((schema) => schema['@type'] === 'ItemList');
+    const visibleCards = await page.locator('article.editorial-card').evaluateAll((cards) =>
+      cards.map((card) => ({
+        name: card.querySelector('h2')?.textContent?.trim(),
+        url: `https://bionatura.es${(card.querySelector('a') as HTMLAnchorElement).getAttribute('href')}`,
+      })),
+    );
+
+    expect(collection).toMatchObject({
+      '@context': 'https://schema.org',
+      '@type': 'CollectionPage',
+      name,
+      url: `https://bionatura.es${path}`,
+      inLanguage: language,
+    });
+    expect(itemList?.numberOfItems).toBe(6);
+    expect(itemList?.itemListElement).toEqual(
+      visibleCards.map((card, index) => ({
+        '@type': 'ListItem',
+        position: index + 1,
+        name: card.name,
+        url: card.url,
+      })),
+    );
+  }
 });
 
 test('recipe schema mirrors the visible yield, times, ingredients, and steps', async ({ page }) => {
@@ -101,6 +121,45 @@ test('recipe schema mirrors the visible yield, times, ingredients, and steps', a
   });
   expect(schemas.some((schema) => schema['@type'] === 'Article')).toBe(false);
   expect(JSON.stringify(recipe)).not.toMatch(/Offer|price|rating|openingHours|pickup/i);
+});
+
+test('recipe schema uses Finnish and Danish visible content', async ({ page }) => {
+  const pages = [
+    {
+      path: '/fi/puutarha-reseptit/tomaatti-punasipuli-luomuoliivioljy-salaatti/',
+      language: 'fi',
+      name: 'Tomaatti-, punasipuli- ja luomuoliiviöljysalaatti',
+      yield: '2 annosta',
+      ingredient: '3 kypsää tomaattia',
+      instruction: 'Pese tomaatit ja leikkaa ne lohkoiksi.',
+    },
+    {
+      path: '/da/have-opskrifter/tomat-roedloeg-oekologisk-olivenolie-salat/',
+      language: 'da',
+      name: 'Tomat-, rødløgs- og økologisk olivenoliesalat',
+      yield: '2 portioner',
+      ingredient: '3 modne tomater',
+      instruction: 'Vask tomaterne og skær dem i både.',
+    },
+  ] as const;
+
+  for (const localized of pages) {
+    await page.goto(localized.path);
+    const schemas = await readStructuredData(page);
+    const recipe = schemas.find((schema) => schema['@type'] === 'Recipe');
+
+    expect(recipe).toMatchObject({
+      '@type': 'Recipe',
+      name: localized.name,
+      inLanguage: localized.language,
+      mainEntityOfPage: `https://bionatura.es${localized.path}`,
+      recipeYield: localized.yield,
+      recipeIngredient: expect.arrayContaining([localized.ingredient]),
+      recipeInstructions: expect.arrayContaining([
+        { '@type': 'HowToStep', position: 1, text: localized.instruction },
+      ]),
+    });
+  }
 });
 
 test('article schema mirrors the visible author, date, image, and page identity', async ({ page }) => {
