@@ -1028,6 +1028,11 @@
   box-shadow: var(--shadow-soft);
 }
 
+.editorial-card:focus-within {
+  border-color: var(--color-focus);
+  box-shadow: 0 0 0 0.2rem var(--color-focus) inset, var(--shadow-soft);
+}
+
 .editorial-card__link {
   display: block;
   height: 100%;

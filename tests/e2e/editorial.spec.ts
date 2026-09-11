@@ -31,6 +31,20 @@ test('index exposes six useful entries and detail renders visible recipe facts',
   await expect(breadcrumb.locator('[aria-current="page"]')).toContainText('Ensalada de tomate');
 });
 
+test('keyboard focus remains visible on clipped editorial cards', async ({ page }) => {
+  await page.goto('/es/huerto-recetas/');
+
+  const firstCard = page.locator('article.editorial-card').first();
+  const firstCardLink = firstCard.locator('.editorial-card__link');
+  for (let presses = 0; presses < 30; presses += 1) {
+    if (await firstCardLink.evaluate((link) => link === document.activeElement)) break;
+    await page.keyboard.press('Tab');
+  }
+
+  await expect(firstCardLink).toBeFocused();
+  await expect(firstCard).toHaveCSS('box-shadow', /rgb\(7, 95, 186\).*inset/);
+});
+
 test('editorial layouts remain readable at the configured viewport', async ({ page, isMobile }) => {
   await page.goto('/es/huerto-recetas/');
 
@@ -42,11 +56,43 @@ test('editorial layouts remain readable at the configured viewport', async ({ pa
   await page.getByRole('link', { name: /Ensalada de tomate/i }).click();
   const article = page.locator('.editorial-article');
   await expect(article).toBeVisible();
-  await expect(article).toHaveCSS('overflow-x', 'hidden');
+  const articleWidth = await article.evaluate((element) => ({
+    clientWidth: element.clientWidth,
+    scrollWidth: element.scrollWidth,
+  }));
+  expect(articleWidth.scrollWidth).toBeLessThanOrEqual(articleWidth.clientWidth);
+  const pageWidth = await page.evaluate(() => ({
+    clientWidth: document.documentElement.clientWidth,
+    scrollWidth: document.documentElement.scrollWidth,
+  }));
+  expect(pageWidth.scrollWidth).toBeLessThanOrEqual(pageWidth.clientWidth);
 
   const heroRatio = await article.locator('.editorial-article__hero img').evaluate((image: HTMLImageElement) =>
     image.getBoundingClientRect().width / image.getBoundingClientRect().height,
   );
   expect(heroRatio).toBeGreaterThan(1.2);
   expect(heroRatio).toBeLessThan(1.5);
+});
+
+test('tablet index uses two card columns without horizontal overflow', async ({ page, isMobile }) => {
+  test.skip(isMobile, 'Tablet coverage runs once in the desktop browser project');
+  await page.setViewportSize({ width: 800, height: 1024 });
+  await page.goto('/es/huerto-recetas/');
+
+  const grid = page.locator('.editorial-index__grid');
+  const columns = await grid.evaluate((element) => getComputedStyle(element).gridTemplateColumns.split(' ').length);
+  expect(columns).toBe(2);
+  const indexWidth = await page.evaluate(() => ({
+    clientWidth: document.documentElement.clientWidth,
+    scrollWidth: document.documentElement.scrollWidth,
+  }));
+  expect(indexWidth.scrollWidth).toBeLessThanOrEqual(indexWidth.clientWidth);
+
+  await page.getByRole('link', { name: /Ensalada de tomate/i }).click();
+  const article = page.locator('.editorial-article');
+  const articleWidth = await article.evaluate((element) => ({
+    clientWidth: element.clientWidth,
+    scrollWidth: element.scrollWidth,
+  }));
+  expect(articleWidth.scrollWidth).toBeLessThanOrEqual(articleWidth.clientWidth);
 });
