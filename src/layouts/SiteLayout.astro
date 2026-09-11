@@ -24,9 +24,10 @@ interface Props {
   publishedAt?: string;
   modifiedAt?: string;
   breadcrumbs?: { label: string; href?: string }[];
+  showMascotWelcome?: boolean;
 }
 
-const { locale, page, title, description, breadcrumbLabel, image, canonicalPath, alternates, ogType, publishedAt, modifiedAt, breadcrumbs } = Astro.props;
+const { locale, page, title, description, breadcrumbLabel, image, canonicalPath, alternates, ogType, publishedAt, modifiedAt, breadcrumbs, showMascotWelcome = true } = Astro.props;
 const current = breadcrumbLabel ?? title.split('|')[0].trim();
 const skipLabel: Record<Locale, string> = {
   es: 'Saltar al contenido',
@@ -51,7 +52,7 @@ const skipLabel: Record<Locale, string> = {
       <slot />
     </main>
     <OrderList {locale} />
-    <MascotWelcome {locale} />
+    {showMascotWelcome && <MascotWelcome {locale} />}
     <Footer {locale} />
     <FloatingWhatsApp {locale} />
     <script src="../scripts/order-controller.ts"></script>

@@ -73,8 +73,9 @@ function render() {
   linesElement.hidden = state.lines.length === 0;
   clearButton?.toggleAttribute('disabled', state.lines.length === 0);
   for (const action of document.querySelectorAll<HTMLButtonElement | HTMLAnchorElement>('[data-copy-order-message], [data-whatsapp-action]')) {
-    action.toggleAttribute('aria-disabled', state.lines.length === 0);
-    if (action instanceof HTMLButtonElement) action.disabled = state.lines.length === 0;
+    const disabled = state.lines.length === 0;
+    action.setAttribute('aria-disabled', String(disabled));
+    if (action instanceof HTMLButtonElement) action.disabled = disabled;
     if (action instanceof HTMLAnchorElement) {
       if (state.lines.length === 0 || !action.dataset.whatsappPhone) {
         action.removeAttribute('href');

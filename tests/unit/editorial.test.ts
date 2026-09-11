@@ -21,4 +21,19 @@ describe('editorial content', () => {
       expect(item.relatedProductIds.length).toBeGreaterThan(0);
     }
   });
+
+  it('describes recipe CTAs as catalog navigation in every locale', () => {
+    const expected = {
+      es: 'Consultar ingredientes en el catálogo',
+      en: 'Browse ingredients in the catalogue',
+      fi: 'Tutustu aineksiin luettelossa',
+      da: 'Se ingredienser i kataloget',
+    } as const;
+
+    for (const item of editorialItems.filter((entry) => entry.type === 'recipe')) {
+      for (const locale of ['es', 'en', 'fi', 'da'] as const) {
+        expect(item.locales[locale].ctaLabel).toBe(expected[locale]);
+      }
+    }
+  });
 });

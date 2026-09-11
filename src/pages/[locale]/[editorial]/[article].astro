@@ -39,6 +39,7 @@ const homeLabel = { es: 'Inicio', en: 'Home', fi: 'Etusivu', da: 'Forside' }[loc
   ogType="article"
   publishedAt={item.publishedAt}
   modifiedAt={item.modifiedAt}
+  showMascotWelcome={false}
   breadcrumbs={[
     { label: homeLabel, href: `/${locale}/` },
     { label: indexLabel, href: editorialIndexPath(locale) },

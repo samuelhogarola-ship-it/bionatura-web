@@ -14,4 +14,15 @@ describe('WhatsAppAction', () => {
     expect(html).toContain('target="_blank"');
     expect(html).toContain('rel="noopener noreferrer"');
   });
+
+  it('renders the real pending-contact copy fallback controls', async () => {
+    const container = await AstroContainer.create();
+    const whatsapp: ValidatedField<string> = { status: 'pending', value: null };
+    const html = await container.renderToString(WhatsAppAction, { props: { locale: 'en', whatsapp } });
+
+    expect(html).toContain('Contact details awaiting confirmation');
+    expect(html).toContain('data-copy-order-message');
+    expect(html).toContain('data-copy-fallback');
+    expect(html).not.toContain('data-whatsapp-action');
+  });
 });

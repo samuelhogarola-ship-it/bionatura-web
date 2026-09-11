@@ -46,10 +46,10 @@ const website = {
   publisher: { '@id': `${siteUrl}#organization` },
 };
 const home = { es: 'Inicio', en: 'Home', fi: 'Etusivu', da: 'Forside' }[locale];
-const breadcrumbItems = breadcrumbs ?? [
+const breadcrumbItems = breadcrumbs ?? (page === 'home' ? [] : [
   { label: home, href: pathFor(locale, 'home') },
-  ...(page === 'home' ? [] : [{ label: current, href: pathFor(locale, page) }]),
-];
+  { label: current, href: pathFor(locale, page) },
+]);
 const breadcrumb = {
   '@context': 'https://schema.org',
   '@type': 'BreadcrumbList',
@@ -64,4 +64,4 @@ const breadcrumb = {
 
 <script is:inline type="application/ld+json" set:html={JSON.stringify(website)}></script>
 <script is:inline type="application/ld+json" set:html={JSON.stringify(organization)}></script>
-<script is:inline type="application/ld+json" set:html={JSON.stringify(breadcrumb)}></script>
+{breadcrumbItems.length > 0 && <script is:inline type="application/ld+json" set:html={JSON.stringify(breadcrumb)}></script>}

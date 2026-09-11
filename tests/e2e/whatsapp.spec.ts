@@ -25,6 +25,21 @@ test('confirmed WhatsApp action contains the enriched current shopping list', as
   expect(message).not.toMatch(/Precio|Total|Nombre|Teléfono|€|EUR/i);
 });
 
+test('empty basket disables both WhatsApp and copy actions', async ({ page }) => {
+  await page.goto('/es/catalogo/');
+  await page.evaluate(() => localStorage.clear());
+  await page.reload();
+  await page.locator('[data-order-open]').click();
+
+  const dialog = page.getByRole('dialog');
+  const whatsapp = dialog.locator('[data-whatsapp-action]');
+  const copy = dialog.getByRole('button', { name: /copiar mensaje/i });
+  await expect(whatsapp).toHaveAttribute('aria-disabled', 'true');
+  await expect(whatsapp).not.toHaveAttribute('href', /.+/);
+  await expect(copy).toBeDisabled();
+  await expect(copy).toHaveAttribute('aria-disabled', 'true');
+});
+
 test('native sharing uses the exact URL message in the referenced order file', async ({ page }) => {
   await page.clock.install({ time: new Date('2026-09-11T10:42:00+02:00') });
   await page.addInitScript(() => {
@@ -77,22 +92,31 @@ test('manual copy fallback exposes the exact current URL message', async ({ page
   const whatsapp = dialog.getByRole('link', { name: /whatsapp/i });
   const href = await whatsapp.getAttribute('href');
   const currentMessage = new URL(href!).searchParams.get('text')!;
-  await page.evaluate(() => {
-    const dialog = document.querySelector('[data-order-dialog]');
-    const button = document.createElement('button');
-    const fallback = document.createElement('textarea');
-    button.type = 'button';
-    button.dataset.copyOrderMessage = '';
-    button.textContent = 'Copiar mensaje';
-    fallback.dataset.copyFallback = '';
-    fallback.hidden = true;
-    dialog?.append(button, fallback);
-  });
   await dialog.getByRole('button', { name: /copiar mensaje/i }).click();
 
   const fallback = dialog.locator('[data-copy-fallback]');
   await expect(fallback).toBeVisible();
   await expect(fallback).toHaveValue(currentMessage);
+});
+
+test('localized WhatsApp messages omit prohibited customer, price, total and delivery fields', async ({ page }) => {
+  const locales = [
+    { path: '/es/catalogo/', action: /consultar por whatsapp/i, prohibited: /Precio|Total|Nombre|Teléfono|Cliente|Entrega|€|EUR/i },
+    { path: '/en/catalog/', action: /ask via whatsapp/i, prohibited: /Price|Total|Name|Phone|Customer|Delivery|€|EUR/i },
+    { path: '/fi/tuotteet/', action: /kysy whatsappissa/i, prohibited: /Hinta|Yhteensä|Nimi|Puhelin|Asiakas|Toimitus|€|EUR/i },
+    { path: '/da/katalog/', action: /spørg via whatsapp/i, prohibited: /Pris|I alt|Navn|Telefon|Kunde|Levering|€|EUR/i },
+  ] as const;
+
+  for (const localized of locales) {
+    await page.goto(localized.path);
+    await page.evaluate(() => localStorage.clear());
+    await page.reload();
+    await page.locator('[data-product-id="potato"]:visible [data-add-product]').click();
+    await page.locator('[data-order-open]').click();
+    const href = await page.getByRole('dialog').getByRole('link', { name: localized.action }).getAttribute('href');
+    const message = new URL(href!).searchParams.get('text')!;
+    expect(message).not.toMatch(localized.prohibited);
+  }
 });
 
 test('floating WhatsApp control uses a recognizable icon and the confirmed number', async ({ page }) => {

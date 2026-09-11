@@ -104,6 +104,16 @@ test('structured data describes the website and organization without shop claims
   }
 });
 
+test('home omits breadcrumb schema when no breadcrumbs are visible', async ({ page }) => {
+  await page.goto('/es/');
+
+  await expect(page.getByRole('navigation', { name: 'Breadcrumb' })).toHaveCount(0);
+  const schemas = await readStructuredData(page);
+  expect(schemas.some((schema) => schema['@type'] === 'WebSite')).toBe(true);
+  expect(schemas.some((schema) => schema['@type'] === 'Organization')).toBe(true);
+  expect(schemas.some((schema) => schema['@type'] === 'BreadcrumbList')).toBe(false);
+});
+
 test('legal identity is visible on legal pages but not presented as a shop or collection point', async ({ page }) => {
   await page.goto('/es/aviso-legal/');
   await expect(page.getByText('Bionatura del Sur S.L.')).toBeVisible();

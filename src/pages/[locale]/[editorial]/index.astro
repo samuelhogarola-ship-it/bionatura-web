@@ -2,6 +2,7 @@
 import SiteLayout from '@/layouts/SiteLayout.astro';
 import EditorialIndex from '@/components/editorial/EditorialIndex.astro';
 import EditorialStructuredData from '@/components/editorial/EditorialStructuredData.astro';
+import { editorialItems } from '@/data/editorial';
 import { DEFAULT_LOCALE, LOCALES, editorialIndexPath, editorialRoutes, type Locale } from '@/i18n/config';
 
 const indexMetadata: Record<Locale, { title: string; description: string }> = {
@@ -35,6 +36,7 @@ const alternates = [
   page="home"
   title={metadata.title}
   description={metadata.description}
+  image={editorialItems[0].image.src}
   canonicalPath={editorialIndexPath(locale)}
   {alternates}
   breadcrumbs={[{ label: homeLabel, href: `/${locale}/` }, { label: indexLabel }]}

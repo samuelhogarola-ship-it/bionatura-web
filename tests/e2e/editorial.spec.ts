@@ -18,6 +18,34 @@ test('article canonical and alternates map the same item', async ({ page }) => {
   }
 });
 
+test('editorial indexes and details expose complete Open Graph and X metadata with their visible photographs', async ({ page }) => {
+  const pages = [
+    ['/es/huerto-recetas/', 'garden-mixed-leaf-rows', '.editorial-card:first-child img'],
+    ['/en/garden-recipes/', 'garden-mixed-leaf-rows', '.editorial-card:first-child img'],
+    ['/fi/puutarha-reseptit/', 'garden-mixed-leaf-rows', '.editorial-card:first-child img'],
+    ['/da/have-opskrifter/', 'garden-mixed-leaf-rows', '.editorial-card:first-child img'],
+    ['/en/garden-recipes/how-to-choose-garden-tomatoes/', 'preparation-tomato-harvest-enhanced', '.editorial-article__hero img'],
+  ] as const;
+
+  for (const [path, imageStem, visibleImage] of pages) {
+    await page.goto(path);
+    const title = await page.title();
+    const description = await page.locator('meta[name="description"]').getAttribute('content');
+    const shareImage = page.locator('meta[property="og:image"]');
+    const shareImageUrl = await shareImage.getAttribute('content');
+
+    await expect(page.locator('meta[property="og:title"]')).toHaveAttribute('content', title);
+    await expect(page.locator('meta[property="og:description"]')).toHaveAttribute('content', description!);
+    await expect(shareImage).toHaveAttribute('content', new RegExp(`^https://bionatura\\.es/.+${imageStem}`));
+    await expect(page.locator(visibleImage)).toHaveAttribute('src', new RegExp(imageStem));
+    await expect(page.locator('meta[name="twitter:card"]')).toHaveAttribute('content', 'summary_large_image');
+    await expect(page.locator('meta[name="twitter:title"]')).toHaveAttribute('content', title);
+    await expect(page.locator('meta[name="twitter:description"]')).toHaveAttribute('content', description!);
+    expect(shareImageUrl).toBeTruthy();
+    await expect(page.locator('meta[name="twitter:image"]')).toHaveAttribute('content', shareImageUrl!);
+  }
+});
+
 test('editorial x-default alternates target the corresponding Spanish page', async ({ page }) => {
   const pages = [
     ['/fi/puutarha-reseptit/', 'https://bionatura.es/es/huerto-recetas/'],
@@ -45,12 +73,23 @@ test('index exposes six useful entries and detail renders visible recipe facts',
   await expect(page.getByRole('heading', { name: 'Ingredientes' })).toBeVisible();
   await expect(page.getByRole('heading', { name: 'Preparación' })).toBeVisible();
   await expect(page.locator('time')).toBeVisible();
-  await expect(page.locator('main').getByRole('link', { name: /catálogo/i })).toHaveAttribute('href', '/es/catalogo/');
+  await expect(page.locator('main').getByRole('link', { name: /consultar ingredientes en el catálogo/i })).toHaveAttribute(
+    'href',
+    '/es/catalogo/',
+  );
 
   const breadcrumb = page.getByRole('navigation', { name: 'Breadcrumb' });
   await expect(breadcrumb.getByRole('link', { name: 'Inicio' })).toHaveAttribute('href', '/es/');
   await expect(breadcrumb.getByRole('link', { name: 'Huerto y recetas' })).toHaveAttribute('href', '/es/huerto-recetas/');
   await expect(breadcrumb.locator('[aria-current="page"]')).toContainText('Ensalada de tomate');
+});
+
+test('article details keep the inline mascot CTA without mounting the session welcome', async ({ page }) => {
+  await page.goto('/es/huerto-recetas/como-elegir-tomates-huerto/');
+
+  await expect(page.locator('[data-mascot-welcome]')).toHaveCount(0);
+  await expect(page.locator('.editorial-article__cta img')).toHaveCount(1);
+  await expect(page.locator('.editorial-article__cta img')).toBeVisible();
 });
 
 test('index schema lists exactly the six visible editorial cards', async ({ page }) => {

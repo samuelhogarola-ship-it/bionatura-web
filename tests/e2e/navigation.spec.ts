@@ -74,14 +74,55 @@ test.describe('desktop navigation', () => {
     await expect(panel).toBeHidden();
     await expect(page.locator('html')).not.toHaveClass(/menu-open/);
   });
+
+  test('Finnish header has no horizontal overflow at the exact 1088px desktop breakpoint', async ({ page }) => {
+    await page.setViewportSize({ width: 1088, height: 900 });
+    await page.goto('/fi/tuotteet/');
+
+    await expect(page.locator('.desktop-navigation')).toBeVisible();
+    await expect(page.locator('[data-menu-trigger]')).toBeHidden();
+    const widths = await page.evaluate(() => {
+      const header = document.querySelector<HTMLElement>('.site-header__main')!;
+      return {
+        headerClient: header.clientWidth,
+        headerScroll: header.scrollWidth,
+        pageClient: document.documentElement.clientWidth,
+        pageScroll: document.documentElement.scrollWidth,
+      };
+    });
+    expect(widths.headerScroll).toBeLessThanOrEqual(widths.headerClient);
+    expect(widths.pageScroll).toBeLessThanOrEqual(widths.pageClient);
+  });
 });
 
-test('language selector preserves the editorial item across locales', async ({ page }) => {
-  await page.goto('/es/huerto-recetas/como-elegir-tomates-huerto/');
+test('editorial language links are reciprocal across all four locales on indexes and details', async ({ page }) => {
+  const labels = { es: 'Español', en: 'English', fi: 'Suomi', da: 'Dansk' } as const;
+  const routeSets = [
+    {
+      es: '/es/huerto-recetas/',
+      en: '/en/garden-recipes/',
+      fi: '/fi/puutarha-reseptit/',
+      da: '/da/have-opskrifter/',
+    },
+    {
+      es: '/es/huerto-recetas/como-elegir-tomates-huerto/',
+      en: '/en/garden-recipes/how-to-choose-garden-tomatoes/',
+      fi: '/fi/puutarha-reseptit/kuinka-valita-puutarhatomaatteja/',
+      da: '/da/have-opskrifter/saadan-vaelger-du-tomater-fra-haven/',
+    },
+  ] as const;
 
-  const language = page.locator('.language-switcher');
-  await language.getByRole('button', { name: /idioma/i }).click();
-  await language.getByRole('link', { name: 'English', exact: true }).click();
-
-  await expect(page).toHaveURL('/en/garden-recipes/how-to-choose-garden-tomatoes/');
+  for (const routes of routeSets) {
+    for (const sourceLocale of ['es', 'en', 'fi', 'da'] as const) {
+      await page.goto(routes[sourceLocale]);
+      const language = page.locator('.language-switcher');
+      await language.locator('summary').click();
+      for (const targetLocale of ['es', 'en', 'fi', 'da'] as const) {
+        await expect(language.getByRole('link', { name: labels[targetLocale], exact: true })).toHaveAttribute(
+          'href',
+          routes[targetLocale],
+        );
+      }
+    }
+  }
 });
