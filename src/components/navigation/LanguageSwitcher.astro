@@ -1,12 +1,13 @@
 ---
-import { alternateLinks, type Locale, type PageKey } from '@/i18n/config';
+import { alternateLinks, type Locale, type PageKey, type SeoAlternate } from '@/i18n/config';
 
 interface Props {
   locale: Locale;
   page: PageKey;
+  links?: SeoAlternate[];
 }
 
-const { locale, page } = Astro.props;
+const { locale, page, links: explicitLinks } = Astro.props;
 const labels: Record<Locale, string> = {
   es: 'Español',
   en: 'English',
@@ -25,7 +26,7 @@ const languageLabel: Record<Locale, string> = {
   fi: 'Kieli',
   da: 'Sprog',
 };
-const links = alternateLinks(page).filter(
+const links = (explicitLinks ?? alternateLinks(page)).filter(
   (link): link is { locale: Locale; href: string } => link.locale !== 'x-default',
 );
 ---

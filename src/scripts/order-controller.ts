@@ -2,7 +2,13 @@ import { products } from '../data/products';
 import { clearOrder, parseStoredOrder, removeLine, serializeOrder, upsertLine, type OrderState } from '../domain/order-list';
 import { isLocale, type Locale } from '../i18n/config';
 import { ui } from '../i18n/ui';
-import { buildWhatsAppUrl, createOrderFile, formatOrderMessage } from '../domain/whatsapp';
+import {
+  buildWhatsAppUrl,
+  createOrderFile,
+  createOrderReference,
+  formatOrderMessage,
+  type OrderMessageContext,
+} from '../domain/whatsapp';
 
 export const ORDER_STORAGE_KEY = 'bionatura.order.v1';
 
@@ -31,6 +37,7 @@ function readOrder(): OrderState {
 }
 
 let state = readOrder();
+let currentOrderMessage: { context: OrderMessageContext; message: string } | null = null;
 
 function announce(message: string) {
   const announcement = dialog?.open ? dialogAnnouncement : pageAnnouncement;
@@ -47,6 +54,14 @@ function persist() {
 }
 
 function render() {
+  if (state.lines.length === 0) {
+    currentOrderMessage = null;
+  } else {
+    const createdAt = new Date();
+    const context = { createdAt, reference: createOrderReference(createdAt, state) };
+    currentOrderMessage = { context, message: formatOrderMessage(locale, state, products, context) };
+  }
+
   for (const count of document.querySelectorAll<HTMLElement>('[data-order-count]')) {
     count.textContent = String(state.lines.length);
   }
@@ -58,13 +73,14 @@ function render() {
   linesElement.hidden = state.lines.length === 0;
   clearButton?.toggleAttribute('disabled', state.lines.length === 0);
   for (const action of document.querySelectorAll<HTMLButtonElement | HTMLAnchorElement>('[data-copy-order-message], [data-whatsapp-action]')) {
-    action.toggleAttribute('aria-disabled', state.lines.length === 0);
-    if (action instanceof HTMLButtonElement) action.disabled = state.lines.length === 0;
+    const disabled = state.lines.length === 0;
+    action.setAttribute('aria-disabled', String(disabled));
+    if (action instanceof HTMLButtonElement) action.disabled = disabled;
     if (action instanceof HTMLAnchorElement) {
       if (state.lines.length === 0 || !action.dataset.whatsappPhone) {
         action.removeAttribute('href');
       } else {
-        action.href = buildWhatsAppUrl(action.dataset.whatsappPhone, formatOrderMessage(locale, state, products));
+        action.href = buildWhatsAppUrl(action.dataset.whatsappPhone, currentOrderMessage!.message);
       }
     }
   }
@@ -127,12 +143,12 @@ document.addEventListener('click', async (event) => {
   const target = event.target as Element | null;
   const whatsappAction = target?.closest<HTMLAnchorElement>('[data-whatsapp-action][data-order-file]');
   if (whatsappAction) {
-    if (state.lines.length === 0) {
+    if (!currentOrderMessage) {
       event.preventDefault();
       return;
     }
-    const message = formatOrderMessage(locale, state, products);
-    const file = createOrderFile(message);
+    const { context, message } = currentOrderMessage;
+    const file = createOrderFile(message, context.reference);
     const shareData: ShareData = { title: 'Bionatura', text: message, files: [file] };
     if (navigator.share && navigator.canShare?.(shareData)) {
       event.preventDefault();
@@ -151,8 +167,8 @@ document.addEventListener('click', async (event) => {
 
   const copyButton = target?.closest<HTMLButtonElement>('[data-copy-order-message]');
   if (copyButton) {
-    if (state.lines.length === 0) return;
-    const message = formatOrderMessage(locale, state, products);
+    if (!currentOrderMessage) return;
+    const { message } = currentOrderMessage;
     const fallback = document.querySelector<HTMLTextAreaElement>('[data-copy-fallback]');
     const copyWithFallback = (): boolean => {
       if (!fallback) return false;

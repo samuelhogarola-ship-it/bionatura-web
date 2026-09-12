@@ -37,6 +37,10 @@ test('Spanish home explains offer, place and process above the fold', async ({ p
     galleryFigures.nth(3).evaluate((element) => element.getBoundingClientRect().width),
   ]);
   expect(Math.abs(thirdWidth - fourthWidth)).toBeLessThanOrEqual(1);
+  await expect(page.locator('main').getByRole('link', { name: /productos de temporada en Fuengirola/i })).toHaveAttribute(
+    'href',
+    '/es/huerto-recetas/productos-temporada-fuengirola/',
+  );
 });
 
 test('mascot welcomes once per browser session without blocking the page', async ({ page }) => {
@@ -86,6 +90,71 @@ test('contact page exposes the confirmed phone and WhatsApp without presenting t
   await expect(page.locator('main')).toContainText(/campo de Los Pacos/i);
   await expect(page.getByText('Calle Tórtolas, 11')).toHaveCount(0);
   await expect(page.locator('main')).not.toContainText(/modo demo/i);
+  await expect(page.locator('main').getByRole('link', { name: /huerto de Los Pacos/i })).toHaveAttribute(
+    'href',
+    '/es/huerto-recetas/del-huerto-los-pacos-a-tu-cesta/',
+  );
+});
+
+test('About links the local story and catalog links relevant recipes', async ({ page }) => {
+  await page.goto('/es/nosotros/');
+  await expect(page.locator('main').getByRole('link', { name: /Los Pacos a tu cesta/i })).toHaveAttribute(
+    'href',
+    '/es/huerto-recetas/del-huerto-los-pacos-a-tu-cesta/',
+  );
+
+  await page.goto('/es/catalogo/');
+  await expect(page.locator('main').getByRole('link', { name: /ensalada de tomate/i })).toHaveAttribute(
+    'href',
+    '/es/huerto-recetas/ensalada-tomate-cebolla-roja-aceite-oliva-bio/',
+  );
+  await expect(page.locator('main').getByRole('link', { name: /calabacines mediterráneos/i })).toHaveAttribute(
+    'href',
+    '/es/huerto-recetas/calabacines-mediterraneos-sencillos/',
+  );
+});
+
+test('contextual editorial links stay descriptive and localized across the site', async ({ page }) => {
+  const locales = [
+    {
+      home: '/es/', about: '/es/nosotros/', contact: '/es/contacto/', catalog: '/es/catalogo/',
+      seasonal: '/es/huerto-recetas/productos-temporada-fuengirola/', story: '/es/huerto-recetas/del-huerto-los-pacos-a-tu-cesta/',
+      tomato: '/es/huerto-recetas/ensalada-tomate-cebolla-roja-aceite-oliva-bio/', courgette: '/es/huerto-recetas/calabacines-mediterraneos-sencillos/',
+      seasonalLabel: /productos de temporada en Fuengirola/i, storyLabel: /Los Pacos.*cesta/i, tomatoLabel: /ensalada de tomate/i,
+    },
+    {
+      home: '/en/', about: '/en/about/', contact: '/en/contact/', catalog: '/en/catalog/',
+      seasonal: '/en/garden-recipes/what-produce-is-in-season-fuengirola/', story: '/en/garden-recipes/from-los-pacos-garden-to-your-basket/',
+      tomato: '/en/garden-recipes/tomato-red-onion-organic-olive-oil-salad/', courgette: '/en/garden-recipes/simple-mediterranean-courgettes/',
+      seasonalLabel: /produce is in season in Fuengirola/i, storyLabel: /Los Pacos.*basket/i, tomatoLabel: /tomato and red onion salad/i,
+    },
+    {
+      home: '/fi/', about: '/fi/meista/', contact: '/fi/yhteystiedot/', catalog: '/fi/tuotteet/',
+      seasonal: '/fi/puutarha-reseptit/mitka-on-sesongissa-fuengirolassa/', story: '/fi/puutarha-reseptit/los-pacosin-puutarhasta-koriisi/',
+      tomato: '/fi/puutarha-reseptit/tomaatti-punasipuli-luomuoliivioljy-salaatti/', courgette: '/fi/puutarha-reseptit/helpot-valimerelliset-kesakurpitsat/',
+      seasonalLabel: /sesongissa/i, storyLabel: /Los Pacos(?:in|ista).*kori/i, tomatoLabel: /tomaatti-punasipulisalaatti/i,
+    },
+    {
+      home: '/da/', about: '/da/om-os/', contact: '/da/kontakt/', catalog: '/da/katalog/',
+      seasonal: '/da/have-opskrifter/hvilke-produkter-er-i-saeson-i-fuengirola/', story: '/da/have-opskrifter/fra-haven-i-los-pacos-til-din-kurv/',
+      tomato: '/da/have-opskrifter/tomat-roedloeg-oekologisk-olivenolie-salat/', courgette: '/da/have-opskrifter/enkle-middelhavs-squash/',
+      seasonalLabel: /sæson.*Fuengirola/i, storyLabel: /Los Pacos.*kurv/i, tomatoLabel: /tomat- og rødløgssalat/i,
+    },
+  ] as const;
+
+  for (const localized of locales) {
+    await page.goto(localized.home);
+    await expect(page.locator(`main a[href="${localized.seasonal}"]`)).toHaveText(localized.seasonalLabel);
+
+    for (const narrativePage of [localized.about, localized.contact]) {
+      await page.goto(narrativePage);
+      await expect(page.locator(`main a[href="${localized.story}"]`)).toHaveText(localized.storyLabel);
+    }
+
+    await page.goto(localized.catalog);
+    await expect(page.locator(`main a[href="${localized.tomato}"]`)).toHaveText(localized.tomatoLabel);
+    await expect(page.locator(`main a[href="${localized.courgette}"]`)).not.toHaveText('');
+  }
 });
 
 test('footer uses the requested local message and credits WF-Studio', async ({ page }) => {
@@ -94,5 +163,9 @@ test('footer uses the requested local message and credits WF-Studio', async ({ p
   const footerNote = page.locator('.site-footer__note');
   await expect(footerNote).toHaveText('Tus productos biológicos en Fuengirola');
   await expect(footerNote).toHaveCSS('font-style', 'normal');
+  await expect(page.locator('footer').getByRole('link', { name: 'Huerto y recetas', exact: true })).toHaveAttribute(
+    'href',
+    '/es/huerto-recetas/',
+  );
   await expect(page.locator('footer')).toContainText('Web por WF-Studio');
 });

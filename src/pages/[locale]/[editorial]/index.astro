@@ -1,0 +1,46 @@
+---
+import SiteLayout from '@/layouts/SiteLayout.astro';
+import EditorialIndex from '@/components/editorial/EditorialIndex.astro';
+import EditorialStructuredData from '@/components/editorial/EditorialStructuredData.astro';
+import { editorialItems } from '@/data/editorial';
+import { DEFAULT_LOCALE, LOCALES, editorialIndexPath, editorialRoutes, type Locale } from '@/i18n/config';
+
+const indexMetadata: Record<Locale, { title: string; description: string }> = {
+  es: { title: 'Huerto y recetas | Bionatura', description: 'Guías del huerto y recetas sencillas de Bionatura.' },
+  en: { title: 'Garden & recipes | Bionatura', description: 'Garden guides and simple recipes from Bionatura.' },
+  fi: { title: 'Puutarha ja reseptit | Bionatura', description: 'Bionaturan puutarhaoppaita ja helppoja reseptejä.' },
+  da: { title: 'Have og opskrifter | Bionatura', description: 'Haveguides og enkle opskrifter fra Bionatura.' },
+};
+
+export function getStaticPaths() {
+  return LOCALES.map((locale) => ({
+    params: { locale, editorial: editorialRoutes[locale] },
+  }));
+}
+
+const { locale: localeParam, editorial } = Astro.params;
+if (!localeParam || !LOCALES.includes(localeParam as Locale)) throw new Error('Invalid editorial locale');
+const locale = localeParam as Locale;
+if (editorial !== editorialRoutes[locale]) throw new Error('Invalid editorial route');
+const metadata = indexMetadata[locale];
+const indexLabel = { es: 'Huerto y recetas', en: 'Garden & recipes', fi: 'Puutarha ja reseptit', da: 'Have og opskrifter' }[locale];
+const homeLabel = { es: 'Inicio', en: 'Home', fi: 'Etusivu', da: 'Forside' }[locale];
+const alternates = [
+  ...LOCALES.map((alternateLocale) => ({ locale: alternateLocale, href: editorialIndexPath(alternateLocale) })),
+  { locale: 'x-default' as const, href: editorialIndexPath(DEFAULT_LOCALE) },
+];
+---
+
+<SiteLayout
+  {locale}
+  page="home"
+  title={metadata.title}
+  description={metadata.description}
+  image={editorialItems[0].image.src}
+  canonicalPath={editorialIndexPath(locale)}
+  {alternates}
+  breadcrumbs={[{ label: homeLabel, href: `/${locale}/` }, { label: indexLabel }]}
+>
+  <EditorialStructuredData slot="head" {locale} title={indexLabel} description={metadata.description} />
+  <EditorialIndex {locale} />
+</SiteLayout>

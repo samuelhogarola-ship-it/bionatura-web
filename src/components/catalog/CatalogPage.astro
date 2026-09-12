@@ -2,6 +2,7 @@
 import SeasonPanel from './SeasonPanel.astro';
 import SeasonSelector from './SeasonSelector.astro';
 import ProductCard from './ProductCard.astro';
+import { editorialItems, editorialPath } from '@/data/editorial';
 import { alwaysAvailableProducts, recommendedProducts, seasonalProducts } from '@/data/products';
 import type { Season } from '@/domain/catalog';
 import type { Locale } from '@/i18n/config';
@@ -16,6 +17,14 @@ interface Props {
 const { locale } = Astro.props;
 const copy = pages.catalog[locale];
 const seasons: Season[] = ['spring', 'summer', 'autumn', 'winter'];
+const recipeCopy = {
+  es: { heading: 'Ideas para cocinar', tomato: 'Prepara una ensalada de tomate y cebolla roja', courgette: 'Cocina calabacines mediterráneos sencillos' },
+  en: { heading: 'Ideas for cooking', tomato: 'Make a tomato and red onion salad', courgette: 'Cook simple Mediterranean courgettes' },
+  fi: { heading: 'Ideoita ruoanlaittoon', tomato: 'Valmista tomaatti-punasipulisalaatti', courgette: 'Kokkaa helpot välimerelliset kesäkurpitsat' },
+  da: { heading: 'Idéer til madlavning', tomato: 'Lav en tomat- og rødløgssalat', courgette: 'Tilbered enkle middelhavs-squash' },
+}[locale];
+const tomatoSalad = editorialItems.find((item) => item.id === 'tomato-red-onion-salad')!;
+const mediterraneanCourgettes = editorialItems.find((item) => item.id === 'simple-mediterranean-courgettes')!;
 ---
 
 <article class="catalog-page" data-season-selector>
@@ -48,6 +57,14 @@ const seasons: Season[] = ['spring', 'summer', 'autumn', 'winter'];
       <div class="product-grid">
         {recommendedProducts().map((product) => <ProductCard {locale} {product} instanceId="recommended" />)}
       </div>
+    </section>
+
+    <section aria-labelledby="catalog-recipes-title">
+      <h2 id="catalog-recipes-title">{recipeCopy.heading}</h2>
+      <ul>
+        <li><a href={editorialPath(locale, tomatoSalad)}>{recipeCopy.tomato}</a></li>
+        <li><a href={editorialPath(locale, mediterraneanCourgettes)}>{recipeCopy.courgette}</a></li>
+      </ul>
     </section>
   </div>
 </article>

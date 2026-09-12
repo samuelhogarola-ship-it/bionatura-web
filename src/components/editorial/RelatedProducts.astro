@@ -1,0 +1,41 @@
+---
+import ResponsiveImage from '@/components/media/ResponsiveImage.astro';
+import { productImageFor } from '@/data/product-images';
+import { products } from '@/data/products';
+import { pathFor, type Locale } from '@/i18n/config';
+
+interface Props {
+  locale: Locale;
+  productIds: string[];
+}
+
+const { locale, productIds } = Astro.props;
+const relatedProducts = productIds.map((id) => products.find((product) => product.id === id)).filter((product) => product !== undefined);
+const copy = {
+  es: { title: 'Productos relacionados', catalog: 'Ver todos los productos en el catálogo' },
+  en: { title: 'Related products', catalog: 'View all products in the catalog' },
+  fi: { title: 'Aiheeseen liittyvät tuotteet', catalog: 'Katso kaikki tuotteet luettelosta' },
+  da: { title: 'Relaterede varer', catalog: 'Se alle varer i kataloget' },
+}[locale];
+---
+
+{relatedProducts.length > 0 && (
+  <section class="related-products" aria-labelledby="related-products-title">
+    <h2 id="related-products-title">{copy.title}</h2>
+    <ul>
+      {relatedProducts.map((product) => (
+        <li>
+          <a href={pathFor(locale, 'catalog')}>
+            <ResponsiveImage
+              src={productImageFor(product.id)}
+              alt={product.imageAlt[locale]}
+              sizes="(min-width: 68rem) 14rem, (min-width: 42rem) 33vw, 50vw"
+            />
+            <strong>{product.name[locale]}</strong>
+          </a>
+        </li>
+      ))}
+    </ul>
+    <a class="related-products__catalog" href={pathFor(locale, 'catalog')}>{copy.catalog}</a>
+  </section>
+)}

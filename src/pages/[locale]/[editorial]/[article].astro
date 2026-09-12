@@ -1,0 +1,51 @@
+---
+import SiteLayout from '@/layouts/SiteLayout.astro';
+import EditorialArticle from '@/components/editorial/EditorialArticle.astro';
+import EditorialStructuredData from '@/components/editorial/EditorialStructuredData.astro';
+import { editorialAlternates, editorialItemBySlug, editorialItems, editorialPath } from '@/data/editorial';
+import { LOCALES, editorialIndexPath, editorialRoutes, type Locale } from '@/i18n/config';
+
+export function getStaticPaths() {
+  return LOCALES.flatMap((locale) =>
+    editorialItems.map((item) => ({
+      params: {
+        locale,
+        editorial: editorialRoutes[locale],
+        article: item.locales[locale].slug,
+      },
+    })),
+  );
+}
+
+const { locale: localeParam, editorial, article } = Astro.params;
+if (!localeParam || !LOCALES.includes(localeParam as Locale)) throw new Error('Invalid editorial locale');
+const locale = localeParam as Locale;
+if (editorial !== editorialRoutes[locale] || !article) throw new Error('Invalid editorial route');
+const item = editorialItemBySlug(locale, article);
+if (!item) throw new Error('Editorial item not found');
+const content = item.locales[locale];
+const indexLabel = { es: 'Huerto y recetas', en: 'Garden & recipes', fi: 'Puutarha ja reseptit', da: 'Have og opskrifter' }[locale];
+const homeLabel = { es: 'Inicio', en: 'Home', fi: 'Etusivu', da: 'Forside' }[locale];
+---
+
+<SiteLayout
+  {locale}
+  page="home"
+  title={`${content.title} | Bionatura`}
+  description={content.description}
+  image={item.image.src}
+  canonicalPath={editorialPath(locale, item)}
+  alternates={editorialAlternates(item)}
+  ogType="article"
+  publishedAt={item.publishedAt}
+  modifiedAt={item.modifiedAt}
+  showMascotWelcome={false}
+  breadcrumbs={[
+    { label: homeLabel, href: `/${locale}/` },
+    { label: indexLabel, href: editorialIndexPath(locale) },
+    { label: content.title },
+  ]}
+>
+  <EditorialStructuredData slot="head" {locale} {item} />
+  <EditorialArticle {locale} {item} />
+</SiteLayout>

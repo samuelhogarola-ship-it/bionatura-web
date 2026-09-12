@@ -29,10 +29,8 @@ const href = confirmedPhone ? buildWhatsAppUrl(confirmedPhone, copy.whatsappIntr
       rel="noopener noreferrer"
     >{copy.consultWhatsapp}</a>
   ) : (
-    <>
-      <p class="whatsapp-action__demo"><strong>{copy.pendingContact}.</strong> {copy.demoCopyNotice}</p>
-      <button class="button button--leaf" type="button" data-copy-order-message>{copy.copyMessage}</button>
-      <textarea class="copy-fallback" readonly data-copy-fallback aria-label={copy.copyMessage} hidden></textarea>
-    </>
+    <p class="whatsapp-action__demo"><strong>{copy.pendingContact}.</strong> {copy.demoCopyNotice}</p>
   )}
+  <button class="button" type="button" data-copy-order-message>{copy.copyMessage}</button>
+  <textarea class="copy-fallback" readonly data-copy-fallback aria-label={copy.copyMessage} hidden></textarea>
 </div>

@@ -27,7 +27,7 @@ test.describe('mobile navigation', () => {
 
     const mobileNavigation = page.locator('[data-menu-panel]').getByRole('navigation', { name: /principal/i });
     const firstLink = mobileNavigation.getByRole('link', { name: 'Inicio', exact: true });
-    const lastLink = mobileNavigation.getByRole('link', { name: 'Contacto', exact: true });
+    const lastLink = mobileNavigation.getByRole('link', { name: 'Huerto y recetas', exact: true });
     await expect(firstLink).toBeFocused();
 
     await page.keyboard.press('Shift+Tab');
@@ -51,6 +51,10 @@ test.describe('desktop navigation', () => {
     await expect(language.locator('.language-switcher__flag')).toHaveText('🇪🇸');
     await expect(language.getByText('ES', { exact: true })).toBeVisible();
     await expect(page.getByRole('link', { name: /cómo funciona/i })).toHaveCount(0);
+    await expect(page.locator('.desktop-navigation').getByRole('link', { name: 'Huerto y recetas', exact: true })).toHaveAttribute(
+      'href',
+      '/es/huerto-recetas/',
+    );
     const basket = page.getByRole('button', { name: /tu cesta/i });
     await expect(basket.locator('svg')).toBeVisible();
     await expect(basket.locator('[data-order-badge]')).toHaveText('0');
@@ -70,4 +74,55 @@ test.describe('desktop navigation', () => {
     await expect(panel).toBeHidden();
     await expect(page.locator('html')).not.toHaveClass(/menu-open/);
   });
+
+  test('Finnish header has no horizontal overflow at the exact 1088px desktop breakpoint', async ({ page }) => {
+    await page.setViewportSize({ width: 1088, height: 900 });
+    await page.goto('/fi/tuotteet/');
+
+    await expect(page.locator('.desktop-navigation')).toBeVisible();
+    await expect(page.locator('[data-menu-trigger]')).toBeHidden();
+    const widths = await page.evaluate(() => {
+      const header = document.querySelector<HTMLElement>('.site-header__main')!;
+      return {
+        headerClient: header.clientWidth,
+        headerScroll: header.scrollWidth,
+        pageClient: document.documentElement.clientWidth,
+        pageScroll: document.documentElement.scrollWidth,
+      };
+    });
+    expect(widths.headerScroll).toBeLessThanOrEqual(widths.headerClient);
+    expect(widths.pageScroll).toBeLessThanOrEqual(widths.pageClient);
+  });
+});
+
+test('editorial language links are reciprocal across all four locales on indexes and details', async ({ page }) => {
+  const labels = { es: 'Español', en: 'English', fi: 'Suomi', da: 'Dansk' } as const;
+  const routeSets = [
+    {
+      es: '/es/huerto-recetas/',
+      en: '/en/garden-recipes/',
+      fi: '/fi/puutarha-reseptit/',
+      da: '/da/have-opskrifter/',
+    },
+    {
+      es: '/es/huerto-recetas/como-elegir-tomates-huerto/',
+      en: '/en/garden-recipes/how-to-choose-garden-tomatoes/',
+      fi: '/fi/puutarha-reseptit/kuinka-valita-puutarhatomaatteja/',
+      da: '/da/have-opskrifter/saadan-vaelger-du-tomater-fra-haven/',
+    },
+  ] as const;
+
+  for (const routes of routeSets) {
+    for (const sourceLocale of ['es', 'en', 'fi', 'da'] as const) {
+      await page.goto(routes[sourceLocale]);
+      const language = page.locator('.language-switcher');
+      await language.locator('summary').click();
+      for (const targetLocale of ['es', 'en', 'fi', 'da'] as const) {
+        await expect(language.getByRole('link', { name: labels[targetLocale], exact: true })).toHaveAttribute(
+          'href',
+          routes[targetLocale],
+        );
+      }
+    }
+  }
 });

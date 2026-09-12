@@ -1,5 +1,5 @@
 ---
-import { alternateLinks, pathFor, type Locale, type PageKey } from '@/i18n/config';
+import { alternateLinks, pathFor, type Locale, type PageKey, type SeoAlternate } from '@/i18n/config';
 
 interface Props {
   locale: Locale;
@@ -7,11 +7,16 @@ interface Props {
   title: string;
   description: string;
   image?: string;
+  canonicalPath?: string;
+  alternates?: SeoAlternate[];
+  ogType?: string;
+  publishedAt?: string;
+  modifiedAt?: string;
 }
 
-const { locale, page, title, description, image } = Astro.props;
+const { locale, page, title, description, image, canonicalPath, alternates, ogType = 'website', publishedAt, modifiedAt } = Astro.props;
 const base = Astro.site ?? new URL('https://bionatura.es');
-const canonical = new URL(pathFor(locale, page), base);
+const canonical = new URL(canonicalPath ?? pathFor(locale, page), base);
 const imageUrl = image ? new URL(image, base) : undefined;
 const ogLocales: Record<Locale, string> = {
   es: 'es_ES',
@@ -19,7 +24,7 @@ const ogLocales: Record<Locale, string> = {
   fi: 'fi_FI',
   da: 'da_DK',
 };
-const alternates = alternateLinks(page);
+const localizedAlternates = alternates ?? alternateLinks(page);
 ---
 
 <meta charset="utf-8" />
@@ -28,10 +33,10 @@ const alternates = alternateLinks(page);
 <title>{title}</title>
 <meta name="description" content={description} />
 <link rel="canonical" href={canonical} />
-{alternates.map(({ locale: hreflang, href }) => (
+{localizedAlternates.map(({ locale: hreflang, href }) => (
   <link rel="alternate" hreflang={hreflang} href={new URL(href, base)} />
 ))}
-<meta property="og:type" content="website" />
+<meta property="og:type" content={ogType} />
 <meta property="og:site_name" content="Bionatura" />
 <meta property="og:title" content={title} />
 <meta property="og:description" content={description} />
@@ -41,3 +46,9 @@ const alternates = alternateLinks(page);
   <meta property="og:locale:alternate" content={value} />
 ))}
 {imageUrl && <meta property="og:image" content={imageUrl} />}
+<meta name="twitter:card" content={imageUrl ? 'summary_large_image' : 'summary'} />
+<meta name="twitter:title" content={title} />
+<meta name="twitter:description" content={description} />
+{imageUrl && <meta name="twitter:image" content={imageUrl} />}
+{publishedAt && <meta property="article:published_time" content={publishedAt} />}
+{modifiedAt && <meta property="article:modified_time" content={modifiedAt} />}

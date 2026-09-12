@@ -9,18 +9,26 @@ import Breadcrumbs from '@/components/Breadcrumbs.astro';
 import StructuredData from '@/components/StructuredData.astro';
 import '@/styles/global.css';
 import '@/styles/components.css';
-import type { Locale, PageKey } from '@/i18n/config';
+import type { Locale, PageKey, SeoAlternate } from '@/i18n/config';
 
 interface Props {
   locale: Locale;
   page: PageKey;
   title: string;
   description: string;
+  breadcrumbLabel?: string;
   image?: string;
+  canonicalPath?: string;
+  alternates?: SeoAlternate[];
+  ogType?: string;
+  publishedAt?: string;
+  modifiedAt?: string;
+  breadcrumbs?: { label: string; href?: string }[];
+  showMascotWelcome?: boolean;
 }
 
-const { locale, page, title, description, image } = Astro.props;
-const current = title.split('|')[0].trim();
+const { locale, page, title, description, breadcrumbLabel, image, canonicalPath, alternates, ogType, publishedAt, modifiedAt, breadcrumbs, showMascotWelcome = true } = Astro.props;
+const current = breadcrumbLabel ?? title.split('|')[0].trim();
 const skipLabel: Record<Locale, string> = {
   es: 'Saltar al contenido',
   en: 'Skip to content',
@@ -32,19 +40,19 @@ const skipLabel: Record<Locale, string> = {
 <!doctype html>
 <html lang={locale}>
   <head>
-    <SeoHead {locale} {page} {title} {description} {image} />
-    <StructuredData {locale} {page} {current} />
+    <SeoHead {locale} {page} {title} {description} {image} {canonicalPath} {alternates} {ogType} {publishedAt} {modifiedAt} />
+    <StructuredData {locale} {page} {current} {canonicalPath} {breadcrumbs} />
     <slot name="head" />
   </head>
   <body>
     <a class="skip-link" href="#contenido">{skipLabel[locale]}</a>
-    <Header {locale} {page} />
-    <Breadcrumbs {locale} {page} {current} />
+    <Header {locale} {page} links={alternates} />
+    <Breadcrumbs {locale} {page} {current} items={breadcrumbs} />
     <main id="contenido" tabindex="-1">
       <slot />
     </main>
     <OrderList {locale} />
-    <MascotWelcome {locale} />
+    {showMascotWelcome && <MascotWelcome {locale} />}
     <Footer {locale} />
     <FloatingWhatsApp {locale} />
     <script src="../scripts/order-controller.ts"></script>

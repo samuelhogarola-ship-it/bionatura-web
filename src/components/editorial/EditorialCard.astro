@@ -1,0 +1,44 @@
+---
+import ResponsiveImage from '@/components/media/ResponsiveImage.astro';
+import { editorialPath } from '@/data/editorial';
+import type { EditorialItem } from '@/domain/editorial';
+import type { Locale } from '@/i18n/config';
+
+interface Props {
+  item: EditorialItem;
+  locale: Locale;
+}
+
+const { item, locale } = Astro.props;
+const content = item.locales[locale];
+const localeTag: Record<Locale, string> = { es: 'es-ES', en: 'en-GB', fi: 'fi-FI', da: 'da-DK' };
+const typeLabel = {
+  es: { article: 'Guía', recipe: 'Receta' },
+  en: { article: 'Guide', recipe: 'Recipe' },
+  fi: { article: 'Opas', recipe: 'Resepti' },
+  da: { article: 'Guide', recipe: 'Opskrift' },
+}[locale][item.type];
+const publishedDate = new Intl.DateTimeFormat(localeTag[locale], { dateStyle: 'long' }).format(
+  new Date(`${item.publishedAt}T12:00:00Z`),
+);
+---
+
+<article class="editorial-card">
+  <a class="editorial-card__link" href={editorialPath(locale, item)}>
+    <ResponsiveImage
+      src={item.image}
+      alt={content.imageAlt}
+      sizes="(min-width: 68rem) 24rem, (min-width: 42rem) 50vw, 100vw"
+      class="editorial-card__image"
+    />
+    <div class="editorial-card__body">
+      <p class="editorial-card__meta">
+        <span>{typeLabel}</span>
+        <span aria-hidden="true">·</span>
+        <time datetime={item.publishedAt}>{publishedDate}</time>
+      </p>
+      <h2>{content.title}</h2>
+      <p>{content.description}</p>
+    </div>
+  </a>
+</article>
