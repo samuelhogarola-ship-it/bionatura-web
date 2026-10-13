@@ -1,10 +1,12 @@
 ---
-const languages = [
-  ['Español', '/es/'], ['English', '/en/'],
-  ['Suomi', '/fi/'], ['Dansk', '/da/'],
-] as const;
+import HomePage from '@/components/pages/HomePage.astro';
+import SiteLayout from '@/layouts/SiteLayout.astro';
+import { home } from '@/i18n/pages/home';
+
+const locale = 'es';
+const copy = home[locale];
 ---
-<html lang="es">
-  <head><meta charset="utf-8" /><meta name="robots" content="noindex" /><title>Bionatura</title></head>
-  <body><main><h1>Bionatura</h1>{languages.map(([label, href]) => <a href={href}>{label}</a>)}</main></body>
-</html>
+
+<SiteLayout locale={locale} page="home" title={copy.title} description={copy.description}>
+  <HomePage {locale} />
+</SiteLayout>
