@@ -1,9 +1,73 @@
 ---
-import ResponsiveImage from '@/components/media/ResponsiveImage.astro'; import { editorialItems, editorialPath } from '@/data/editorial'; import { mediaItems } from '@/data/media'; import { editorialIndexPath, type Locale } from '@/i18n/config'; import { about } from '@/i18n/pages/about';
+import ResponsiveImage from '@/components/media/ResponsiveImage.astro';
+import { mediaItems } from '@/data/media';
+import { pathFor, type Locale } from '@/i18n/config';
+import { about } from '@/i18n/pages/about';
+
 const {locale}=Astro.props as {locale:Locale}; const copy=about[locale]; const photos=mediaItems.filter((i)=>['grower-greenhouse','market-stall-team'].includes(i.id));
-const extra={es:['Persona y proyecto','El huerto','Filosofía','Cercanía'],en:['People and project','The garden','Approach','Closeness'],fi:['Ihmiset ja projekti','Kasvimaa','Ajatus','Läheisyys'],da:['Mennesker og projekt','Køkkenhaven','Tilgang','Nærhed']}[locale];
-const localStory=editorialItems.find((item)=>item.id==='los-pacos-garden-to-basket')!;
-const localStoryLabel={es:'Descubre el camino de Los Pacos a tu cesta',en:'Follow the journey from Los Pacos to your basket',fi:'Tutustu matkaan Los Pacosista koriisi',da:'Følg vejen fra Los Pacos til din kurv'}[locale];
-const editorialLabel={es:'Huerto y recetas',en:'Garden & recipes',fi:'Puutarha ja reseptit',da:'Have og opskrifter'}[locale];
+const aboutCopy = {
+  es: {
+    eyebrow: 'Bionatura · negocio local en Fuengirola',
+    intro: 'Bionatura es un negocio familiar con muchos años de trayectoria en productos biológicos. Después del Covid volvió a sus orígenes en Fuengirola y decidió quedarse cerca: atender el mercado local, trabajar con clientes de la zona y cuidar cada pedido de forma directa.',
+    paragraphs: [
+      'Hoy Bionatura funciona como un proyecto 100% local en Fuengirola. No tenemos tienda física: preparamos pedidos de fruta y verdura biológica para recoger y hacemos envíos a domicilio en Fuengirola.',
+      'Los productos llegan directamente de nuestro huerto o de proveedores biológicos de confianza. La idea es sencilla: producto fresco, trato cercano y una cesta preparada después de confirmar disponibilidad.',
+    ],
+    facts: ['Fuengirola y Torreblanca', 'Fruta y verdura a domicilio', 'Pedidos para recoger', 'Producto biológico y de cercanía'],
+    cta: 'Pide ahora',
+  },
+  en: {
+    eyebrow: 'Bionatura · local business in Fuengirola',
+    intro: 'Bionatura is a family business with many years of experience in organic produce. After Covid, it returned to its roots in Fuengirola and focused on the nearby market.',
+    paragraphs: [
+      'Bionatura is now a fully local project in Fuengirola. There is no physical shop: we prepare fruit and vegetable orders for collection and home delivery in Fuengirola.',
+      'Products come directly from our garden or trusted organic suppliers, with availability confirmed before each order is prepared.',
+    ],
+    facts: ['Fuengirola and Torreblanca', 'Fruit and vegetable delivery', 'Orders for collection', 'Organic local produce'],
+    cta: 'Order now',
+  },
+  fi: {
+    eyebrow: 'Bionatura · paikallinen yritys Fuengirolassa',
+    intro: 'Bionatura on perheyritys, jolla on pitkä kokemus luomutuotteista. Covidin jälkeen se palasi juurilleen Fuengirolaan ja keskittyi lähimarkkinaan.',
+    paragraphs: [
+      'Bionatura toimii nyt paikallisena projektina Fuengirolassa. Meillä ei ole fyysistä myymälää: valmistamme hedelmä- ja vihannestilauksia noutoon ja kotiinkuljetukseen Fuengirolassa.',
+      'Tuotteet tulevat omasta puutarhastamme tai luotettavilta luomutoimittajilta, ja saatavuus vahvistetaan ennen tilauksen valmistelua.',
+    ],
+    facts: ['Fuengirola ja Torreblanca', 'Hedelmät ja vihannekset kotiin', 'Tilaukset noutoon', 'Paikalliset luomutuotteet'],
+    cta: 'Tilaa nyt',
+  },
+  da: {
+    eyebrow: 'Bionatura · lokal virksomhed i Fuengirola',
+    intro: 'Bionatura er en familievirksomhed med mange års erfaring med økologiske produkter. Efter Covid vendte projektet tilbage til sine rødder i Fuengirola og fokuserede på det nære marked.',
+    paragraphs: [
+      'Bionatura er i dag et lokalt projekt i Fuengirola. Vi har ingen fysisk butik: vi forbereder bestillinger af frugt og grønt til afhentning og hjemmelevering i Fuengirola.',
+      'Produkterne kommer direkte fra vores have eller fra betroede økologiske leverandører, og tilgængelighed bekræftes før hver bestilling.',
+    ],
+    facts: ['Fuengirola og Torreblanca', 'Frugt og grønt leveret hjem', 'Bestillinger til afhentning', 'Lokale økologiske produkter'],
+    cta: 'Bestil nu',
+  },
+}[locale];
 ---
-<article class="editorial-page"><div class="page-shell"><p class="eyebrow">Bionatura · Fuengirola</p><h1>{copy.h1}</h1><p class="editorial-page__intro">{copy.intro}</p><div class="about-photos">{photos.map((item)=><figure><ResponsiveImage src={item.asset} alt={item.alt[locale]} /><figcaption>{item.caption[locale]}</figcaption></figure>)}</div><div class="editorial-page__sections">{extra.map((title,index)=><section><h2>{title}</h2><p>{index===1?copy.sections[0].body:copy.intro}</p></section>)}</div><p><a href={editorialPath(locale,localStory)}>{localStoryLabel}</a></p><a class="button button--leaf" href={editorialIndexPath(locale)}>{editorialLabel}</a></div></article>
+<article class="editorial-page about-page">
+  <div class="page-shell">
+    <p class="eyebrow">{aboutCopy.eyebrow}</p>
+    <h1>{copy.h1}</h1>
+    <p class="editorial-page__intro">{aboutCopy.intro}</p>
+
+    <div class="about-photos">
+      {photos.map((item)=><figure><ResponsiveImage src={item.asset} alt={item.alt[locale]} /><figcaption>{item.caption[locale]}</figcaption></figure>)}
+    </div>
+
+    <section class="about-story" aria-label={copy.h1}>
+      {aboutCopy.paragraphs.map((paragraph) => <p>{paragraph}</p>)}
+    </section>
+
+    <ul class="about-facts">
+      {aboutCopy.facts.map((fact) => <li>{fact}</li>)}
+    </ul>
+
+    <div class="about-actions">
+      <a class="button button--leaf" href={pathFor(locale, 'catalog')}>{aboutCopy.cta}</a>
+    </div>
+  </div>
+</article>
