@@ -15,7 +15,7 @@ test('Spanish home explains offer, place and process above the fold', async ({ p
   }));
   expect(heroQuality.currentSrc).toContain('garden-mixed-leaf-rows-hero-2k');
   expect(heroQuality.naturalWidth).toBeGreaterThanOrEqual(heroQuality.viewportWidth);
-  await expect(page.locator('[data-bionatura-mascot] img')).toBeVisible();
+  await expect(page.locator('[data-mascot-context="season"] img')).toBeVisible();
   await expect(page.getByRole('heading', { name: 'Una selección para empezar' })).toHaveCount(0);
   await expect(page.getByRole('heading', { name: 'Productos habituales' })).toHaveCount(0);
   await expect(page.getByRole('heading', { name: 'Desde el huerto' })).toHaveCount(0);
@@ -24,20 +24,15 @@ test('Spanish home explains offer, place and process above the fold', async ({ p
   await expect(seasonSection.getByRole('link', { name: 'Ver catálogo' })).toHaveAttribute('href', '/es/catalogo/');
   await expect(page.locator('.home-season')).toHaveCSS('background-color', 'rgb(237, 247, 233)');
   await expect(page.locator('.home-process')).toHaveCSS('background-color', 'rgb(237, 247, 233)');
-  await expect(page.locator('[data-bionatura-mascot]')).toContainText('¿Preparamos tu cesta?');
-  const mascotWidth = await page.locator('[data-bionatura-mascot]').evaluate((element) => element.getBoundingClientRect().width);
-  expect(mascotWidth).toBeGreaterThanOrEqual(300);
-  const decorativeBackground = await page.locator('[data-bionatura-mascot] > div').evaluate(
+  await expect(page.locator('[data-mascot-context="order"]')).toContainText('¿Preparamos tu cesta?');
+  const mascotWidth = await page.locator('[data-mascot-context="order"]').evaluate((element) => element.getBoundingClientRect().width);
+  expect(mascotWidth).toBeGreaterThanOrEqual(120);
+  const decorativeBackground = await page.locator('[data-mascot-context="order"] > div').evaluate(
     (element) => getComputedStyle(element, '::before').content,
   );
   expect(decorativeBackground).toBe('none');
-  const galleryFigures = page.locator('.home-gallery .gallery-group__images figure');
-  const [thirdWidth, fourthWidth] = await Promise.all([
-    galleryFigures.nth(2).evaluate((element) => element.getBoundingClientRect().width),
-    galleryFigures.nth(3).evaluate((element) => element.getBoundingClientRect().width),
-  ]);
-  expect(Math.abs(thirdWidth - fourthWidth)).toBeLessThanOrEqual(1);
-  await expect(page.locator('main').getByRole('link', { name: /productos de temporada en Fuengirola/i })).toHaveAttribute(
+  await expect(page.locator('.home-garden img')).toBeVisible();
+  await expect(page.locator('main').getByRole('link', { name: /huerto y recetas/i })).toHaveAttribute(
     'href',
     '/es/huerto-recetas/productos-temporada-fuengirola/',
   );

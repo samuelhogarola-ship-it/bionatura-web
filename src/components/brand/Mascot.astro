@@ -5,12 +5,12 @@ import type { Locale } from '@/i18n/config';
 
 interface Props {
   locale: Locale;
-  context: 'catalog' | 'contact' | 'basket';
+  context: 'catalog' | 'contact' | 'basket' | 'season' | 'order';
   message?: string;
 }
 
 const { locale, context, message } = Astro.props;
-const priority = context === 'catalog' || context === 'contact';
+const priority = context === 'catalog' || context === 'contact' || context === 'season';
 const alt = {
   es: 'Mascota lechuga de Bionatura',
   en: 'Bionatura lettuce mascot',

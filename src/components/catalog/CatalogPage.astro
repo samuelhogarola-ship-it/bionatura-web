@@ -23,6 +23,52 @@ const recipeCopy = {
   fi: { heading: 'Ideoita ruoanlaittoon', tomato: 'Valmista tomaatti-punasipulisalaatti', courgette: 'Kokkaa helpot välimerelliset kesäkurpitsat' },
   da: { heading: 'Idéer til madlavning', tomato: 'Lav en tomat- og rødløgssalat', courgette: 'Tilbered enkle middelhavs-squash' },
 }[locale];
+const deliveryCopy = {
+  es: {
+    eyebrow: 'Verdura y fruta a domicilio',
+    heading: 'Verduras y fruta a domicilio en Fuengirola',
+    intro: 'Preparamos pedidos de verduras, fruta y productos frescos a domicilio en Fuengirola, con envío gratuito a partir de 30 euros.',
+    items: [
+      'Los envíos se realizan los jueves.',
+      'Para pedidos grandes o si necesitas más flexibilidad, contacta por WhatsApp.',
+      'Los envíos fuera de Fuengirola también son posibles: consúltanos por WhatsApp.',
+      'Trabajamos la zona de Fuengirola y Torreblanca.',
+    ],
+  },
+  en: {
+    eyebrow: 'Fruit and vegetables delivered',
+    heading: 'Fruit and vegetable delivery in Fuengirola',
+    intro: 'We prepare orders of vegetables, fruit and fresh produce for home delivery in Fuengirola, with free delivery from 30 euros.',
+    items: [
+      'Deliveries are made on Thursdays.',
+      'For large orders or extra flexibility, contact us on WhatsApp.',
+      'Delivery outside Fuengirola may also be possible: ask us on WhatsApp.',
+      'We serve Fuengirola and Torreblanca.',
+    ],
+  },
+  fi: {
+    eyebrow: 'Hedelmät ja vihannekset kotiin',
+    heading: 'Hedelmien ja vihannesten kotiinkuljetus Fuengirolassa',
+    intro: 'Valmistamme vihannes-, hedelmä- ja tuoretuotetilauksia kotiinkuljetuksella Fuengirolassa, ja toimitus on ilmainen yli 30 euron tilauksille.',
+    items: [
+      'Toimitukset tehdään torstaisin.',
+      'Suurista tilauksista tai joustavammista ajoista voit kysyä WhatsAppissa.',
+      'Toimitus Fuengirolan ulkopuolelle voi myös olla mahdollista: kysy WhatsAppissa.',
+      'Palvelemme Fuengirolan ja Torreblancan aluetta.',
+    ],
+  },
+  da: {
+    eyebrow: 'Frugt og grønt leveret hjem',
+    heading: 'Frugt og grønt leveret hjem i Fuengirola',
+    intro: 'Vi pakker bestillinger med grøntsager, frugt og friske varer til hjemmelevering i Fuengirola, med gratis levering fra 30 euro.',
+    items: [
+      'Leveringer sker om torsdagen.',
+      'Ved store bestillinger eller behov for mere fleksibilitet, kontakt os på WhatsApp.',
+      'Levering uden for Fuengirola kan også være mulig: spørg os på WhatsApp.',
+      'Vi betjener Fuengirola og Torreblanca.',
+    ],
+  },
+}[locale];
 const tomatoSalad = editorialItems.find((item) => item.id === 'tomato-red-onion-salad')!;
 const mediterraneanCourgettes = editorialItems.find((item) => item.id === 'simple-mediterranean-courgettes')!;
 ---
@@ -39,6 +85,17 @@ const mediterraneanCourgettes = editorialItems.find((item) => item.id === 'simpl
   </header>
 
   <div class="page-shell">
+    <section class="delivery-info" aria-labelledby="delivery-info-title">
+      <p class="delivery-info__eyebrow">{deliveryCopy.eyebrow}</p>
+      <div>
+        <h2 id="delivery-info-title">{deliveryCopy.heading}</h2>
+        <p>{deliveryCopy.intro}</p>
+      </div>
+      <ul>
+        {deliveryCopy.items.map((item) => <li>{item}</li>)}
+      </ul>
+    </section>
+
     <SeasonSelector {locale} />
     <div class="season-panels">
       {seasons.map((season) => <SeasonPanel {locale} {season} products={seasonalProducts(season)} />)}
