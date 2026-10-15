@@ -7,6 +7,9 @@
     "build": "astro check && astro build",
     "preview": "astro preview",
     "check": "astro check",
+    "diagnostics": "npm run check && npm run test:unit && npm run build && git diff --check",
+    "prepare": "husky",
+    "prepush": "npm run diagnostics",
     "test": "npm run test:unit && npm run test:e2e",
     "test:unit": "vitest run && npm run test:analytics",
     "test:e2e": "playwright test",
@@ -20,6 +23,7 @@
     "@astrojs/check": "^0.9.10",
     "@axe-core/playwright": "^4.13.0",
     "@playwright/test": "^1.63.0",
+    "husky": "^9.1.7",
     "lighthouse": "^13.4.1",
     "typescript": "^6.0.3",
     "vitest": "^5.0.0"

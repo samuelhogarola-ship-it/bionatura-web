@@ -49,8 +49,9 @@ describe('UI copy', () => {
 });
 
 describe('page CTAs', () => {
-  it('links Spanish About to Contact and Contact to Catalog', () => {
-    expect(pages.about.es.ctaPage).toBe('contact');
+  it('links Spanish About and Contact to Catalog', () => {
+    expect(pages.about.es.ctaPage).toBe('catalog');
+    expect(pages.about.es.cta).toBe('Pide ahora');
     expect(pages.contact.es.ctaPage).toBe('catalog');
   });
 
