@@ -40,6 +40,7 @@ const skipLabel: Record<Locale, string> = {
 <!doctype html>
 <html lang={locale}>
   <head>
+    <script is:inline defer src="/umami-analytics.js"></script>
     <SeoHead {locale} {page} {title} {description} {image} {canonicalPath} {alternates} {ogType} {publishedAt} {modifiedAt} />
     <StructuredData {locale} {page} {current} {canonicalPath} {breadcrumbs} />
     <slot name="head" />
