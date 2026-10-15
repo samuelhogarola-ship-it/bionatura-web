@@ -19,7 +19,6 @@ const isEditorial = Astro.url.pathname.startsWith(editorialIndexPath(locale));
 const links: Array<{ href: string; label: string; current: boolean }> = [
   { href: pathFor(locale, 'home'), label: copy.navHome, current: !isEditorial && page === 'home' },
   { href: pathFor(locale, 'catalog'), label: copy.navCatalog, current: page === 'catalog' },
-  { href: pathFor(locale, 'gallery'), label: copy.navGallery, current: page === 'gallery' },
   { href: pathFor(locale, 'about'), label: copy.navAbout, current: page === 'about' },
   { href: pathFor(locale, 'contact'), label: copy.navContact, current: page === 'contact' },
   { href: editorialIndexPath(locale), label: copy.navEditorial, current: isEditorial },

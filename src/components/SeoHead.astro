@@ -1,5 +1,7 @@
 ---
 import { alternateLinks, pathFor, type Locale, type PageKey, type SeoAlternate } from '@/i18n/config';
+import favicon from '@/assets/brand/bionatura-logo.png';
+import defaultShareImage from '@/assets/media/garden-mixed-leaf-rows-hero-2k.png';
 
 interface Props {
   locale: Locale;
@@ -17,7 +19,8 @@ interface Props {
 const { locale, page, title, description, image, canonicalPath, alternates, ogType = 'website', publishedAt, modifiedAt } = Astro.props;
 const base = Astro.site ?? new URL('https://bionatura.es');
 const canonical = new URL(canonicalPath ?? pathFor(locale, page), base);
-const imageUrl = image ? new URL(image, base) : undefined;
+const faviconUrl = new URL(favicon.src, base);
+const imageUrl = new URL(image ?? defaultShareImage.src, base);
 const ogLocales: Record<Locale, string> = {
   es: 'es_ES',
   en: 'en_GB',
@@ -32,6 +35,8 @@ const localizedAlternates = alternates ?? alternateLinks(page);
 <meta name="generator" content={Astro.generator} />
 <title>{title}</title>
 <meta name="description" content={description} />
+<link rel="icon" type="image/png" href={faviconUrl} />
+<link rel="apple-touch-icon" href={faviconUrl} />
 <link rel="canonical" href={canonical} />
 {localizedAlternates.map(({ locale: hreflang, href }) => (
   <link rel="alternate" hreflang={hreflang} href={new URL(href, base)} />
@@ -45,10 +50,10 @@ const localizedAlternates = alternates ?? alternateLinks(page);
 {Object.entries(ogLocales).filter(([key]) => key !== locale).map(([, value]) => (
   <meta property="og:locale:alternate" content={value} />
 ))}
-{imageUrl && <meta property="og:image" content={imageUrl} />}
-<meta name="twitter:card" content={imageUrl ? 'summary_large_image' : 'summary'} />
+<meta property="og:image" content={imageUrl} />
+<meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:title" content={title} />
 <meta name="twitter:description" content={description} />
-{imageUrl && <meta name="twitter:image" content={imageUrl} />}
+<meta name="twitter:image" content={imageUrl} />
 {publishedAt && <meta property="article:published_time" content={publishedAt} />}
 {modifiedAt && <meta property="article:modified_time" content={modifiedAt} />}
