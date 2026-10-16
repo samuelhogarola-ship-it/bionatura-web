@@ -7,9 +7,10 @@ interface Props {
   locale: Locale;
   context: 'catalog' | 'contact' | 'basket' | 'season' | 'order';
   message?: string;
+  messageHref?: string;
 }
 
-const { locale, context, message } = Astro.props;
+const { locale, context, message, messageHref } = Astro.props;
 const priority = context === 'catalog' || context === 'contact' || context === 'season';
 const alt = {
   es: 'Mascota lechuga de Bionatura',
@@ -23,5 +24,5 @@ const alt = {
   <div class="mascot__shape">
     <ResponsiveImage src={mascotAsset} {alt} sizes="(min-width: 48rem) 12rem, 8rem" {priority} />
   </div>
-  {message && <figcaption>{message}</figcaption>}
+  {message && <figcaption>{messageHref ? <a href={messageHref}>{message}</a> : message}</figcaption>}
 </figure>

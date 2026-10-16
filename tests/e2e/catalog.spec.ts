@@ -8,7 +8,26 @@ test('catalog keeps every season in generated HTML', async ({ request }) => {
 
   for (const id of ['spring', 'summer', 'autumn', 'winter']) {
     expect(html).toContain(`data-season-panel="${id}"`);
+    expect(html).toContain(`season-${id}`);
   }
+});
+
+test('each season has its own descriptive landscape photograph', async ({ page }) => {
+  await page.goto('/es/catalogo/');
+
+  for (const season of ['spring', 'summer', 'autumn', 'winter']) {
+    const image = page.locator(`[data-season-panel="${season}"] .season-panel__image img`);
+    await expect(image).toHaveCount(1);
+    await expect(image).toHaveAttribute('src', new RegExp(`season-${season}`));
+    await expect(image).toHaveAttribute('alt', /temporada|huerto|cosecha/i);
+  }
+});
+
+test('farm eggs offer half a dozen and one dozen', async ({ page }) => {
+  await page.goto('/es/catalogo/');
+  const quantity = page.locator('[data-product-id="egg"] [data-quantity]');
+
+  await expect(quantity.locator('option')).toHaveText(['Media docena', 'Una docena', 'Otra cantidad']);
 });
 
 test('September selects autumn and keyboard changes season', async ({ page }) => {

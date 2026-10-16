@@ -4,6 +4,8 @@ test('Spanish home explains offer, place and process above the fold', async ({ p
   await page.goto('/es/');
 
   await expect(page.getByRole('heading', { level: 1 })).toContainText(/Bionatura|Fuengirola/);
+  await expect(page.getByRole('heading', { level: 1 })).not.toContainText(/domicilio/i);
+  await expect(page.getByRole('heading', { level: 2, name: /productos bio a domicilio y para recoger/i })).toBeVisible();
   await expect(page.getByRole('link', { name: /prepara tu pedido/i }).first()).toBeVisible();
   await expect(page.getByRole('link', { name: /ver catálogo/i }).first()).toBeVisible();
   await expect(page.locator('main h1')).toHaveCount(1);
@@ -15,7 +17,7 @@ test('Spanish home explains offer, place and process above the fold', async ({ p
   }));
   expect(heroQuality.currentSrc).toContain('garden-mixed-leaf-rows-hero-2k');
   expect(heroQuality.naturalWidth).toBeGreaterThanOrEqual(heroQuality.viewportWidth);
-  await expect(page.locator('[data-mascot-context="season"] img')).toBeVisible();
+  await expect(page.locator('[data-mascot-context="season"]')).toHaveCount(0);
   await expect(page.getByRole('heading', { name: 'Una selección para empezar' })).toHaveCount(0);
   await expect(page.getByRole('heading', { name: 'Productos habituales' })).toHaveCount(0);
   await expect(page.getByRole('heading', { name: 'Desde el huerto' })).toHaveCount(0);
@@ -25,12 +27,25 @@ test('Spanish home explains offer, place and process above the fold', async ({ p
   await expect(page.locator('.home-season')).toHaveCSS('background-color', 'rgb(237, 247, 233)');
   await expect(page.locator('.home-process')).toHaveCSS('background-color', 'rgb(237, 247, 233)');
   await expect(page.locator('[data-mascot-context="order"]')).toContainText('¿Preparamos tu cesta?');
+  await expect(page.locator('[data-mascot-context="order"]').getByRole('link', { name: '¿Preparamos tu cesta?' })).toHaveAttribute(
+    'href',
+    '/es/catalogo/',
+  );
   const mascotWidth = await page.locator('[data-mascot-context="order"]').evaluate((element) => element.getBoundingClientRect().width);
   expect(mascotWidth).toBeGreaterThanOrEqual(120);
   const decorativeBackground = await page.locator('[data-mascot-context="order"] > div').evaluate(
     (element) => getComputedStyle(element, '::before').content,
   );
   expect(decorativeBackground).toBe('none');
+  const seasonButton = seasonSection.getByRole('link', { name: 'Ver catálogo' });
+  const processHeading = page.getByRole('heading', { name: 'Del catálogo a tu cesta' });
+  const processLayout = page.locator('.home-process__layout');
+  const gardenLayout = page.locator('.home-garden__layout');
+  const [seasonButtonBox, processHeadingBox, processLayoutBox, gardenLayoutBox] = await Promise.all([
+    seasonButton.boundingBox(), processHeading.boundingBox(), processLayout.boundingBox(), gardenLayout.boundingBox(),
+  ]);
+  expect(processHeadingBox!.y - (seasonButtonBox!.y + seasonButtonBox!.height)).toBeLessThan(120);
+  expect(gardenLayoutBox!.y - (processLayoutBox!.y + processLayoutBox!.height)).toBeLessThan(120);
   await expect(page.locator('.home-garden img')).toBeVisible();
   await expect(page.locator('main').getByRole('link', { name: /huerto y recetas/i })).toHaveAttribute(
     'href',
@@ -93,6 +108,11 @@ test('contact page exposes the confirmed phone and WhatsApp without presenting t
 
 test('About links the catalog and catalog links relevant recipes', async ({ page }) => {
   await page.goto('/es/nosotros/');
+  await expect(page.locator('main')).not.toContainText(/covid/i);
+  await expect(page.locator('main')).toContainText(/Carvajal/);
+  await expect(page.locator('main')).toContainText(/Elige lo que quieres directamente de nuestro huerto/i);
+  const decoration = await page.locator('.about-page').evaluate((element) => getComputedStyle(element, '::before').content);
+  expect(decoration).toBe('none');
   await expect(page.locator('main').getByRole('link', { name: /Pide ahora/i })).toHaveAttribute('href', '/es/catalogo/');
 
   await page.goto('/es/catalogo/');

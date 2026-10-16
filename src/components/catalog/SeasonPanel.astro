@@ -1,5 +1,7 @@
 ---
 import ProductCard from './ProductCard.astro';
+import ResponsiveImage from '@/components/media/ResponsiveImage.astro';
+import { seasonImages } from '@/data/season-images';
 import type { Locale } from '@/i18n/config';
 import { ui } from '@/i18n/ui';
 import type { Product, Season } from '@/domain/catalog';
@@ -11,6 +13,7 @@ interface Props {
 }
 
 const { locale, season, products } = Astro.props;
+const seasonImage = seasonImages[season];
 ---
 
 <section
@@ -19,6 +22,13 @@ const { locale, season, products } = Astro.props;
   data-season-panel={season}
   aria-labelledby={`season-tab-${season}`}
 >
+  <figure class="season-panel__image">
+    <ResponsiveImage
+      src={seasonImage.asset}
+      alt={seasonImage.alt[locale]}
+      sizes="(min-width: 68rem) 72rem, 100vw"
+    />
+  </figure>
   <div class="season-panel__heading">
     <p>{ui[locale].seasonSelection}</p>
     <h2>{ui[locale][season]}</h2>

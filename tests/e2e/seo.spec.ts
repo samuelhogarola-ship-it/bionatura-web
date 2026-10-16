@@ -12,9 +12,9 @@ async function readStructuredData(page: import('@playwright/test').Page): Promis
 
 test('localized pages use specific local titles and descriptions', async ({ page }) => {
   const pages = [
-    ['/es/', /productos biológicos.*Fuengirola/i, /Los Pacos|Fuengirola/i],
+    ['/es/', /productos bio.*Fuengirola/i, /fruta y verdura biológica.*Fuengirola.*Torreblanca/i],
     ['/es/catalogo/', /fruta y verdura biológica.*Fuengirola/i, /reparto a domicilio.*Fuengirola.*Torreblanca/i],
-    ['/es/nosotros/', /Bionatura Fuengirola.*fruta y verdura biológica local/i, /negocio local.*Fuengirola/i],
+    ['/es/nosotros/', /productos bio.*Fuengirola.*Bionatura local/i, /Fuengirola.*Torreblanca.*Carvajal/i],
     ['/es/contacto/', /contacto y reparto a domicilio.*Bionatura Fuengirola/i, /productos biológicos.*reparto a domicilio.*Fuengirola.*Torreblanca/i],
     ['/es/galeria/', /huerto.*Los Pacos/i, /Fuengirola/i],
     ['/fi/', /luomutuotteita.*Fuengirolassa/i, /Los Pacos|Fuengirola/i],
