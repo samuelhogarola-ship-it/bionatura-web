@@ -13,18 +13,18 @@ async function readStructuredData(page: import('@playwright/test').Page): Promis
 test('localized pages use specific local titles and descriptions', async ({ page }) => {
   const pages = [
     ['/es/', /productos biológicos.*Fuengirola/i, /Los Pacos|Fuengirola/i],
-    ['/es/catalogo/', /catálogo.*Fuengirola/i, /temporada.*Fuengirola/i],
-    ['/es/nosotros/', /Bionatura.*Los Pacos/i, /huerto.*Fuengirola/i],
-    ['/es/contacto/', /contacta.*Bionatura.*Fuengirola/i, /Los Pacos.*recogida/i],
+    ['/es/catalogo/', /fruta y verdura biológica.*Fuengirola/i, /reparto a domicilio.*Fuengirola.*Torreblanca/i],
+    ['/es/nosotros/', /Bionatura Fuengirola.*fruta y verdura biológica local/i, /negocio local.*Fuengirola/i],
+    ['/es/contacto/', /contacto y reparto a domicilio.*Bionatura Fuengirola/i, /productos biológicos.*reparto a domicilio.*Fuengirola.*Torreblanca/i],
     ['/es/galeria/', /huerto.*Los Pacos/i, /Fuengirola/i],
     ['/fi/', /luomutuotteita.*Fuengirolassa/i, /Los Pacos|Fuengirola/i],
     ['/fi/tuotteet/', /Fuengirolan.*luomu.*sesonkituotteet/i, /Fuengirol/i],
-    ['/fi/meista/', /Los Pacosin.*Fuengirolassa/i, /Los Pacos.*Fuengirol/i],
+    ['/fi/meista/', /Bionatura.*Luomutuotteita Fuengirolassa/i, /paikallinen Fuengirolan yritys/i],
     ['/fi/yhteystiedot/', /Bionaturaan.*Fuengirolassa/i, /Los Pacos.*Fuengirol/i],
     ['/fi/galleria/', /Los Pacosin.*galleria/i, /Los Pacos.*Fuengirol/i],
     ['/da/', /økologiske.*Fuengirola/i, /Los Pacos|Fuengirola/i],
     ['/da/katalog/', /økologiske.*Fuengirola/i, /Fuengirola/i],
-    ['/da/om-os/', /Los Pacos.*Fuengirola/i, /Los Pacos.*Fuengirola/i],
+    ['/da/om-os/', /Om Bionatura.*Økologiske varer i Fuengirola/i, /lokal virksomhed i Fuengirola/i],
     ['/da/kontakt/', /Bionatura.*Fuengirola/i, /Los Pacos.*Fuengirola/i],
     ['/da/galleri/', /Los Pacos.*Bionatura/i, /Los Pacos.*Fuengirola/i],
   ] as const;
@@ -61,6 +61,24 @@ test('catalog emits canonical and all language alternates', async ({ page }) => 
   for (const lang of ['es', 'en', 'fi', 'da', 'x-default']) {
     await expect(page.locator(`link[rel="alternate"][hreflang="${lang}"]`)).toHaveCount(1);
   }
+});
+
+test('Spanish catalog describes the delivery service and confirmed product list', async ({ page }) => {
+  await page.goto('/es/catalogo/');
+  const schemas = await readStructuredData(page);
+  const service = schemas.find((schema) => schema['@type'] === 'Service');
+  const catalog = schemas.find((schema) => schema['@type'] === 'ItemList');
+
+  expect(service).toMatchObject({
+    serviceType: 'Reparto a domicilio de fruta, verdura y productos biológicos',
+    areaServed: [
+      { '@type': 'City', name: 'Fuengirola' },
+      { '@type': 'Place', name: 'Torreblanca' },
+    ],
+  });
+  expect(catalog).toMatchObject({ name: 'Catálogo' });
+  expect((catalog?.itemListElement as unknown[]).length).toBeGreaterThan(0);
+  expect(JSON.stringify([service, catalog])).not.toMatch(/price|availability|inStock/i);
 });
 
 test('structured data describes the website and organization without shop claims', async ({ page }) => {

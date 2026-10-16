@@ -20,7 +20,7 @@ test('confirmed WhatsApp action contains the enriched current shopping list', as
   expect(message).toContain('*1. Patatas*\nCantidad: 1 kg');
   expect(message).toContain('*2. Cebolla roja*\nCantidad: 1 kg');
   expect(message).toContain('*2 productos en la lista*');
-  expect(message).toContain('La recogida se acuerda previamente en Los Pacos, Fuengirola.');
+  expect(message).toContain('Quisiera acordar la recogida o reparto a domicilio en Fuengirola o Torreblanca.');
   expect(message).toMatch(/Referencia: BN-20260911-[A-F0-9]{4}/);
   expect(message).not.toMatch(/Precio|Total|Nombre|Teléfono|€|EUR/i);
 });

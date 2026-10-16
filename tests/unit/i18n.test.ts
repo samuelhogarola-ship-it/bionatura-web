@@ -64,3 +64,19 @@ describe('page CTAs', () => {
     }
   });
 });
+
+describe('Spanish delivery SEO', () => {
+  it('presents the catalog as organic fruit and vegetable home delivery in Fuengirola', () => {
+    expect(pages.catalog.es.title).toBe('Fruta y verdura biológica a domicilio en Fuengirola | Bionatura');
+    expect(pages.catalog.es.description).toBe(
+      'Consulta fruta, verdura y productos biológicos con reparto a domicilio en Fuengirola y Torreblanca. Envío gratuito desde 30 € y disponibilidad por WhatsApp.',
+    );
+    expect(pages.catalog.es.h1).toBe('Fruta, verdura y productos biológicos en Fuengirola');
+  });
+
+  it('explains delivery and collection consistently in contact and WhatsApp copy', () => {
+    expect(pages.contact.es.description).toContain('reparto a domicilio en Fuengirola y Torreblanca');
+    expect(pages.contact.es.intro).toContain('recogida o reparto a domicilio');
+    expect(ui.es.whatsappPickup).toContain('recogida o reparto a domicilio');
+  });
+});

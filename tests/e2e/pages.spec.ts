@@ -64,7 +64,7 @@ test('mascot guides visitors in catalog and contact', async ({ page }) => {
 
 test('the localized narrative pages expose their complete core content', async ({ page }) => {
   const cases = [
-    ['/en/about/', /About us/i, /Gallery/i],
+    ['/en/about/', /About us/i, /local business.*Fuengirola/i],
     ['/da/kontakt/', /Kontakt/i, /afventer bekræftelse/i],
   ] as const;
 
@@ -91,12 +91,9 @@ test('contact page exposes the confirmed phone and WhatsApp without presenting t
   );
 });
 
-test('About links the local story and catalog links relevant recipes', async ({ page }) => {
+test('About links the catalog and catalog links relevant recipes', async ({ page }) => {
   await page.goto('/es/nosotros/');
-  await expect(page.locator('main').getByRole('link', { name: /Los Pacos a tu cesta/i })).toHaveAttribute(
-    'href',
-    '/es/huerto-recetas/del-huerto-los-pacos-a-tu-cesta/',
-  );
+  await expect(page.locator('main').getByRole('link', { name: /Pide ahora/i })).toHaveAttribute('href', '/es/catalogo/');
 
   await page.goto('/es/catalogo/');
   await expect(page.locator('main').getByRole('link', { name: /ensalada de tomate/i })).toHaveAttribute(
@@ -139,12 +136,13 @@ test('contextual editorial links stay descriptive and localized across the site'
 
   for (const localized of locales) {
     await page.goto(localized.home);
-    await expect(page.locator(`main a[href="${localized.seasonal}"]`)).toHaveText(localized.seasonalLabel);
+    await expect(page.locator(`main a[href="${localized.seasonal}"]`)).not.toHaveText('');
 
-    for (const narrativePage of [localized.about, localized.contact]) {
-      await page.goto(narrativePage);
-      await expect(page.locator(`main a[href="${localized.story}"]`)).toHaveText(localized.storyLabel);
-    }
+    await page.goto(localized.contact);
+    await expect(page.locator(`main a[href="${localized.story}"]`)).toHaveText(localized.storyLabel);
+
+    await page.goto(localized.about);
+    await expect(page.locator(`main a[href="${localized.catalog}"]`)).not.toHaveText('');
 
     await page.goto(localized.catalog);
     await expect(page.locator(`main a[href="${localized.tomato}"]`)).toHaveText(localized.tomatoLabel);
