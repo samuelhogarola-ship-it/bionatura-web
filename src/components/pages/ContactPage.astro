@@ -14,7 +14,7 @@ const pending = {
   da: 'Afventer bekræftelse',
 }[locale];
 const labels = {
-  es: { phone: 'Teléfono', whatsapp: 'WhatsApp', email: 'Correo', hours: 'Horario', pickup: 'Zona de cultivo y recogida' },
+  es: { phone: 'Teléfono', whatsapp: 'WhatsApp', email: 'Correo', hours: 'Horario', pickup: 'Recogida y reparto' },
   en: { phone: 'Phone', whatsapp: 'WhatsApp', email: 'Email', hours: 'Opening times', pickup: 'Growing and collection area' },
   fi: { phone: 'Puhelin', whatsapp: 'WhatsApp', email: 'Sähköposti', hours: 'Aukioloajat', pickup: 'Viljely- ja noutoalue' },
   da: { phone: 'Telefon', whatsapp: 'WhatsApp', email: 'E-mail', hours: 'Åbningstider', pickup: 'Dyrknings- og afhentningsområde' },
@@ -55,7 +55,7 @@ const localStoryLabel = {
       </section>
       <section>
         <h2>{labels.pickup}</h2>
-        <p>{locale === 'es' ? 'Campo de Los Pacos, Fuengirola. Recogida acordada previamente.' : copy.sections[0].body}</p>
+        <p>{locale === 'es' ? 'Recogida acordada en Los Pacos o reparto a domicilio en Fuengirola y Torreblanca.' : copy.sections[0].body}</p>
       </section>
     </div>
     <p>{copy.sections[0].body}</p>

@@ -8,6 +8,7 @@ import LegalPage from '@/components/pages/LegalPage.astro';
 import SiteLayout from '@/layouts/SiteLayout.astro';
 import { LOCALES, PAGE_KEYS, routes, type Locale, type PageKey } from '@/i18n/config';
 import { pages } from '@/i18n/pages';
+import { ui } from '@/i18n/ui';
 
 export function getStaticPaths() {
   return LOCALES.flatMap((locale) =>
@@ -20,8 +21,9 @@ export function getStaticPaths() {
 
 const { locale, page } = Astro.props as { locale: Locale; page: PageKey };
 const copy = pages[page][locale];
+const breadcrumbLabel = page === 'catalog' ? ui[locale].navCatalog : copy.h1;
 ---
 
-<SiteLayout locale={locale} page={page} title={copy.title} description={copy.description} breadcrumbLabel={copy.h1}>
+<SiteLayout locale={locale} page={page} title={copy.title} description={copy.description} {breadcrumbLabel}>
   {page === 'catalog' ? <CatalogPage {locale} /> : page === 'gallery' ? <GalleryPage {locale} /> : page === 'about' ? <AboutPage {locale} /> : page === 'contact' ? <ContactPage {locale} /> : ['legalNotice','privacy','cookies'].includes(page) ? <LegalPage {locale} {page} {copy} /> : <PageScaffold copy={copy} locale={locale} />}
 </SiteLayout>

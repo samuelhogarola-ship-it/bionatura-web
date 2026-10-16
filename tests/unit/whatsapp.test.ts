@@ -26,7 +26,7 @@ it.each([
     second: '*2. Cebolla roja*\nCantidad: 1 kg',
     count: '*2 productos en la lista*',
     availability: '¿Podéis confirmarme la disponibilidad?',
-    pickup: 'La recogida se acuerda previamente en Los Pacos, Fuengirola.',
+    pickup: 'Quisiera acordar la recogida o reparto a domicilio en Fuengirola o Torreblanca.',
     reference: 'Referencia: BN-20260911-A1B2',
     date: 'Fecha: 11/09/2026',
   },
