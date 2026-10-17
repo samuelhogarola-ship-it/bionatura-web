@@ -114,6 +114,18 @@ test('index exposes six useful entries and detail renders visible recipe facts',
   await expect(breadcrumb.locator('[aria-current="page"]')).toContainText('Ensalada de tomate');
 });
 
+test('Spanish garden index explains certified suppliers and the Los Pacos garden', async ({ page }) => {
+  await page.goto('/es/huerto-recetas/');
+
+  await expect(page.locator('.editorial-index__source')).toContainText(/proveedores con certificación 100 % ecológica/i);
+  await expect(page.locator('.editorial-index__source')).toContainText(/nuestro propio huerto.*Los Pacos.*Fuengirola/i);
+  await expect(page.locator('.editorial-index__source')).toContainText(/calidad.*cercanía.*productos ecológicos/i);
+  await expect(page.locator('meta[name="description"]')).toHaveAttribute(
+    'content',
+    /huerto de Los Pacos.*proveedores con certificación ecológica/i,
+  );
+});
+
 test('article details keep the inline mascot CTA without mounting the session welcome', async ({ page }) => {
   await page.goto('/es/huerto-recetas/como-elegir-tomates-huerto/');
 

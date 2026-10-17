@@ -63,6 +63,18 @@ test('catalog emits canonical and all language alternates', async ({ page }) => 
   }
 });
 
+test('home social preview uses the compact branded Bionatura card', async ({ page }) => {
+  await page.goto('/es/');
+
+  await expect(page.locator('meta[property="og:image"]')).toHaveAttribute('content', /bionatura-social-share/);
+  await expect(page.locator('meta[property="og:image:width"]')).toHaveAttribute('content', '1200');
+  await expect(page.locator('meta[property="og:image:height"]')).toHaveAttribute('content', '630');
+  await expect(page.locator('meta[property="og:image:alt"]')).toHaveAttribute(
+    'content',
+    'Bionatura, productos bio en Fuengirola, con Lechuguita',
+  );
+});
+
 test('Spanish catalog describes the delivery service and confirmed product list', async ({ page }) => {
   await page.goto('/es/catalogo/');
   const schemas = await readStructuredData(page);

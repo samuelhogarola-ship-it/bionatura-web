@@ -1134,6 +1134,13 @@
   font-size: var(--text-lg);
 }
 
+.editorial-index__source {
+  max-width: 70ch;
+  margin-top: var(--space-3);
+  color: var(--color-ink-soft);
+  line-height: 1.75;
+}
+
 .editorial-index__grid {
   display: grid;
   grid-template-columns: minmax(0, 1fr);

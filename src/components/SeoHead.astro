@@ -1,7 +1,7 @@
 ---
 import { alternateLinks, pathFor, type Locale, type PageKey, type SeoAlternate } from '@/i18n/config';
 import favicon from '@/assets/brand/bionatura-logo.png';
-import defaultShareImage from '@/assets/media/garden-mixed-leaf-rows-hero-2k.png';
+import defaultShareImage from '@/assets/brand/bionatura-social-share-garden.png';
 
 interface Props {
   locale: Locale;
@@ -21,6 +21,12 @@ const base = Astro.site ?? new URL('https://bionatura.es');
 const canonical = new URL(canonicalPath ?? pathFor(locale, page), base);
 const faviconUrl = new URL(favicon.src, base);
 const imageUrl = new URL(image ?? defaultShareImage.src, base);
+const defaultImageAlt: Record<Locale, string> = {
+  es: 'Bionatura, productos bio en Fuengirola, con Lechuguita',
+  en: 'Bionatura organic produce in Fuengirola with Lechuguita',
+  fi: 'Bionatura, luomutuotteita Fuengirolassa, ja Lechuguita',
+  da: 'Bionatura, økologiske varer i Fuengirola, med Lechuguita',
+};
 const ogLocales: Record<Locale, string> = {
   es: 'es_ES',
   en: 'en_GB',
@@ -51,9 +57,13 @@ const localizedAlternates = alternates ?? alternateLinks(page);
   <meta property="og:locale:alternate" content={value} />
 ))}
 <meta property="og:image" content={imageUrl} />
+{!image && <meta property="og:image:width" content="1200" />}
+{!image && <meta property="og:image:height" content="630" />}
+<meta property="og:image:alt" content={image ? title : defaultImageAlt[locale]} />
 <meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:title" content={title} />
 <meta name="twitter:description" content={description} />
 <meta name="twitter:image" content={imageUrl} />
+<meta name="twitter:image:alt" content={image ? title : defaultImageAlt[locale]} />
 {publishedAt && <meta property="article:published_time" content={publishedAt} />}
 {modifiedAt && <meta property="article:modified_time" content={modifiedAt} />}

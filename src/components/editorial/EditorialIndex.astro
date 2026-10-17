@@ -11,21 +11,25 @@ const copy = {
     eyebrow: 'Bionatura · Fuengirola',
     title: 'Huerto y recetas',
     intro: 'Ideas sencillas para aprovechar los productos de temporada, conocer mejor el huerto de Los Pacos y preparar recetas en casa.',
+    source: 'Nuestra producción procede de proveedores con certificación 100 % ecológica y de nuestro propio huerto, ubicado en Los Pacos, Fuengirola. En una época de producción masiva, apostamos por la calidad, la cercanía y una selección cuidada de los mejores productos ecológicos.',
   },
   en: {
     eyebrow: 'Bionatura · Fuengirola',
     title: 'Garden & recipes',
     intro: 'Simple ideas for making the most of seasonal produce, learning about the Los Pacos garden and preparing recipes at home.',
+    source: 'Our produce comes from certified 100% organic suppliers and our own garden in Los Pacos, Fuengirola. At a time of mass production, we choose quality, proximity and a carefully selected range of the best organic produce.',
   },
   fi: {
     eyebrow: 'Bionatura · Fuengirola',
     title: 'Puutarha ja reseptit',
     intro: 'Helppoja ideoita sesonkituotteiden hyödyntämiseen, Los Pacosin puutarhaan tutustumiseen ja kotona kokkaamiseen.',
+    source: 'Tuotteemme tulevat sertifioiduilta 100-prosenttisesti luomutuottajilta ja omasta puutarhastamme Los Pacosissa, Fuengirolassa. Massatuotannon aikakaudella valitsemme laadun, läheisyyden ja huolella valikoidut parhaat luomutuotteet.',
   },
   da: {
     eyebrow: 'Bionatura · Fuengirola',
     title: 'Have og opskrifter',
     intro: 'Enkle idéer til sæsonens varer, viden om haven i Los Pacos og opskrifter, du kan lave derhjemme.',
+    source: 'Vores varer kommer fra certificerede 100 % økologiske leverandører og vores egen have i Los Pacos, Fuengirola. I en tid med masseproduktion vælger vi kvalitet, nærhed og et omhyggeligt udvalg af de bedste økologiske varer.',
   },
 }[locale];
 ---
@@ -35,6 +39,7 @@ const copy = {
     <p class="eyebrow">{copy.eyebrow}</p>
     <h1>{copy.title}</h1>
     <p class="editorial-index__intro">{copy.intro}</p>
+    <p class="editorial-index__source">{copy.source}</p>
   </header>
   <div class="editorial-index__grid page-shell">
     {editorialItems.map((item) => <EditorialCard {item} {locale} />)}
