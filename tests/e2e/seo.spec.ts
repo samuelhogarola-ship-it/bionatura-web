@@ -63,12 +63,12 @@ test('catalog emits canonical and all language alternates', async ({ page }) => 
   }
 });
 
-test('home social preview uses the compact branded Bionatura card', async ({ page }) => {
+test('home social preview uses the branded Bionatura card with the garden background', async ({ page }) => {
   await page.goto('/es/');
 
   await expect(page.locator('meta[property="og:image"]')).toHaveAttribute(
     'content',
-    /bionatura-social-share\.[^.]+\.png$/,
+    /bionatura-social-share-garden\.[^.]+\.png$/,
   );
   await expect(page.locator('meta[property="og:image:width"]')).toHaveAttribute('content', '1200');
   await expect(page.locator('meta[property="og:image:height"]')).toHaveAttribute('content', '630');
