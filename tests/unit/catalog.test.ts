@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { assertValidCatalog, type Product } from '../../src/domain/catalog';
-import { alwaysAvailableProducts, products, recommendedProducts, seasonalProducts } from '../../src/data/products';
+import { alwaysAvailableProducts, consultProducts, products, recommendedProducts, seasonalProducts } from '../../src/data/products';
 
 const product = (overrides: Partial<Product> = {}): Product => ({
   id: 'tomato',
@@ -53,8 +53,50 @@ describe('catalog validation', () => {
 
   it('keeps stable ids and locates the tomato by id', () => {
     expect(products.map(({ id }) => id)).toEqual(expect.arrayContaining(['tomato', 'potato', 'egg', 'red-onion', 'kombucha', 'olive-oil', 'birdhouse']));
-    expect(products.map(({ id }) => id)).not.toContain('avocado');
+    expect(products.map(({ id }) => id)).toContain('avocado');
     expect(products.find(({ id }) => id === 'tomato')?.name.es).toBe('Tomates');
+  });
+
+  it('contains the complete produce catalogue supplied by Bionatura', () => {
+    expect(products).toHaveLength(120);
+    expect(products.map(({ name }) => name.es)).toEqual(expect.arrayContaining([
+      'Ajo',
+      'Acelga',
+      'Aguacate',
+      'Apio en bolsa',
+      'Apio por kilo',
+      'Brócoli por unidad',
+      'Brócoli por kilo',
+      'Cebolla blanca',
+      'Colrabi',
+      'Dátiles Salomón',
+      'Aloe planta por kilo',
+      'Fresa en caja',
+      'Fresa suelta',
+      'Manzana Evelina',
+      'Melón piel de sapo',
+      'Naranja de zumo',
+      'Tomate cherry',
+      'Uvas negras o rojas',
+      'Zanahorias por kilo',
+    ]));
+  });
+
+  it('marks unconfirmed catalogue entries for consultation without publishing prices', () => {
+    const consultation = consultProducts();
+    expect(consultation).toHaveLength(108);
+    expect(consultation.filter(({ categoryId }) => categoryId === 'vegetables')).toHaveLength(59);
+    expect(consultation.filter(({ categoryId }) => categoryId === 'fruit')).toHaveLength(49);
+    expect(consultation.every(({ availability, price }) => availability === 'consult' && price === undefined)).toBe(true);
+  });
+
+  it('localizes new catalog names instead of silently falling back to English', () => {
+    const garlic = products.find(({ id }) => id === 'garlic')!;
+    const apricot = products.find(({ id }) => id === 'apricot')!;
+    expect(garlic.name).toEqual({ es: 'Ajo', en: 'Garlic', fi: 'Valkosipuli', da: 'Hvidløg' });
+    expect(apricot.name).toEqual({ es: 'Albaricoque', en: 'Apricot', fi: 'Aprikoosi', da: 'Abrikos' });
+    expect(consultProducts().filter(({ name }) => name.fi !== name.en).length).toBeGreaterThan(100);
+    expect(consultProducts().filter(({ name }) => name.da !== name.en).length).toBeGreaterThan(100);
   });
 
   it('selects seasonal and always-available products without relying on order', () => {

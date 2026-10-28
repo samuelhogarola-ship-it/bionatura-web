@@ -98,10 +98,9 @@ export function buildPageStructuredData({
         '@type': 'ListItem',
         position: index + 1,
         item: {
-          '@type': 'Product',
+          '@type': 'Thing',
           name: product.name[locale],
-          description: product.shortDescription[locale],
-          category: product.categoryId,
+          ...(product.availability === 'consult' ? {} : { description: product.shortDescription[locale] }),
         },
       })),
     });

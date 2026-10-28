@@ -25,6 +25,7 @@ export interface Product {
   imageId: string;
   imageAlt: LocalizedText;
   featured: boolean;
+  availability?: 'consult';
   price?: {
     amount: number;
     currency: 'EUR';
@@ -61,7 +62,13 @@ export function assertValidCatalog(catalog: Product[]): void {
     if (product.alwaysAvailable && product.recommended) throw new Error(`product cannot be alwaysAvailable and recommended: ${product.id}`);
     if (product.alwaysAvailable && product.seasons.length > 0) throw new Error(`alwaysAvailable product cannot have seasons: ${product.id}`);
     if (product.recommended && product.seasons.length > 0) throw new Error(`recommended product cannot have seasons: ${product.id}`);
-    if (!product.alwaysAvailable && !product.recommended && product.seasons.length === 0) throw new Error(`seasonal product needs a season: ${product.id}`);
+    if (product.availability === 'consult') {
+      if (product.alwaysAvailable || product.recommended || product.seasons.length > 0) {
+        throw new Error(`consultation product cannot claim fixed availability: ${product.id}`);
+      }
+    } else if (!product.alwaysAvailable && !product.recommended && product.seasons.length === 0) {
+      throw new Error(`seasonal product needs a season: ${product.id}`);
+    }
     if (product.seasons.some((season) => !seasons.includes(season))) throw new Error(`invalid season in product ${product.id}`);
     if (product.quantityOptions.length === 0) throw new Error(`quantity options must not be empty: ${product.id}`);
     for (const option of product.quantityOptions) {
