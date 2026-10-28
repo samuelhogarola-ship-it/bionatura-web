@@ -19,7 +19,7 @@ describe('catalog structured data', () => {
     expect(JSON.stringify(service)).not.toMatch(/price|availability|inStock/i);
   });
 
-  it('publishes the confirmed guide catalog as one item list', () => {
+  it('publishes the guide catalog as an informational item list without unsupported offers', () => {
     const schemas = buildPageStructuredData({ locale: 'es', page: 'catalog', current: 'Catálogo' });
     const catalog = schemas.find((schema) => schema['@type'] === 'ItemList') as { itemListElement?: unknown[] } | undefined;
 
@@ -27,7 +27,14 @@ describe('catalog structured data', () => {
     expect(catalog?.itemListElement?.[0]).toMatchObject({
       '@type': 'ListItem',
       position: 1,
-      item: { '@type': 'Product', name: 'Tomates' },
+      item: { '@type': 'Thing', name: 'Tomates' },
     });
+    const serialized = JSON.stringify(catalog);
+    expect(serialized).not.toContain('"@type":"Product"');
+    expect(serialized).not.toContain('"@type":"Offer"');
+    expect(serialized).not.toContain('"price":');
+    expect(serialized).not.toContain('"availability":');
+    expect(serialized).not.toContain('"category":');
+    expect(serialized).not.toContain('Disponibilidad y precio a consultar.');
   });
 });

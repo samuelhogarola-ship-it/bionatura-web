@@ -1,10 +1,7 @@
 ---
-import SeasonPanel from './SeasonPanel.astro';
-import SeasonSelector from './SeasonSelector.astro';
-import ProductCard from './ProductCard.astro';
+import CatalogProductRow from './CatalogProductRow.astro';
 import { editorialItems, editorialPath } from '@/data/editorial';
-import { alwaysAvailableProducts, recommendedProducts, seasonalProducts } from '@/data/products';
-import type { Season } from '@/domain/catalog';
+import { products } from '@/data/products';
 import type { Locale } from '@/i18n/config';
 import { pages } from '@/i18n/pages';
 import { ui } from '@/i18n/ui';
@@ -16,7 +13,10 @@ interface Props {
 
 const { locale } = Astro.props;
 const copy = pages.catalog[locale];
-const seasons: Season[] = ['spring', 'summer', 'autumn', 'winter'];
+const collator = new Intl.Collator(locale, { sensitivity: 'base' });
+const vegetables = products.filter((product) => product.categoryId === 'vegetables').sort((a, b) => collator.compare(a.name[locale], b.name[locale]));
+const fruit = products.filter((product) => product.categoryId === 'fruit').sort((a, b) => collator.compare(a.name[locale], b.name[locale]));
+const extras = products.filter((product) => !['vegetables', 'fruit'].includes(product.categoryId)).sort((a, b) => collator.compare(a.name[locale], b.name[locale]));
 const recipeCopy = {
   es: { heading: 'Ideas para cocinar', tomato: 'Prepara una ensalada de tomate y cebolla roja', courgette: 'Cocina calabacines mediterráneos sencillos' },
   en: { heading: 'Ideas for cooking', tomato: 'Make a tomato and red onion salad', courgette: 'Cook simple Mediterranean courgettes' },
@@ -96,24 +96,33 @@ const mediterraneanCourgettes = editorialItems.find((item) => item.id === 'simpl
       </ul>
     </section>
 
-    <SeasonSelector {locale} />
-    <div class="season-panels">
-      {seasons.map((season) => <SeasonPanel {locale} {season} products={seasonalProducts(season)} />)}
-    </div>
-
-    <section class="always-available" aria-labelledby="always-available-title">
-      <h2 id="always-available-title">{ui[locale].alwaysAvailable}</h2>
-      <div class="product-grid">
-        {alwaysAvailableProducts().map((product) => <ProductCard {locale} {product} instanceId="regular" />)}
+    <section class="complete-catalog" aria-labelledby="complete-catalog-title">
+      <div class="complete-catalog__heading">
+        <p class="complete-catalog__eyebrow">Bionatura · Fuengirola</p>
+        <h2 id="complete-catalog-title">{ui[locale].completeCatalog}</h2>
+        <p>{ui[locale].availabilityNotice}</p>
       </div>
-    </section>
 
-    <section class="catalog-recommendations" aria-labelledby="catalog-recommendations-title">
-      <p class="catalog-recommendations__eyebrow">Bionatura · Fuengirola</p>
-      <h2 id="catalog-recommendations-title">{ui[locale].recommendationHeading}</h2>
-      <div class="product-grid">
-        {recommendedProducts().map((product) => <ProductCard {locale} {product} instanceId="recommended" />)}
-      </div>
+      <section class="catalog-group" aria-labelledby="catalog-vegetables-title">
+        <h2 id="catalog-vegetables-title">{ui[locale].catalogVegetables}</h2>
+        <div class="catalog-directory">
+          {vegetables.map((product) => <CatalogProductRow {locale} {product} />)}
+        </div>
+      </section>
+
+      <section class="catalog-group" aria-labelledby="catalog-fruit-title">
+        <h2 id="catalog-fruit-title">{ui[locale].catalogFruit}</h2>
+        <div class="catalog-directory">
+          {fruit.map((product) => <CatalogProductRow {locale} {product} />)}
+        </div>
+      </section>
+
+      <section class="catalog-group" aria-labelledby="catalog-extras-title">
+        <h2 id="catalog-extras-title">{ui[locale].catalogExtras}</h2>
+        <div class="catalog-directory">
+          {extras.map((product) => <CatalogProductRow {locale} {product} />)}
+        </div>
+      </section>
     </section>
 
     <section aria-labelledby="catalog-recipes-title">
@@ -125,5 +134,3 @@ const mediterraneanCourgettes = editorialItems.find((item) => item.id === 'simpl
     </section>
   </div>
 </article>
-
-<script src="../../scripts/season-selector.ts"></script>

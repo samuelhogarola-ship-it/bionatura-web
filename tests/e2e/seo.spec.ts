@@ -13,12 +13,12 @@ async function readStructuredData(page: import('@playwright/test').Page): Promis
 test('localized pages use specific local titles and descriptions', async ({ page }) => {
   const pages = [
     ['/es/', /productos bio.*Fuengirola/i, /fruta y verdura biológica.*Fuengirola.*Torreblanca/i],
-    ['/es/catalogo/', /fruta y verdura biológica.*Fuengirola/i, /reparto a domicilio.*Fuengirola.*Torreblanca/i],
+    ['/es/catalogo/', /catálogo.*productos bio.*Fuengirola/i, /fruta y verdura ecológica.*biológica.*Fuengirola.*Torreblanca/i],
     ['/es/nosotros/', /productos bio.*Fuengirola.*Bionatura local/i, /Fuengirola.*Torreblanca.*Carvajal/i],
     ['/es/contacto/', /contacto y reparto a domicilio.*Bionatura Fuengirola/i, /productos biológicos.*reparto a domicilio.*Fuengirola.*Torreblanca/i],
     ['/es/galeria/', /huerto.*Los Pacos/i, /Fuengirola/i],
     ['/fi/', /luomutuotteita.*Fuengirolassa/i, /Los Pacos|Fuengirola/i],
-    ['/fi/tuotteet/', /Fuengirolan.*luomu.*sesonkituotteet/i, /Fuengirol/i],
+    ['/fi/tuotteet/', /Fuengirolan.*luomutuoteluettelo/i, /Fuengirol/i],
     ['/fi/meista/', /Bionatura.*Luomutuotteita Fuengirolassa/i, /paikallinen Fuengirolan yritys/i],
     ['/fi/yhteystiedot/', /Bionaturaan.*Fuengirolassa/i, /Los Pacos.*Fuengirol/i],
     ['/fi/galleria/', /Los Pacosin.*galleria/i, /Los Pacos.*Fuengirol/i],
@@ -92,7 +92,7 @@ test('Spanish catalog describes the delivery service and confirmed product list'
     ],
   });
   expect(catalog).toMatchObject({ name: 'Catálogo' });
-  expect((catalog?.itemListElement as unknown[]).length).toBeGreaterThan(0);
+  expect((catalog?.itemListElement as unknown[]).length).toBeGreaterThanOrEqual(110);
   expect(JSON.stringify([service, catalog])).not.toMatch(/price|availability|inStock/i);
 });
 

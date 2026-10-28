@@ -1,26 +1,25 @@
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test } from '@playwright/test';
 
-test('catalog keeps every season in generated HTML', async ({ request }) => {
+test('catalog renders the complete produce directory in generated HTML', async ({ request }) => {
   const response = await request.get('/es/catalogo/');
   expect(response.ok()).toBe(true);
   const html = await response.text();
 
-  for (const id of ['spring', 'summer', 'autumn', 'winter']) {
-    expect(html).toContain(`data-season-panel="${id}"`);
-    expect(html).toContain(`season-${id}`);
+  for (const product of ['Ajo', 'Acelga', 'Aguacate', 'Melón piel de sapo', 'Naranja de zumo', 'Tomate cherry']) {
+    expect(html).toContain(product);
   }
+  expect(html).toContain('Disponibilidad y precio a consultar');
 });
-
-test('each season has its own descriptive landscape photograph', async ({ page }) => {
+test('complete catalog is grouped and every consultation product is visible', async ({ page }) => {
   await page.goto('/es/catalogo/');
 
-  for (const season of ['spring', 'summer', 'autumn', 'winter']) {
-    const image = page.locator(`[data-season-panel="${season}"] .season-panel__image img`);
-    await expect(image).toHaveCount(1);
-    await expect(image).toHaveAttribute('src', new RegExp(`season-${season}`));
-    await expect(image).toHaveAttribute('alt', /temporada|huerto|cosecha/i);
-  }
+  await expect(page.getByRole('heading', { name: 'Verduras y hortalizas' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Frutas' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Otros productos' })).toBeVisible();
+  expect(await page.locator('[data-catalog-product]').count()).toBeGreaterThanOrEqual(110);
+  await expect(page.getByText('Disponibilidad y precio a consultar', { exact: true }).first()).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Uvas negras o rojas' })).toBeVisible();
 });
 
 test('farm eggs offer half a dozen and one dozen', async ({ page }) => {
@@ -30,16 +29,14 @@ test('farm eggs offer half a dozen and one dozen', async ({ page }) => {
   await expect(quantity.locator('option')).toHaveText(['Media docena', 'Una docena', 'Otra cantidad']);
 });
 
-test('September selects autumn and keyboard changes season', async ({ page }) => {
-  await page.clock.install({ time: new Date('2026-09-11T10:00:00+02:00') });
+test('a newly added consultation product can be added to the basket', async ({ page }) => {
   await page.goto('/es/catalogo/');
+  const garlic = page.locator('[data-product-id="garlic"]');
+  await garlic.locator('[data-add-product]').click();
+  await page.locator('[data-order-open]').click();
 
-  await expect(page.getByRole('tab', { name: /otoño/i })).toHaveAttribute('aria-selected', 'true');
-  await page.getByRole('tab', { name: /otoño/i }).press('ArrowRight');
-  await expect(page.getByRole('tab', { name: /invierno/i })).toHaveAttribute('aria-selected', 'true');
-  await expect(page.getByRole('tabpanel', { name: /invierno/i })).toBeVisible();
-  await expect(page.getByRole('tab', { name: /otoño/i }).getByText(/ahora/i)).toBeVisible();
-  await expect(page.getByRole('tab', { name: /invierno/i }).getByText(/ahora/i)).toBeHidden();
+  await expect(page.locator('[data-order-lines]')).toContainText('Ajo');
+  await expect(page.locator('[data-order-lines]')).toContainText('Cantidad a consultar');
 });
 
 test('catalog has no automatically detectable accessibility violations', async ({ page }) => {
@@ -48,28 +45,15 @@ test('catalog has no automatically detectable accessibility violations', async (
   expect(results.violations).toEqual([]);
 });
 
-test('catalog uses real product photography and the approved all-year selection', async ({ page }) => {
+test('catalog retains existing extras alongside the complete produce list', async ({ page }) => {
   await page.goto('/es/catalogo/');
 
-  await expect(page.getByRole('heading', { name: 'Todo el año' })).toBeVisible();
-  await expect(page.getByText('Productos habituales', { exact: true })).toHaveCount(0);
-  await expect(page.getByText('Aguacates', { exact: true })).toHaveCount(0);
+  await expect(page.getByRole('heading', { name: 'Aguacate', exact: true })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Huevos caseros', exact: true })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Kombucha bio', exact: true })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Aceite de oliva bio', exact: true })).toBeVisible();
   await expect(page.getByText(/producto de muestra/i)).toHaveCount(0);
-  await expect(page.locator('.product-card img')).toHaveCount(18);
-  await expect(page.locator('.product-card img[src*="product-placeholder"]')).toHaveCount(0);
-  await expect(page.locator('[data-product-id="egg"] img')).toHaveAttribute('src', /eggs/);
-  await expect(page.locator('[data-product-id="birdhouse"] img')).toHaveAttribute('src', /wooden-birdhouses/);
-  const yearRound = page.locator('.always-available');
-  await expect(yearRound.locator('[data-product-id="birdhouse"]')).toHaveCount(0);
-  const recommendations = page.locator('.catalog-recommendations');
-  await expect(recommendations.getByRole('heading', { name: 'También te puede interesar' })).toBeVisible();
-  const birdhouse = recommendations.locator('[data-product-id="birdhouse"]');
-  await expect(birdhouse).toBeVisible();
-  const [recommendationBox, recommendationGridBox] = await Promise.all([
-    birdhouse.boundingBox(),
-    recommendations.locator('.product-grid').boundingBox(),
-  ]);
-  expect(Math.abs(recommendationBox!.width - recommendationGridBox!.width)).toBeLessThan(2);
+  await expect(page.getByRole('heading', { name: 'Casas para pájaros', exact: true })).toBeVisible();
 });
 
 test('basket uses the sober Andalusian treatment', async ({ page }) => {
@@ -102,20 +86,4 @@ test('desktop catalog header is compact and mascot-led without yellow decoration
     (element) => getComputedStyle(element, '::before').content,
   );
   expect(decoration).toBe('none');
-});
-
-test('season rail remains dynamic, responsive and keyboard accessible', async ({ page }) => {
-  await page.clock.install({ time: new Date('2026-09-11T10:00:00+02:00') });
-  await page.goto('/es/catalogo/');
-
-  const rail = page.locator('.season-selector');
-  await expect(rail).toHaveAttribute('data-season-style', 'harvest-rail');
-  await expect(page.getByRole('tab')).toHaveCount(4);
-  const activeTab = page.getByRole('tab', { name: /otoño/i });
-  await expect(activeTab).toHaveAttribute('aria-selected', 'true');
-  const overflow = await rail.evaluate((element) => ({ width: element.clientWidth, scrollWidth: element.scrollWidth }));
-  expect(overflow.scrollWidth).toBeGreaterThanOrEqual(overflow.width);
-  const [railBox, activeBox] = await Promise.all([rail.boundingBox(), activeTab.boundingBox()]);
-  expect(activeBox!.x).toBeGreaterThanOrEqual(railBox!.x);
-  expect(activeBox!.x + activeBox!.width).toBeLessThanOrEqual(railBox!.x + railBox!.width + 1);
 });
